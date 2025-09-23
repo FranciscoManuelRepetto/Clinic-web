@@ -43,7 +43,7 @@ export default function RegistrarPaciente() {
         title={t('registerPatient.title')}
         showBackButton={true}
         backButtonText={t('registerPatient.backToHome')}
-        backButtonHref="/"
+        backButtonHref="/Home"
       />
 
       {/* Contenido */}
@@ -257,7 +257,7 @@ export default function RegistrarPaciente() {
             {/* Botones */}
             <div className="flex justify-end space-x-4 pt-6">
               <Link
-                href="/"
+                href="/Home"
                 className="px-6 py-3 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors font-medium"
               >
                 {t('registerPatient.form.buttons.cancel')}

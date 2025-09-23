@@ -1,0 +1,88 @@
+{
+  "navbar": {
+    "logo": "CRZ",
+    "userGreeting": "Hello, Francisco",
+    "menus": {
+      "historiaClinica": "CLINICAL HISTORY ▾",
+      "turnos": "APPOINTMENTS ▾",
+      "medicamentos": "MEDICATIONS ▾",
+      "personal": "STAFF ▾"
+    },
+    "submenus": {
+      "historiaClinica": {
+        "crearPaciente": "Create Patient",
+        "buscarPaciente": "Search Patient",
+        "generarReporte": "Generate Report"
+      },
+      "turnos": {
+        "gestionarTurnos": "Manage Appointments",
+        "calendario": "Calendar"
+      },
+      "medicamentos": {
+        "inventario": "Inventory",
+        "recetas": "Prescriptions"
+      },
+      "personal": {
+        "gestionarPersonal": "Manage Staff",
+        "horarios": "Schedules"
+      }
+    }
+  },
+  "content": {
+    "welcome": "Welcome, Francisco",
+    "date": "Monday 01/02"
+  },
+  "language": {
+    "selector": "Language",
+    "spanish": "Español",
+    "english": "English"
+  },
+  "registerPatient": {
+    "title": "Register Patient",
+    "backToHome": "Back to Home",
+    "form": {
+      "title": "Patient Registration Form",
+      "successMessage": "Patient registered successfully",
+      "sections": {
+        "personalInfo": "Personal Information",
+        "medicalInfo": "Medical Information"
+      },
+      "fields": {
+        "firstName": "First Name",
+        "lastName": "Last Name",
+        "document": "Document",
+        "birthDate": "Birth Date",
+        "phone": "Phone",
+        "email": "Email",
+        "address": "Address",
+        "gender": "Gender",
+        "bloodType": "Blood Type",
+        "allergies": "Allergies",
+        "medications": "Current Medications",
+        "medicalHistory": "Medical History"
+      },
+      "placeholders": {
+        "firstName": "Enter first name",
+        "lastName": "Enter last name",
+        "document": "Document number",
+        "phone": "Phone number",
+        "email": "email@example.com",
+        "address": "Complete address",
+        "selectGender": "Select gender",
+        "selectBloodType": "Select blood type",
+        "allergies": "Describe known allergies",
+        "medications": "List current medications",
+        "medicalHistory": "Describe important medical history"
+      },
+      "options": {
+        "male": "Male",
+        "female": "Female",
+        "other": "Other"
+      },
+      "buttons": {
+        "cancel": "Cancel",
+        "register": "Register Patient"
+      }
+    }
+  }
+}

@@ -1,0 +1,88 @@
+{
+  "navbar": {
+    "logo": "CRZ",
+    "userGreeting": "Hola, Francisco",
+    "menus": {
+      "historiaClinica": "HISTORIA CLÍNICA ▾",
+      "turnos": "TURNOS ▾",
+      "medicamentos": "MEDICAMENTOS ▾",
+      "personal": "PERSONAL ▾"
+    },
+    "submenus": {
+      "historiaClinica": {
+        "crearPaciente": "Crear Paciente",
+        "buscarPaciente": "Buscar Paciente",
+        "generarReporte": "Generar Reporte"
+      },
+      "turnos": {
+        "gestionarTurnos": "Gestionar Turnos",
+        "calendario": "Calendario"
+      },
+      "medicamentos": {
+        "inventario": "Inventario",
+        "recetas": "Recetas"
+      },
+      "personal": {
+        "gestionarPersonal": "Gestionar Personal",
+        "horarios": "Horarios"
+      }
+    }
+  },
+  "content": {
+    "welcome": "Bienvenido, Francisco",
+    "date": "Lunes 01/02"
+  },
+  "language": {
+    "selector": "Idioma",
+    "spanish": "Español",
+    "english": "English"
+  },
+  "registerPatient": {
+    "title": "Registrar Paciente",
+    "backToHome": "Volver al Inicio",
+    "form": {
+      "title": "Formulario de Registro de Paciente",
+      "successMessage": "Paciente registrado exitosamente",
+      "sections": {
+        "personalInfo": "Información Personal",
+        "medicalInfo": "Información Médica"
+      },
+      "fields": {
+        "firstName": "Nombre",
+        "lastName": "Apellido",
+        "document": "Documento",
+        "birthDate": "Fecha de Nacimiento",
+        "phone": "Teléfono",
+        "email": "Email",
+        "address": "Dirección",
+        "gender": "Género",
+        "bloodType": "Tipo de Sangre",
+        "allergies": "Alergias",
+        "medications": "Medicamentos Actuales",
+        "medicalHistory": "Antecedentes Médicos"
+      },
+      "placeholders": {
+        "firstName": "Ingrese el nombre",
+        "lastName": "Ingrese el apellido",
+        "document": "Número de documento",
+        "phone": "Número de teléfono",
+        "email": "correo@ejemplo.com",
+        "address": "Dirección completa",
+        "selectGender": "Seleccione el género",
+        "selectBloodType": "Seleccione el tipo de sangre",
+        "allergies": "Describa las alergias conocidas",
+        "medications": "Liste los medicamentos que toma actualmente",
+        "medicalHistory": "Describa antecedentes médicos importantes"
+      },
+      "options": {
+        "male": "Masculino",
+        "female": "Femenino",
+        "other": "Otro"
+      },
+      "buttons": {
+        "cancel": "Cancelar",
+        "register": "Registrar Paciente"
+      }
+    }
+  }
+}

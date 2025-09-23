@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useTranslations } from "@/hooks/useTranslations";
+import Header from "@/components/Header";
 import Link from "next/link";
 
 export default function RegistrarPaciente() {
@@ -38,23 +39,12 @@ export default function RegistrarPaciente() {
 
   return (
     <div className="font-sans bg-white min-h-screen">
-      {/* Barra superior */}
-      <div className="bg-[#d2f0e0] flex justify-between items-center px-8 py-2.5">
-        <Link href="/" className="text-xl font-bold flex items-center gap-1 hover:opacity-80 transition-opacity">
-          💚 {t('navbar.logo')}
-        </Link>
-        
-        <div className="text-lg font-semibold">
-          {t('registerPatient.title')}
-        </div>
-        
-        <Link 
-          href="/" 
-          className="bg-white border border-gray-300 rounded px-4 py-2 text-sm font-medium hover:bg-gray-50 transition-colors"
-        >
-          {t('registerPatient.backToHome')}
-        </Link>
-      </div>
+      <Header 
+        title={t('registerPatient.title')}
+        showBackButton={true}
+        backButtonText={t('registerPatient.backToHome')}
+        backButtonHref="/"
+      />
 
       {/* Contenido */}
       <div className="p-8 max-w-4xl mx-auto">

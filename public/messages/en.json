@@ -61,19 +61,6 @@
         "medications": "Current Medications",
         "medicalHistory": "Medical History"
       },
-      "placeholders": {
-        "firstName": "Enter first name",
-        "lastName": "Enter last name",
-        "document": "Document number",
-        "phone": "Phone number",
-        "email": "email@example.com",
-        "address": "Complete address",
-        "selectGender": "Select gender",
-        "selectBloodType": "Select blood type",
-        "allergies": "Describe known allergies",
-        "medications": "List current medications",
-        "medicalHistory": "Describe important medical history"
-      },
       "options": {
         "male": "Male",
         "female": "Female",
@@ -81,7 +68,90 @@
       },
       "buttons": {
         "cancel": "Cancel",
-        "register": "Register Patient"
+        "register": "Register Patient",
+        "save": "Save Changes"
+      },
+      "labels": {
+        "profilePhoto": "Profile Photo",
+        "admissionDate": "ADMISSION DATE",
+        "personalData": "Personal Data",
+        "contactData": "Contact Data",
+        "dni": "DNI",
+        "firstName": "FIRST NAME",
+        "lastName": "LAST NAME",
+        "gender": "GENDER",
+        "socialWork": "SOCIAL WORK",
+        "memberNumber": "MEMBER NUMBER",
+        "street": "STREET",
+        "number": "NUM",
+        "floor": "FLOOR",
+        "apartment": "APT",
+        "phone": "PHONE",
+        "email": "EMAIL"
+      },
+      "placeholders": {
+        "enterDni": "Enter your DNI here",
+        "enterFirstName": "Enter your first name here",
+        "enterLastName": "Enter your last name here",
+        "selectGender": "Select your gender here",
+        "selectGenderOption": "Select an option",
+        "enterSocialWork": "Enter your social work here",
+        "enterMemberNumber": "Enter your member number here",
+        "enterStreet": "Enter your street here",
+        "enterNumber": "Number",
+        "enterFloor": "Floor",
+        "enterApartment": "Apt",
+        "enterPhone": "Enter your phone here",
+        "enterEmail": "Enter your email here",
+        "enterPhoto": "Upload"
+      },
+      "genderOptions": {
+        "male": "Male",
+        "female": "Female",
+        "other": "Other"
+      },
+      "messages": {
+        "requiredField": "Required field",
+        "optionalField": "Optional",
+        "dniInstructions": "Enter only numbers, without dots or commas",
+        "nameInstructions": "Enter only letters",
+        "memberNumberInstructions": "Enter only numbers",
+        "socialWorkInstructions": "Enter only letters",
+        "patientSavedSuccessfully": "Patient saved successfully.",
+        "dniRequired": "DNI field is required"
+      },
+      "validation": {
+        "requiredFields": "Please complete the following required fields:",
+        "dniRequired": "DNI field is required",
+        "firstNameRequired": "First Name field is required",
+        "lastNameRequired": "Last Name field is required",
+        "genderRequired": "Gender field is required",
+        "socialWorkRequired": "Social Work field is required",
+        "memberNumberRequired": "Member Number field is required"
+      },
+      "virtualKeyboard": {
+        "title": "Virtual Keyboard",
+        "openKeyboard": "Open virtual keyboard",
+        "saveAndClose": "Save and close virtual keyboard",
+        "closeWithoutSaving": "Close virtual keyboard without saving",
+        "save": "Save",
+        "close": "Close",
+        "activateCaps": "Activate caps",
+        "deactivateCaps": "Deactivate caps",
+        "insertSpace": "Insert space",
+        "deleteLastChar": "Delete last character",
+        "clearField": "Clear field",
+        "insertLetter": "Insert letter",
+        "insertNumber": "Insert number"
+      },
+      "modal": {
+        "confirmRegistration": "Confirm Registration",
+        "confirmSavePatient": "Are you sure you want to save the patient data?",
+        "cancel": "Cancel",
+        "confirm": "Confirm"
+      },
+      "notifications": {
+        "close": "Close"
       }
     }
   },

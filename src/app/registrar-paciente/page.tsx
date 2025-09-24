@@ -1,41 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
-// Asumo que tienes estos componentes y hooks
-// import { useTranslations } from "@/hooks/useTranslations";
-// import Header from "@/components/Header";
+import { useTranslations } from "@/hooks/useTranslations";
 
-// --- Mock de useTranslations para que el componente sea autoejecutable ---
-const useTranslations = () => ({
-  t: (key: string) => {
-    const translations: Record<string, string> = {
-      'registerPatient.title': 'Registrar Paciente',
-      'registerPatient.backToHome': 'Volver al Inicio',
-      'registerPatient.form.title': 'Formulario de Registro de Paciente',
-      // Agrega aquí más traducciones si las necesitas para los campos
-    };
-    return translations[key] || key;
-  }
-});
 
-// --- Mock del Header para que el componente sea autoejecutable ---
-// Se reemplaza <Link> por <a> para evitar errores de compilación fuera de un entorno Next.js
-const Header = ({ title, showBackButton, backButtonText, backButtonHref }: {
-  title: string;
-  showBackButton: boolean;
-  backButtonText: string;
-  backButtonHref: string;
-}) => (
-  <header className="bg-white shadow-md p-4 flex items-center">
-    {showBackButton && (
-      <a href={backButtonHref} className="text-blue-600 hover:underline mr-4">
-        &larr; {backButtonText}
-      </a>
-    )}
-    <h1 className="text-xl font-bold text-gray-800">{title}</h1>
-  </header>
-);
-// --- Fin de los Mocks ---
 
 
 interface FormData {
@@ -56,7 +24,7 @@ interface FormData {
 }
 
 export default function RegistrarPaciente() {
-  const { t } = useTranslations();
+  const { t, language, changeLanguage } = useTranslations();
   
   // Estado inicial alineado con el wireframe y con nombres de clave válidos
   const [formData, setFormData] = useState({
@@ -94,6 +62,37 @@ export default function RegistrarPaciente() {
 
   // Agregar esta constante al inicio del componente
   const numericFields = ['dni', 'nroSocio', 'telefono', 'numero', 'piso'];
+
+
+  // Header personalizado para esta página
+  const CustomHeader = () => (
+    <header className="bg-white shadow-md p-4 flex items-center justify-between">
+      <div className="flex items-center">
+        <button 
+          onClick={() => window.history.back()}
+          className="text-blue-600 hover:underline mr-4 flex items-center"
+        >
+          <span className="mr-1">←</span>
+          {t('registerPatient.backToHome')}
+        </button>
+        <h1 className="text-xl font-bold text-gray-800">
+          {t('registerPatient.title')}
+        </h1>
+      </div>
+      
+      {/* Selector de idioma */}
+      <div className="relative">
+        <select
+          value={language}
+          onChange={(e) => changeLanguage(e.target.value as "es" | "en")}
+          className="h-12 w-30 text-center bg-white border text-gray-900 border-gray-900 rounded px-3 py-1 text-sm font-medium"
+        >
+          <option value="es" className="text-center">🇪🇸 {t("language.spanish")}</option>
+          <option value="en" className="text-center">🇺🇸 {t("language.english")}</option>
+        </select>
+      </div>
+    </header>
+  );
 
   // Función para manejar el focus en los inputs
   const handleInputFocus = (fieldName: string) => {
@@ -264,7 +263,7 @@ export default function RegistrarPaciente() {
       setValidationErrors(errors);
       
       // Mostrar alerta con los campos faltantes
-      const errorMessage = `Por favor complete los siguientes campos obligatorios:\n\n${errors.join('\n')}`;
+      const errorMessage = `${t('registerPatient.form.validation.requiredFields')}\n\n${errors.join('\n')}`;
       alert(errorMessage);
       
       // Enfocar el primer campo faltante
@@ -284,7 +283,7 @@ export default function RegistrarPaciente() {
   const handleConfirmarGuardado = () => {
     console.log("Datos del paciente:", formData);
     // Aquí iría la lógica para enviar los datos al backend
-    setNotification({ show: true, message: 'Paciente guardado exitosamente.', type: 'success' });
+    setNotification({ show: true, message: t('registerPatient.form.messages.patientSavedSuccessfully'), type: 'success' });
     setShowModal(false);
     // Opcional: limpiar el formulario o redirigir
   };
@@ -324,12 +323,7 @@ export default function RegistrarPaciente() {
         onKeyUp={handleVirtualKeyboardToggle}
         tabIndex={-1}
       >
-        <Header 
-          title={t('registerPatient.title')}
-          showBackButton={true}
-          backButtonText={t('registerPatient.backToHome')}
-          backButtonHref="javascript:history.back()"
-        />
+        <CustomHeader />
 
         <main className="p-4 sm:p-8 max-w-5xl mx-auto">
           <div className="bg-white rounded-lg shadow-lg p-6 sm:p-8">
@@ -343,10 +337,10 @@ export default function RegistrarPaciente() {
                 {/* Columna de Imagen de Perfil */}
                 <div className="flex flex-col items-center">
                   <label htmlFor="fotoPerfil" className="block text-sm font-medium text-gray-700 mb-2 cursor-pointer">
-                    Foto de Perfil
+                    {t('registerPatient.form.labels.profilePhoto')}
                   </label>
                   <div className="w-40 h-40 bg-gray-200 rounded-md flex items-center justify-center text-gray-500 border-2 border-dashed border-gray-300">
-                    <span className="text-center text-sm">Ingresar</span>
+                    <span className="text-center text-sm">{t('registerPatient.form.placeholders.enterPhoto')}</span>
                   </div>
                   {/* El input real está oculto pero es accesible vía la etiqueta */}
                   <input type="file" id="fotoPerfil" name="fotoPerfil" className="sr-only" onChange={handleInputChange} accept="image/*"/>
@@ -355,7 +349,7 @@ export default function RegistrarPaciente() {
                   <div className="mt-6 w-full">
                     <div className="flex items-center mb-1">
                       <label htmlFor="fechaIngreso" className="block text-sm font-medium text-gray-700 uppercase">
-                        FECHA DE INGRESO <span className="text-red-500">*</span>
+                        {t('registerPatient.form.labels.admissionDate')} <span className="text-red-500">*</span>
                       </label>
                       <KeyboardIcon fieldName="fechaIngreso" />
                     </div>
@@ -368,21 +362,21 @@ export default function RegistrarPaciente() {
                       required 
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#a4eac3] bg-white text-black" 
                     />
-                    <p className="text-xs text-red-500 mt-1">Campo obligatorio</p>
+                    <p className="text-xs text-red-500 mt-1">{t('registerPatient.form.messages.requiredField')}</p>
                   </div>
                 </div>
                 
                 {/* Columna principal de datos */}
                 <div className="lg:col-span-2 space-y-6">
                    <fieldset className="border border-gray-200 p-4 rounded-md">
-                      <legend className="text-lg font-semibold text-gray-700 px-2">Datos Personales</legend>
+                      <legend className="text-lg font-semibold text-gray-700 px-2">{t('registerPatient.form.labels.personalData')}</legend>
                       <div className="space-y-4 mt-4">
                         {/* Primera fila: DNI solo pero con ancho limitado */}
                         <div className="flex justify-start">
                           <div className="w-full md:w-1/2">
                             <div className="flex items-center mb-1">
                               <label htmlFor="dni" className="block text-sm font-medium text-gray-700 uppercase">
-                                DNI <span className="text-red-500">*</span>
+                                {t('registerPatient.form.labels.dni')} <span className="text-red-500">*</span>
                               </label>
                               <KeyboardIcon fieldName="dni" />
                             </div>
@@ -400,7 +394,7 @@ export default function RegistrarPaciente() {
                                   ? 'border-red-500 ring-1 ring-red-500' 
                                   : 'border-gray-300'
                               } rounded-md focus:outline-none focus:ring-2 focus:ring-[#a4eac3] bg-white text-black`}
-                              placeholder={focusedFields.has('dni') ? "" : "Ingrese aquí su DNI"}
+                              placeholder={focusedFields.has('dni') ? "" : t('registerPatient.form.placeholders.enterDni')}
                               aria-describedby="dni-error"
                             />
                             {validationErrors.includes('El campo DNI es obligatorio') && (
@@ -408,9 +402,9 @@ export default function RegistrarPaciente() {
                                 El campo DNI es obligatorio
                               </p>
                             )}
-                            <p className="text-xs text-red-500 mt-1">Campo obligatorio</p>
+                            <p className="text-xs text-red-500 mt-1">{t('registerPatient.form.messages.requiredField')}</p>
                             <p className="text-xs text-blue-600 mt-1 flex items-center">
-                              <span className="mr-1">ℹ️</span> Ingrese solo números, sin puntos ni comas
+                              <span className="mr-1">ℹ️</span> {t('registerPatient.form.messages.dniInstructions')}
                             </p>
                           </div>
                         </div>
@@ -420,7 +414,7 @@ export default function RegistrarPaciente() {
                           <div>
                             <div className="flex items-center mb-1">
                               <label htmlFor="nombres" className="block text-sm font-medium text-gray-700 uppercase">
-                                NOMBRE/S <span className="text-red-500">*</span>
+                                {t('registerPatient.form.labels.firstName')} <span className="text-red-500">*</span>
                               </label>
                               <KeyboardIcon fieldName="nombres" />
                             </div>
@@ -434,16 +428,16 @@ export default function RegistrarPaciente() {
                               onBlur={handleInputBlur}
                               required 
                               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#a4eac3] bg-white text-black" 
-                              placeholder={focusedFields.has('nombres') ? "" : "Ingrese aquí su nombre"}
+                              placeholder={focusedFields.has('nombres') ? "" : t('registerPatient.form.placeholders.enterFirstName')}
                             />
-                            <p className="text-xs text-red-500 mt-1">Campo obligatorio</p>
+                            <p className="text-xs text-red-500 mt-1">{t('registerPatient.form.messages.requiredField')}</p>
                             <p className="text-xs text-blue-600 mt-1 flex items-center">
-                              <span className="mr-1">ℹ️</span> Ingrese solo letras
+                              <span className="mr-1">ℹ️</span> {t('registerPatient.form.messages.nameInstructions')}
                             </p>
                           </div>
                           <div>
                             <label htmlFor="apellido" className="block text-sm font-medium text-gray-700 mb-1 uppercase">
-                              APELLIDO <span className="text-red-500">*</span>
+                              {t('registerPatient.form.labels.lastName')} <span className="text-red-500">*</span>
                               <KeyboardIcon fieldName="apellido" />
                             </label>
                             <input 
@@ -455,11 +449,11 @@ export default function RegistrarPaciente() {
                               onFocus={() => handleInputFocus('apellido')}
                               required 
                               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#a4eac3] bg-white text-black" 
-                              placeholder={focusedFields.has('apellido') ? "" : "Ingrese aquí su apellido"} 
+                              placeholder={focusedFields.has('apellido') ? "" : t('registerPatient.form.placeholders.enterLastName')} 
                             />
-                            <p className="text-xs text-red-500 mt-1">Campo obligatorio</p>
+                            <p className="text-xs text-red-500 mt-1">{t('registerPatient.form.messages.requiredField')}</p>
                             <p className="text-xs text-blue-600 mt-1 flex items-center">
-                              <span className="mr-1">ℹ️</span> Ingrese solo letras
+                              <span className="mr-1">ℹ️</span> {t('registerPatient.form.messages.nameInstructions')}
                             </p>
                           </div>
                         </div>
@@ -468,7 +462,7 @@ export default function RegistrarPaciente() {
                         <div className="flex justify-start">
                           <div className="w-full md:w-1/2">
                             <label htmlFor="genero" className="block text-sm font-medium text-gray-700 mb-1 uppercase">
-                              GÉNERO <span className="text-red-500">*</span>
+                              {t('registerPatient.form.labels.gender')} <span className="text-red-500">*</span>
                             </label>
                             <select 
                               id="genero" 
@@ -479,12 +473,12 @@ export default function RegistrarPaciente() {
                               required 
                               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#a4eac3] bg-white text-black"
                             >
-                              <option value="">{focusedFields.has('genero') ? "Seleccione una opción" : "Seleccione aquí su género"}</option>
-                              <option value="masculino">Masculino</option>
-                              <option value="femenino">Femenino</option>
-                              <option value="otro">Otro</option>
+                              <option value="">{focusedFields.has('genero') ? t('registerPatient.form.placeholders.selectGenderOption') : t('registerPatient.form.placeholders.selectGender')}</option>
+                              <option value="masculino">{t('registerPatient.form.genderOptions.male')}</option>
+                              <option value="femenino">{t('registerPatient.form.genderOptions.female')}</option>
+                              <option value="otro">{t('registerPatient.form.genderOptions.other')}</option>
                             </select>
-                            <p className="text-xs text-red-500 mt-1">Campo obligatorio</p>
+                            <p className="text-xs text-red-500 mt-1">{t('registerPatient.form.messages.requiredField')}</p>
                           </div>
                         </div>
 
@@ -492,7 +486,7 @@ export default function RegistrarPaciente() {
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           <div>
                             <label htmlFor="obraSocial" className="block text-sm font-medium text-gray-700 mb-1 uppercase">
-                              OBRA SOCIAL <span className="text-red-500">*</span>
+                              {t('registerPatient.form.labels.socialWork')} <span className="text-red-500">*</span>
                               <KeyboardIcon fieldName="obraSocial" />
                             </label>
                             <input 
@@ -504,16 +498,16 @@ export default function RegistrarPaciente() {
                               onFocus={() => handleInputFocus('obraSocial')}
                               required 
                               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#a4eac3] bg-white text-black" 
-                              placeholder={focusedFields.has('obraSocial') ? "" : "Ingrese aquí su obra social"} 
+                              placeholder={focusedFields.has('obraSocial') ? "" : t('registerPatient.form.placeholders.enterSocialWork')} 
                             />
-                            <p className="text-xs text-red-500 mt-1">Campo obligatorio</p>
+                            <p className="text-xs text-red-500 mt-1">{t('registerPatient.form.messages.requiredField')}</p>
                             <p className="text-xs text-blue-600 mt-1 flex items-center">
-                              <span className="mr-1">ℹ️</span> Ingrese solo letras
+                              <span className="mr-1">ℹ️</span> {t('registerPatient.form.messages.nameInstructions')}
                             </p>
                           </div>
                           <div>
                             <label htmlFor="nroSocio" className="block text-sm font-medium text-gray-700 mb-1 uppercase">
-                              NRO SOCIO <span className="text-red-500">*</span>
+                              {t('registerPatient.form.labels.memberNumber')} <span className="text-red-500">*</span>
                               <KeyboardIcon fieldName="nroSocio" />
                             </label>
                             <input 
@@ -525,11 +519,11 @@ export default function RegistrarPaciente() {
                               onFocus={() => handleInputFocus('nroSocio')}
                               required 
                               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#a4eac3] bg-white text-black" 
-                              placeholder={focusedFields.has('nroSocio') ? "" : "Ingrese aquí su número de socio"} 
+                              placeholder={focusedFields.has('nroSocio') ? "" : t('registerPatient.form.placeholders.enterMemberNumber')} 
                             />
-                            <p className="text-xs text-red-500 mt-1">Campo obligatorio</p>
+                            <p className="text-xs text-red-500 mt-1">{t('registerPatient.form.messages.requiredField')}</p>
                             <p className="text-xs text-blue-600 mt-1 flex items-center">
-                              <span className="mr-1">ℹ️</span> Ingrese solo números
+                              <span className="mr-1">ℹ️</span> {t('registerPatient.form.messages.memberNumberInstructions')}
                             </p>
                           </div>
                         </div>
@@ -537,7 +531,7 @@ export default function RegistrarPaciente() {
                    </fieldset>
                    
                    <fieldset className="border border-gray-200 p-4 rounded-md">
-                      <legend className="text-lg font-semibold text-gray-700 px-2">Datos de Contacto</legend>
+                      <legend className="text-lg font-semibold text-gray-700 px-2">{t('registerPatient.form.labels.contactData')}</legend>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
                         {/* Domicilio */}
                         <div className="md:col-span-2">
@@ -545,14 +539,14 @@ export default function RegistrarPaciente() {
                                 {/* Calle */}
                                 <div className="sm:col-span-6">
                                     <label htmlFor="calle" className="block text-sm font-medium text-gray-700 mb-1">
-                                        CALLE
+                                        {t('registerPatient.form.labels.street')}
                                         <KeyboardIcon fieldName="calle" />
                                     </label>
                                     <input 
                                         id="calle"
                                         type="text" 
                                         name="calle" 
-                                        placeholder={focusedFields.has('calle') ? "" : "Ingrese aquí su calle"} 
+                                        placeholder={focusedFields.has('calle') ? "" : t('registerPatient.form.placeholders.enterStreet')} 
                                         onChange={handleInputChange} 
                                         onFocus={() => handleInputFocus('calle')}
                                         value={formData.calle} 
@@ -563,14 +557,14 @@ export default function RegistrarPaciente() {
                                 {/* Número */}
                                 <div className="sm:col-span-2">
                                     <label htmlFor="numero" className="block text-sm font-medium text-gray-700 mb-1">
-                                        NUM
+                                        {t('registerPatient.form.labels.number')}
                                         <KeyboardIcon fieldName="numero" />
                                     </label>
                                     <input 
                                         id="numero"
                                         type="text" 
                                         name="numero" 
-                                        placeholder={focusedFields.has('numero') ? "" : "Nro"} 
+                                        placeholder={focusedFields.has('numero') ? "" : t('registerPatient.form.placeholders.enterNumber')} 
                                         onChange={handleInputChange} 
                                         onFocus={() => handleInputFocus('numero')}
                                         value={formData.numero} 
@@ -581,14 +575,14 @@ export default function RegistrarPaciente() {
                                 {/* Piso */}
                                 <div className="sm:col-span-2">
                                     <label htmlFor="piso" className="block text-sm font-medium text-gray-700 mb-1">
-                                        PISO
+                                        {t('registerPatient.form.labels.floor')}
                                         <KeyboardIcon fieldName="piso" />
                                     </label>
                                     <input 
                                         id="piso"
                                         type="text" 
                                         name="piso" 
-                                        placeholder={focusedFields.has('piso') ? "" : "Piso"} 
+                                        placeholder={focusedFields.has('piso') ? "" : t('registerPatient.form.placeholders.enterFloor')} 
                                         onChange={handleInputChange} 
                                         onFocus={() => handleInputFocus('piso')}
                                         value={formData.piso} 
@@ -599,14 +593,14 @@ export default function RegistrarPaciente() {
                                 {/* Departamento */}
                                 <div className="sm:col-span-2">
                                     <label htmlFor="dpto" className="block text-sm font-medium text-gray-700 mb-1">
-                                        DPTO
+                                        {t('registerPatient.form.labels.apartment')}
                                         <KeyboardIcon fieldName="dpto" />
                                     </label>
                                     <input 
                                         id="dpto"
                                         type="text" 
                                         name="dpto" 
-                                        placeholder={focusedFields.has('dpto') ? "" : "Dpto"} 
+                                        placeholder={focusedFields.has('dpto') ? "" : t('registerPatient.form.placeholders.enterApartment')} 
                                         onChange={handleInputChange} 
                                         onFocus={() => handleInputFocus('dpto')}
                                         value={formData.dpto} 
@@ -614,12 +608,12 @@ export default function RegistrarPaciente() {
                                     />
                                 </div>
                             </div>
-                            <p className="text-xs text-gray-500 mt-1">Opcional</p>
+                            <p className="text-xs text-gray-500 mt-1">{t('registerPatient.form.messages.optionalField')}</p>
                         </div>
                         {/* Teléfono */}
                         <div>
                           <label htmlFor="telefono" className="block text-sm font-medium text-gray-700 mb-1 uppercase">
-                            TELÉFONO
+                            {t('registerPatient.form.labels.phone')}
                             <KeyboardIcon fieldName="telefono" />
                           </label>
                           <input 
@@ -630,7 +624,7 @@ export default function RegistrarPaciente() {
                             onChange={handleInputChange} 
                             onFocus={() => handleInputFocus('telefono')}
                             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#a4eac3] bg-white text-black" 
-                            placeholder={focusedFields.has('telefono') ? "" : "Ingrese aquí su teléfono"} 
+                            placeholder={focusedFields.has('telefono') ? "" : t('registerPatient.form.placeholders.enterPhone')} 
                           />
                           <p className="text-xs text-gray-500 mt-1">Opcional</p>
                         </div>
@@ -638,7 +632,7 @@ export default function RegistrarPaciente() {
                         <div>
                           <div className="flex items-center mb-1">
                             <label htmlFor="email" className="block text-sm font-medium text-gray-700 uppercase">
-                              EMAIL
+                              {t('registerPatient.form.labels.email')}
                             </label>
                             <KeyboardIcon fieldName="email" />
                           </div>
@@ -650,7 +644,7 @@ export default function RegistrarPaciente() {
                             onChange={handleInputChange} 
                             onFocus={() => handleInputFocus('email')}
                             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#a4eac3] bg-white text-black" 
-                            placeholder={focusedFields.has('email') ? "" : "Ingrese aquí su email"} 
+                            placeholder={focusedFields.has('email') ? "" : t('registerPatient.form.placeholders.enterEmail')} 
                           />
                           <p className="text-xs text-gray-500 mt-1">Opcional</p>
                         </div>
@@ -666,13 +660,13 @@ export default function RegistrarPaciente() {
                   onClick={() => window.history.back()}
                   className="px-6 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-100 transition-colors font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400"
                 >
-                  Cancelar
+                  {t('registerPatient.form.modal.cancel')}
                 </button>
                 <button 
                   type="submit" 
                   className="px-6 py-2 bg-[#69b594] text-white rounded-md hover:bg-[#5aa382] transition-colors font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#69b594]"
                 >
-                  Guardar Cambios
+                  {t('registerPatient.form.buttons.save')}
                 </button>
               </div>
             </form>
@@ -685,7 +679,7 @@ export default function RegistrarPaciente() {
         <div 
           className="fixed bottom-0 left-0 right-0 bg-white border-t-2 border-gray-300 shadow-lg z-40 p-4"
           role="dialog"
-          aria-label="Teclado Virtual"
+          aria-label={t('registerPatient.form.virtualKeyboard.title')}
           onKeyDown={(e) => {
             if (e.key === 'Tab') {
               e.preventDefault();
@@ -697,7 +691,7 @@ export default function RegistrarPaciente() {
             {/* Header del teclado virtual */}
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-lg font-semibold text-gray-800">
-                Teclado Virtual - {activeInput?.toUpperCase()}
+{t('registerPatient.form.virtualKeyboard.title')} - {activeInput?.toUpperCase()}
               </h3>
               <div className="flex gap-2">
                 <button 
@@ -711,10 +705,10 @@ export default function RegistrarPaciente() {
                     }
                   }}
                   className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 transition-all"
-                  aria-label="Guardar y cerrar teclado virtual"
+                  aria-label={t('registerPatient.form.virtualKeyboard.saveAndClose')}
                   data-keyboard-button="true"
                 >
-                  Guardar
+                  {t('registerPatient.form.virtualKeyboard.save')}
                 </button>
                 <button 
                   onClick={() => setShowVirtualKeyboard(false)}
@@ -724,10 +718,10 @@ export default function RegistrarPaciente() {
                     }
                   }}
                   className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 transition-all"
-                  aria-label="Cerrar teclado virtual sin guardar"
+                  aria-label={t('registerPatient.form.virtualKeyboard.closeWithoutSaving')}
                   data-keyboard-button="true"
                 >
-                  Cerrar
+                  {t('registerPatient.form.virtualKeyboard.close')}
                 </button>
               </div>
             </div>
@@ -746,7 +740,7 @@ export default function RegistrarPaciente() {
                       }
                     }}
                     className="px-4 py-3 bg-gray-200 hover:bg-gray-300 rounded-md text-lg font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
-                    aria-label={`Insertar número ${num}`}
+                    aria-label={`${t('registerPatient.form.virtualKeyboard.insertNumber')} ${num}`}
                     data-keyboard-button="true"
                   >
                     {num}
@@ -769,7 +763,7 @@ export default function RegistrarPaciente() {
                         }
                       }}
                       className="px-4 py-3 bg-gray-200 hover:bg-gray-300 rounded-md text-lg font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
-                      aria-label={`Insertar letra ${letter}`}
+                      aria-label={`${t('registerPatient.form.virtualKeyboard.insertLetter')} ${letter}`}
                       data-keyboard-button="true"
                     >
                       {isUpperCase ? letter : letter.toLowerCase()}
@@ -790,7 +784,7 @@ export default function RegistrarPaciente() {
                         }
                       }}
                       className="px-4 py-3 bg-gray-200 hover:bg-gray-300 rounded-md text-lg font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
-                      aria-label={`Insertar letra ${letter}`}
+                      aria-label={`${t('registerPatient.form.virtualKeyboard.insertLetter')} ${letter}`}
                       data-keyboard-button="true"
                     >
                       {isUpperCase ? letter : letter.toLowerCase()}
@@ -811,7 +805,7 @@ export default function RegistrarPaciente() {
                         }
                       }}
                       className="px-4 py-3 bg-gray-200 hover:bg-gray-300 rounded-md text-lg font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
-                      aria-label={`Insertar letra ${letter}`}
+                      aria-label={`${t('registerPatient.form.virtualKeyboard.insertLetter')} ${letter}`}
                       data-keyboard-button="true"
                     >
                       {isUpperCase ? letter : letter.toLowerCase()}
@@ -829,7 +823,7 @@ export default function RegistrarPaciente() {
                   <button
                     onClick={() => setIsUpperCase(!isUpperCase)}
                     className={`px-6 py-3 ${isUpperCase ? 'bg-blue-500' : 'bg-gray-200'} rounded-md hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-blue-500 text-black`}
-                    aria-label={isUpperCase ? "Desactivar mayúsculas" : "Activar mayúsculas"}
+                    aria-label={isUpperCase ? t('registerPatient.form.virtualKeyboard.deactivateCaps') : t('registerPatient.form.virtualKeyboard.activateCaps')}
                     data-keyboard-button="true"
                   >
                     ⇧
@@ -837,10 +831,10 @@ export default function RegistrarPaciente() {
                   <button
                     onClick={() => insertText(' ')}
                     className="px-12 py-3 bg-gray-300 hover:bg-gray-400 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-500 text-black"
-                    aria-label="Insertar espacio"
+                    aria-label={t('registerPatient.form.virtualKeyboard.insertSpace')}
                     data-keyboard-button="true"
                   >
-                    Espacio
+{t('registerPatient.form.virtualKeyboard.insertSpace')}
                   </button>
                 </div>
               )}
@@ -850,18 +844,18 @@ export default function RegistrarPaciente() {
                 <button
                   onClick={deleteText}
                   className="px-6 py-3 bg-orange-500 text-white rounded-md hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2"
-                  aria-label="Borrar último carácter"
+                  aria-label={t('registerPatient.form.virtualKeyboard.deleteLastChar')}
                   data-keyboard-button="true"
                 >
-                  ← Borrar
+                  ← {t('registerPatient.form.virtualKeyboard.deleteLastChar')}
                 </button>
                 <button
                   onClick={clearField}
                   className="px-6 py-3 bg-red-500 text-white rounded-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2"
-                  aria-label="Limpiar campo"
+                  aria-label={t('registerPatient.form.virtualKeyboard.clearField')}
                   data-keyboard-button="true"
                 >
-                  Limpiar
+                  {t('registerPatient.form.virtualKeyboard.clearField')}
                 </button>
               </div>
             </div>
@@ -874,23 +868,23 @@ export default function RegistrarPaciente() {
         <div className="fixed inset-0 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg shadow-lg p-6 sm:p-8 max-w-md mx-auto">
             <h2 className="text-xl font-semibold text-gray-800 mb-4 text-center">
-              Confirmar Registro
+              {t('registerPatient.form.modal.confirmRegistration')}
             </h2>
             <p className="text-gray-700 mb-4 text-center">
-              ¿Está seguro de que desea guardar los datos del paciente?
+              {t('registerPatient.form.modal.confirmSavePatient')}
             </p>
             <div className="flex justify-center gap-4">
               <button 
                 onClick={() => setShowModal(false)}
                 className="px-4 py-2 bg-gray-200 rounded-md text-gray-700 hover:bg-gray-300 transition-colors font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400"
               >
-                Cancelar
+                {t('registerPatient.form.modal.cancel')}
               </button>
               <button 
                 onClick={handleConfirmarGuardado}
                 className="px-4 py-2 bg-[#69b594] text-white rounded-md hover:bg-[#5aa382] transition-colors font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#69b594]"
               >
-                Confirmar
+                {t('registerPatient.form.modal.confirm')}
               </button>
             </div>
           </div>
@@ -927,7 +921,7 @@ export default function RegistrarPaciente() {
                 onClick={() => setNotification(prev => ({ ...prev, show: false }))}
                 className="inline-flex text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
               >
-                <span className="sr-only">Cerrar</span>
+                <span className="sr-only">{t('registerPatient.form.notifications.close')}</span>
                 <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                   <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" />
                 </svg>

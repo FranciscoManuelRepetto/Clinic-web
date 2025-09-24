@@ -3,10 +3,10 @@
     "logo": "CRZ",
     "userGreeting": "Hello, Francisco",
     "menus": {
-      "historiaClinica": "CLINICAL HISTORY ▾",
-      "turnos": "APPOINTMENTS ▾",
-      "medicamentos": "MEDICATIONS ▾",
-      "personal": "STAFF ▾"
+      "historiaClinica": "CLINICAL HISTORY ",
+      "turnos": "APPOINTMENTS ",
+      "medicamentos": "MEDICATIONS ",
+      "personal": "STAFF "
     },
     "submenus": {
       "historiaClinica": {
@@ -83,6 +83,80 @@
         "cancel": "Cancel",
         "register": "Register Patient"
       }
+    }
+  },
+  "home": {
+    "aboutUs": {
+      "title": "About Us",
+      "history": {
+        "title": "Our History",
+        "description": "CRZ Clinic was born in 2024 from the shared dream of four mental health professionals committed to transforming psychological and psychiatric care in our community."
+      },
+      "mission": {
+        "title": "Our Mission",
+        "description": "We believe that mental health is fundamental to a fulfilling life. We are dedicated to providing comprehensive, personalized, and evidence-based care."
+      }
+    },
+    "values": {
+      "title": "Our Values",
+      "empathy": {
+        "title": "Empathy",
+        "description": "We understand that each story is unique and deserves to be heard with respect and compassion."
+      },
+      "excellence": {
+        "title": "Excellence",
+        "description": "We maintain the highest professional standards in all our services."
+      },
+      "innovation": {
+        "title": "Innovation",
+        "description": "We incorporate the latest therapeutic techniques and approaches supported by science."
+      },
+      "confidentiality": {
+        "title": "Confidentiality",
+        "description": "We guarantee the privacy and security of each patient at all times."
+      },
+      "accessibility": {
+        "title": "Accessibility",
+        "description": "We work to make mental health accessible to all people."
+      }
+    },
+    "team": {
+      "title": "Our Founding Team",
+      "members": {
+        "francisco": {
+          "name": "Dr. Francisco Baghdadi",
+          "role": "Medical Director",
+          "description": "Psychiatrist with more than 15 years of experience in mood disorders and anxiety."
+        },
+        "nicolas": {
+          "name": "Dr. Nicolas Al-Masri",
+          "role": "Administrative Area Coordinator",
+          "description": "Clinical psychologist specialist in cognitive-behavioral therapy and couple therapy."
+        },
+        "malena": {
+          "name": "Dr. Malena Haddad",
+          "role": "Clinical Area Coordinator",
+          "description": "Child and adolescent psychologist with focus on systemic family therapy."
+        },
+        "lara": {
+          "name": "Dr. Lara Al-Fayed",
+          "role": "Research Coordinator",
+          "description": "Clinical neuropsychologist specialized in cognitive assessment and rehabilitation."
+        }
+      }
+    },
+    "services": {
+      "title": "Our Services",
+      "service1": "Psychiatric Consultations: Evaluation, diagnosis and pharmacological treatment",
+      "service2": "Individual Therapy: Personalized approach for adults, adolescents and children",
+      "service3": "Couple and Family Therapy: Strengthening bonds and conflict resolution",
+      "service4": "Neuropsychological Evaluations: Comprehensive cognitive assessments",
+      "service5": "Group Programs: Specialized group therapy by themes",
+      "service6": "Emergency Care: 24-hour crisis service"
+    },
+    "images": {
+      "building": "CRZ Clinic Building",
+      "team": "CRZ Clinic Founding Team"
     }
   }
 }

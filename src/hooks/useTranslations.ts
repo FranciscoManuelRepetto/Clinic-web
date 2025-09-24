@@ -11,11 +11,16 @@ type Language = 'es' | 'en';
 export const useTranslations = () => {
   const [language, setLanguage] = useState<Language>('es');
   const [translations, setTranslations] = useState<Translations>({});
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const loadTranslations = async () => {
       try {
+        setIsLoading(true);
         const response = await fetch(`/messages/${language}.json`);
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
         const data = await response.json();
         setTranslations(data);
       } catch (error) {
@@ -26,6 +31,8 @@ export const useTranslations = () => {
           const fallbackData = await fallbackResponse.json();
           setTranslations(fallbackData);
         }
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -50,6 +57,7 @@ export const useTranslations = () => {
   const changeLanguage = (newLanguage: Language) => {
     setLanguage(newLanguage);
     localStorage.setItem('language', newLanguage);
+    window.location.reload();
   };
 
   // Load language from localStorage on mount
@@ -64,6 +72,7 @@ export const useTranslations = () => {
     t,
     language,
     changeLanguage,
+    isLoading,
     isSpanish: language === 'es',
     isEnglish: language === 'en'
   };

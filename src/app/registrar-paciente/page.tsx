@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { useTranslations } from "@/hooks/useTranslations";
+import Header from "@/components/Header";
+import VirtualKeyboard from "@/components/VirtualKeyboard";
 
 
 
@@ -63,36 +65,6 @@ export default function RegistrarPaciente() {
   // Agregar esta constante al inicio del componente
   const numericFields = ['dni', 'nroSocio', 'telefono', 'numero', 'piso'];
 
-
-  // Header personalizado para esta página
-  const CustomHeader = () => (
-    <header className="bg-white shadow-md p-4 flex items-center justify-between">
-      <div className="flex items-center">
-        <button 
-          onClick={() => window.history.back()}
-          className="text-blue-600 hover:underline mr-4 flex items-center"
-        >
-          <span className="mr-1">←</span>
-          {t('registerPatient.backToHome')}
-        </button>
-        <h1 className="text-xl font-bold text-gray-800">
-          {t('registerPatient.title')}
-        </h1>
-      </div>
-      
-      {/* Selector de idioma */}
-      <div className="relative">
-        <select
-          value={language}
-          onChange={(e) => changeLanguage(e.target.value as "es" | "en")}
-          className="h-12 w-30 text-center bg-white border text-gray-900 border-gray-900 rounded px-3 py-1 text-sm font-medium"
-        >
-          <option value="es" className="text-center">🇪🇸 {t("language.spanish")}</option>
-          <option value="en" className="text-center">🇺🇸 {t("language.english")}</option>
-        </select>
-      </div>
-    </header>
-  );
 
   // Función para manejar el focus en los inputs
   const handleInputFocus = (fieldName: string) => {
@@ -323,7 +295,13 @@ export default function RegistrarPaciente() {
         onKeyUp={handleVirtualKeyboardToggle}
         tabIndex={-1}
       >
-        <CustomHeader />
+        <Header />
+
+        {/* Breadcrumb */}
+        <div className="max-w-7xl mx-auto px-6 py-3 text-sm text-gray-600">
+          {t("common.home")} &gt; {t("navbar.menus.historiaClinica")} &gt;{" "}
+          <span className="font-semibold">{t("registerPatient.title")}</span>
+        </div>
 
         <main className="p-4 sm:p-8 max-w-5xl mx-auto">
           <div className="bg-white rounded-lg shadow-lg p-6 sm:p-8">
@@ -674,194 +652,16 @@ export default function RegistrarPaciente() {
         </main>
       </div>
 
-      {/* Teclado Virtual */}
-      {showVirtualKeyboard && (
-        <div 
-          className="fixed bottom-0 left-0 right-0 bg-white border-t-2 border-gray-300 shadow-lg z-40 p-4"
-          role="dialog"
-          aria-label={t('registerPatient.form.virtualKeyboard.title')}
-          onKeyDown={(e) => {
-            if (e.key === 'Tab') {
-              e.preventDefault();
-              handleKeyboardNavigation(e.shiftKey);
-            }
-          }}
-        >
-          <div className="max-w-4xl mx-auto">
-            {/* Header del teclado virtual */}
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-semibold text-gray-800">
-{t('registerPatient.form.virtualKeyboard.title')} - {activeInput?.toUpperCase()}
-              </h3>
-              <div className="flex gap-2">
-                <button 
-                  onClick={() => {
-                    setShowVirtualKeyboard(false);
-                  }}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                      e.preventDefault();
-                      setShowVirtualKeyboard(false);
-                    }
-                  }}
-                  className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 transition-all"
-                  aria-label={t('registerPatient.form.virtualKeyboard.saveAndClose')}
-                  data-keyboard-button="true"
-                >
-                  {t('registerPatient.form.virtualKeyboard.save')}
-                </button>
-                <button 
-                  onClick={() => setShowVirtualKeyboard(false)}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Escape') {
-                      setShowVirtualKeyboard(false);
-                    }
-                  }}
-                  className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 transition-all"
-                  aria-label={t('registerPatient.form.virtualKeyboard.closeWithoutSaving')}
-                  data-keyboard-button="true"
-                >
-                  {t('registerPatient.form.virtualKeyboard.close')}
-                </button>
-              </div>
-            </div>
-
-            {activeInput && numericFields.includes(activeInput) ? (
-              // Teclado numérico
-              <div className="grid grid-cols-3 gap-2 mb-4" role="grid">
-                {['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'].map((num) => (
-                  <button
-                    key={num}
-                    onClick={() => insertText(num)}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter' || e.key === ' ') {
-                        e.preventDefault();
-                        insertText(num);
-                      }
-                    }}
-                    className="px-4 py-3 bg-gray-200 hover:bg-gray-300 rounded-md text-lg font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
-                    aria-label={`${t('registerPatient.form.virtualKeyboard.insertNumber')} ${num}`}
-                    data-keyboard-button="true"
-                  >
-                    {num}
-                  </button>
-                ))}
-              </div>
-            ) : (
-              // Teclado alfabético (el resto del código del teclado alfabético se mantiene igual)
-              <>
-                {/* Primera fila de letras */}
-                <div className="grid grid-cols-10 gap-2 mb-2">
-                  {['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P'].map((letter) => (
-                    <button
-                      key={letter}
-                      onClick={() => insertText(isUpperCase ? letter : letter.toLowerCase())}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter' || e.key === ' ') {
-                          e.preventDefault();
-                          insertText(isUpperCase ? letter : letter.toLowerCase());
-                        }
-                      }}
-                      className="px-4 py-3 bg-gray-200 hover:bg-gray-300 rounded-md text-lg font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
-                      aria-label={`${t('registerPatient.form.virtualKeyboard.insertLetter')} ${letter}`}
-                      data-keyboard-button="true"
-                    >
-                      {isUpperCase ? letter : letter.toLowerCase()}
-                    </button>
-                  ))}
-                </div>
-
-                {/* Segunda fila de letras */}
-                <div className="grid grid-cols-10 gap-2 mb-2">
-                  {['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', 'Ñ'].map((letter) => (
-                    <button
-                      key={letter}
-                      onClick={() => insertText(isUpperCase ? letter : letter.toLowerCase())}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter' || e.key === ' ') {
-                          e.preventDefault();
-                          insertText(isUpperCase ? letter : letter.toLowerCase());
-                        }
-                      }}
-                      className="px-4 py-3 bg-gray-200 hover:bg-gray-300 rounded-md text-lg font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
-                      aria-label={`${t('registerPatient.form.virtualKeyboard.insertLetter')} ${letter}`}
-                      data-keyboard-button="true"
-                    >
-                      {isUpperCase ? letter : letter.toLowerCase()}
-                    </button>
-                  ))}
-                </div>
-
-                {/* Tercera fila de letras */}
-                <div className="grid grid-cols-10 gap-2 mb-4">
-                  {['Z', 'X', 'C', 'V', 'B', 'N', 'M'].map((letter) => (
-                    <button
-                      key={letter}
-                      onClick={() => insertText(isUpperCase ? letter : letter.toLowerCase())}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter' || e.key === ' ') {
-                          e.preventDefault();
-                          insertText(isUpperCase ? letter : letter.toLowerCase());
-                        }
-                      }}
-                      className="px-4 py-3 bg-gray-200 hover:bg-gray-300 rounded-md text-lg font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
-                      aria-label={`${t('registerPatient.form.virtualKeyboard.insertLetter')} ${letter}`}
-                      data-keyboard-button="true"
-                    >
-                      {isUpperCase ? letter : letter.toLowerCase()}
-                    </button>
-                  ))}
-                </div>
-              </>
-            )}
-
-            {/* Botones de control */}
-            <div className="flex gap-2 justify-center">
-              {!numericFields.includes(activeInput || '') && (
-                // Solo mostrar estos botones si NO es un campo numérico
-                <div className="flex gap-2 justify-center mb-2 w-full">
-                  <button
-                    onClick={() => setIsUpperCase(!isUpperCase)}
-                    className={`px-6 py-3 ${isUpperCase ? 'bg-blue-500' : 'bg-gray-200'} rounded-md hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-blue-500 text-black`}
-                    aria-label={isUpperCase ? t('registerPatient.form.virtualKeyboard.deactivateCaps') : t('registerPatient.form.virtualKeyboard.activateCaps')}
-                    data-keyboard-button="true"
-                  >
-                    ⇧
-                  </button>
-                  <button
-                    onClick={() => insertText(' ')}
-                    className="px-12 py-3 bg-gray-300 hover:bg-gray-400 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-500 text-black"
-                    aria-label={t('registerPatient.form.virtualKeyboard.insertSpace')}
-                    data-keyboard-button="true"
-                  >
-{t('registerPatient.form.virtualKeyboard.insertSpace')}
-                  </button>
-                </div>
-              )}
-              
-              {/* Botones de Borrar y Limpiar (siempre visibles) */}
-              <div className="flex gap-2 justify-center">
-                <button
-                  onClick={deleteText}
-                  className="px-6 py-3 bg-orange-500 text-white rounded-md hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2"
-                  aria-label={t('registerPatient.form.virtualKeyboard.deleteLastChar')}
-                  data-keyboard-button="true"
-                >
-                  ← {t('registerPatient.form.virtualKeyboard.deleteLastChar')}
-                </button>
-                <button
-                  onClick={clearField}
-                  className="px-6 py-3 bg-red-500 text-white rounded-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2"
-                  aria-label={t('registerPatient.form.virtualKeyboard.clearField')}
-                  data-keyboard-button="true"
-                >
-                  {t('registerPatient.form.virtualKeyboard.clearField')}
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+     {/* 📌 Render del teclado virtual */}
+      <VirtualKeyboard
+        showKeyboard={showVirtualKeyboard}
+        setShowKeyboard={setShowVirtualKeyboard}
+        activeInput={activeInput}
+        isNumericField={activeInput ? numericFields.includes(activeInput) : false}
+        onInsertText={insertText}
+        onDeleteText={deleteText}
+        onClearField={clearField}
+      />
 
       {/* Modal de Confirmación */}
       {showModal && (

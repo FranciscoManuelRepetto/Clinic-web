@@ -228,5 +228,37 @@
       "building": "Edificio de la Clínica CRZ",
       "team": "Equipo fundador de la Clínica CRZ"
     }
+  },
+  "searchPatient": {
+    "title": "Buscar Paciente",
+    "description": "Busque y seleccione un paciente para acceder a sus datos e historia clínica",
+    "form": {
+      "patient": "Paciente",
+      "placeholders": {
+        "search": "Ingrese nombre, apellido o DNI...",
+        "year": "AAAA",
+        "diagnosis": "Ingrese diagnóstico",
+        "professional": "Ingrese nombre del profesional...",
+        "medication": "Ingrese nombre del medicamento..."
+      },
+      "advancedFilters": "Filtros Avanzados",
+      "hideFilters": "Ocultar filtros avanzados",
+      "gender": {
+        "label": "Género Paciente",
+        "female": "Femenino",
+        "male": "Masculino",
+        "other": "Otro"
+      },
+      "yearOfAdmission": "Año Ingreso Paciente",
+      "diagnosis": "Diagnóstico del Paciente",
+      "professional": "Profesional que atendió",
+      "medication": "Medicación Asignada",
+      "searchButton": "Buscar",
+      "captchaWarning": "* Complete el captcha para poder realizar la búsqueda"
+    }
+  },
+  "common": {
+    "back": "Volver",
+    "home": "Inicio"
   }
 }

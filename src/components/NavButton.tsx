@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { useTranslations } from "@/hooks/useTranslations";
 import Link from "next/link";
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown } from "lucide-react";
+
 interface NavItem {
   href: string;
   text: string;
@@ -29,8 +30,8 @@ export default function NavButton({ menuKey, items }: NavButtonProps) {
     <li className="relative">
       <button
         onClick={toggleDropdown}
-        onBlur={() => setTimeout(closeDropdown, 150)} 
-        className=" flex text-black font-medium px-3 py-2 hover:bg-[#4a6b59] hover:text-[#FFFFFF] rounded transition-colors justify-center items-center"
+        onBlur={() => setTimeout(closeDropdown, 150)}
+        className="flex text-black font-medium px-3 py-2 hover:bg-[#4a6b59] hover:text-white rounded transition-colors justify-center items-center"
       >
         {t(`navbar.menus.${menuKey}`)}
         <ChevronDown className="mr-4 w-4 h-4" />
@@ -40,18 +41,22 @@ export default function NavButton({ menuKey, items }: NavButtonProps) {
           {items.map((item, index) => (
             <li key={index} className="w-40">
               {item.isExternal ? (
-                <a 
-                  href={item.href} 
-                  className="block px-2.5 py-2.5 text-white hover:bg-[#4a6b59] transition-colors"
+                <a
+                  href={item.href}
+                  className="block px-2.5 py-2.5 text-white hover:bg-[#795C34] 
+                             hover:outline hover:outline-2 hover:outline-black 
+                             focus:outline focus:outline-2 focus:outline-black rounded transition-colors"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
                   {item.text}
                 </a>
               ) : (
-                <Link 
-                  href={item.href} 
-                  className="block px-2.5 py-2.5 text-white hover:bg-[#795C34] transition-colors"
+                <Link
+                  href={item.href}
+                  className="block px-2.5 py-2.5 text-white hover:bg-[#795C34] 
+                             hover:outline hover:outline-2 hover:outline-black 
+                             focus:outline focus:outline-2 focus:outline-black rounded transition-colors"
                 >
                   {item.text}
                 </Link>

@@ -39,6 +39,7 @@ export default function Header({
             {
               href: "/registrar-paciente",
               text: t("navbar.submenus.historiaClinica.crearPaciente"),
+              
             },
             {
               href: "/buscar-paciente", // Actualizar esta URL
@@ -117,6 +118,25 @@ export default function Header({
           )}
         </div>
       </div>
-    </div>
+
+ <div className="dropdown-content hidden group-hover:block absolute bg-white mt-1 py-2 w-48 rounded-md shadow-lg z-50">
+    <Link
+      href="/registrar-paciente"
+      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 
+                 hover:outline hover:outline-2 hover:outline-black 
+                 focus:outline focus:outline-2 focus:outline-black rounded"
+    >
+      {t("navbar.menus.historiaClinica.registrarPaciente")}
+    </Link>
+    <Link
+      href="/buscar-paciente"
+      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 
+                 hover:outline hover:outline-2 hover:outline-black 
+                 focus:outline focus:outline-2 focus:outline-black rounded"
+    >
+      {t("navbar.menus.historiaClinica.buscarPaciente")}
+    </Link>
+  </div>
+</div>
   );
 }

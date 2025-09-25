@@ -145,6 +145,29 @@ export default function Home() {
           </div>
         </section>
 
+{/* Video Institucional */}
+<section className="space-y-8">
+  <div className="text-center mb-12">
+    <h2 className="text-3xl font-bold text-black mb-4">
+      {t('home.video.title')}
+    </h2>
+    <div className="w-20 h-1 bg-green-800 mx-auto rounded-full"></div>
+  </div>
+
+  <div className="flex justify-center">
+    <div className="w-full md:w-3/4 lg:w-2/3 rounded-xl overflow-hidden shadow-lg">
+      <iframe
+        className="w-full aspect-video"
+        src="https://www.youtube.com/embed/XXXXXXXX" 
+        title="Video Institucional"
+        frameBorder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowFullScreen
+      ></iframe>
+    </div>
+  </div>
+</section>
+
         {/* Servicios */}
         <section className="space-y-8">
           <div className="text-center mb-12">

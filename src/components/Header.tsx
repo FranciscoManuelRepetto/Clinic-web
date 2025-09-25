@@ -20,7 +20,7 @@ export default function Header({
   return (
     <div className="bg-[#d2f0e0] flex  items-center px-8 py-4">
       <Link
-        href="/Home"
+        href="/"
         className="text-xl text-black font-bold flex items-center gap-1 hover:opacity-80 transition-opacity"
       >
         💚 {t("navbar.logo")}

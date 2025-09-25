@@ -30,13 +30,13 @@ export default function NavButton({ menuKey, items }: NavButtonProps) {
       <button
         onClick={toggleDropdown}
         onBlur={() => setTimeout(closeDropdown, 150)} 
-        className=" flex text-black font-medium px-3 py-2 hover:bg-[#4a6b59] hover:text-[#FFFFFF] rounded transition-colors justify-center items-center"
+        className=" flex text-black font-bold px-3 py-2 hover:bg-[#4a6b59] hover:text-[#FFFFFF] rounded transition-colors justify-center items-center"
       >
         {t(`navbar.menus.${menuKey}`)}
         <ChevronDown className="mr-4 w-4 h-4" />
       </button>
       {isOpen && (
-        <ul className="absolute top-10 bg-[#4a6b59] text-white shadow-lg py-1.5 z-10 rounded">
+        <ul className="absolute top-10 bg-[#4a6b59]  text-white shadow-lg py-1.5 z-10 rounded">
           {items.map((item, index) => (
             <li key={index} className="w-40">
               {item.isExternal ? (

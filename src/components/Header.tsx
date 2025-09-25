@@ -1,4 +1,3 @@
-import { useTranslations } from "@/hooks/useTranslations";
 import Link from "next/link";
 import NavButton from "./NavButton";
 
@@ -7,6 +6,10 @@ interface HeaderProps {
   showBackButton?: boolean;
   backButtonText?: string;
   backButtonHref?: string;
+  onLogout?: () => void;
+  t: (key: string) => string;
+  language: string;
+  changeLanguage: (lang: 'es' | 'en') => void;
 }
 
 export default function Header({
@@ -14,13 +17,16 @@ export default function Header({
   showBackButton = false,
   backButtonText,
   backButtonHref = "/",
+  onLogout,
+  t,
+  language,
+  changeLanguage,
 }: HeaderProps) {
-  const { t, language, changeLanguage } = useTranslations();
 
   return (
     <div className="bg-[#d2f0e0] flex  items-center px-8 py-4">
       <Link
-        href="/"
+        href="/home"
         className="text-xl text-black font-bold flex items-center gap-1 hover:opacity-80 transition-opacity"
       >
         💚 {t("navbar.logo")}
@@ -79,7 +85,7 @@ export default function Header({
           <select
             value={language}
             onChange={(e) => changeLanguage(e.target.value as "es" | "en")}
-            className="h-12 w-30 text-center bg-white border text-gray-900 border-gray-900 rounded px-3 py-1 text-sm font-medium "
+            className="h-12 w-30 text-center bg-white border text-gray-900 border-gray-900 rounded px-3 py-1 text-sm font-bold "
           >
             <option value="es" className="text-center">🇪🇸 {t("language.spanish")}</option>
             <option value="en" className="text-center">🇺🇸 {t("language.english")}</option>
@@ -99,25 +105,17 @@ export default function Header({
             </Link>
           )}
 
-          {!title && !showBackButton && (
-            <div className="font-bold">{t("navbar.userGreeting")}</div>
+
+          {/* Botón de logout */}
+          {onLogout && (
+            <button
+              onClick={onLogout}
+              className="bg-red-600  text-white px-4 py-2 rounded hover:bg-red-700 transition-colors text-sm font-bold h-12 w-30"
+            >
+              {t("navbar.submenus.personal.cerrarSesion")}
+            </button>
           )}
         </div>
-      </div>
-
-      <div className="dropdown-content hidden group-hover:block absolute bg-white mt-1 py-2 w-48 rounded-md shadow-lg z-50">
-        <Link
-          href="/registrar-paciente"
-          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-        >
-          {t("navbar.menus.historiaClinica.registrarPaciente")}
-        </Link>
-        <Link
-          href="/buscar-paciente"
-          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-        >
-          {t("navbar.menus.historiaClinica.buscarPaciente")}
-        </Link>
       </div>
     </div>
   );

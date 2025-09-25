@@ -1,7 +1,6 @@
 {
   "navbar": {
     "logo": "CRZ",
-    "userGreeting": "Hola, Francisco",
     "menus": {
       "historiaClinica": "HISTORIA CLÍNICA",
       "turnos": "TURNOS",
@@ -24,7 +23,8 @@
       },
       "personal": {
         "gestionarPersonal": "Gestionar Personal",
-        "horarios": "Horarios"
+        "horarios": "Horarios",
+        "cerrarSesion": "Cerrar Sesión"
       }
     }
   },
@@ -227,6 +227,10 @@
     "images": {
       "building": "Edificio de la Clínica CRZ",
       "team": "Equipo fundador de la Clínica CRZ"
+    },
+    "video": {
+      "title": "Lo más importante para nosotros",
+      "fallback": "Tu navegador no soporta la etiqueta de video."
     }
   },
   "searchPatient": {
@@ -255,6 +259,19 @@
       "medication": "Medicación Asignada",
       "searchButton": "Buscar",
       "captchaWarning": "* Complete el captcha para poder realizar la búsqueda"
+    }
+  },
+  "login": {
+    "title": "Iniciar Sesión",
+    "username": "Nombre de usuario",
+    "password": "Contraseña",
+    "loginButton": "Login",
+    "continueButton": "Continuar",
+    "error": {
+      "emptyFields": "ERROR: Por favor complete todos los campos."
+    },
+    "captcha": {
+      "description": "Captcha de seguridad, presione Tab para acceder."
     }
   },
   "common": {

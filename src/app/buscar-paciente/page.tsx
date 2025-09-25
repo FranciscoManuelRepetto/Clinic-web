@@ -15,8 +15,20 @@ interface FormData {
   medicacion: string;
 }
 
-export default function BuscarPaciente() {
-  const { t } = useTranslations();
+interface BuscarPacienteProps {
+  onLogout?: () => void;
+  t?: (key: string) => string;
+  language?: string;
+  changeLanguage?: (lang: 'es' | 'en') => void;
+}
+
+export default function BuscarPaciente({ onLogout, t: propT, language: propLanguage, changeLanguage: propChangeLanguage }: BuscarPacienteProps) {
+  const { t: hookT, language: hookLanguage, changeLanguage: hookChangeLanguage } = useTranslations();
+  
+  // Usar props si están disponibles, sino usar hook
+  const t = propT || hookT;
+  const language = propLanguage || hookLanguage;
+  const changeLanguage = propChangeLanguage || hookChangeLanguage;
   const [showFilters, setShowFilters] = useState(false);
   const [showVirtualKeyboard, setShowVirtualKeyboard] = useState(false);
   const [activeInput, setActiveInput] = useState<string | null>(null);
@@ -98,7 +110,7 @@ export default function BuscarPaciente() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Header />
+      <Header onLogout={onLogout} t={t} language={language} changeLanguage={changeLanguage} />
 
       {/* Breadcrumb */}
       <div className="max-w-7xl mx-auto px-6 py-3 text-sm text-gray-600">

@@ -25,8 +25,20 @@ interface FormData {
   fotoPerfil: File | null;
 }
 
-export default function RegistrarPaciente() {
-  const { t, language, changeLanguage } = useTranslations();
+interface RegistrarPacienteProps {
+  onLogout?: () => void;
+  t?: (key: string) => string;
+  language?: string;
+  changeLanguage?: (lang: 'es' | 'en') => void;
+}
+
+export default function RegistrarPaciente({ onLogout, t: propT, language: propLanguage, changeLanguage: propChangeLanguage }: RegistrarPacienteProps) {
+  const { t: hookT, language: hookLanguage, changeLanguage: hookChangeLanguage } = useTranslations();
+  
+  // Usar props si están disponibles, sino usar hook
+  const t = propT || hookT;
+  const language = propLanguage || hookLanguage;
+  const changeLanguage = propChangeLanguage || hookChangeLanguage;
   
   // Estado inicial alineado con el wireframe y con nombres de clave válidos
   const [formData, setFormData] = useState({
@@ -295,7 +307,7 @@ export default function RegistrarPaciente() {
         onKeyUp={handleVirtualKeyboardToggle}
         tabIndex={-1}
       >
-        <Header />
+        <Header onLogout={onLogout} t={t} language={language} changeLanguage={changeLanguage} />
 
         {/* Breadcrumb */}
         <div className="max-w-7xl mx-auto px-6 py-3 text-sm text-gray-600">

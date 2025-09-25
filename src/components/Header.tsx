@@ -26,7 +26,7 @@ export default function Header({
         💚 {t("navbar.logo")}
       </Link>
 
-       <ul className="flex gap-5 m-0 p-0 list-none justify-center w-full mt-4">
+      <ul className="flex gap-5 m-0 p-0 list-none justify-center w-full mt-4">
         <NavButton
           menuKey="historiaClinica"
           items={[
@@ -35,7 +35,7 @@ export default function Header({
               text: t("navbar.submenus.historiaClinica.crearPaciente"),
             },
             {
-              href: "#",
+              href: "/buscar-paciente", // Actualizar esta URL
               text: t("navbar.submenus.historiaClinica.buscarPaciente"),
             },
             {
@@ -103,6 +103,21 @@ export default function Header({
             <div className="font-bold">{t("navbar.userGreeting")}</div>
           )}
         </div>
+      </div>
+
+      <div className="dropdown-content hidden group-hover:block absolute bg-white mt-1 py-2 w-48 rounded-md shadow-lg z-50">
+        <Link
+          href="/registrar-paciente"
+          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+        >
+          {t("navbar.menus.historiaClinica.registrarPaciente")}
+        </Link>
+        <Link
+          href="/buscar-paciente"
+          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+        >
+          {t("navbar.menus.historiaClinica.buscarPaciente")}
+        </Link>
       </div>
     </div>
   );

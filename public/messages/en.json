@@ -228,5 +228,33 @@
       "building": "CRZ Clinic Building",
       "team": "CRZ Clinic Founding Team"
     }
+  },
+  "searchPatient": {
+    "title": "Search Patient",
+    "description": "Search and select a patient to access their data and medical history",
+    "form": {
+      "patient": "Patient",
+      "placeholders": {
+        "search": "Enter name, surname or ID...",
+        "year": "YYYY",
+        "diagnosis": "Enter diagnosis",
+        "professional": "Enter professional's name...",
+        "medication": "Enter medication name..."
+      },
+      "advancedFilters": "Advanced Filters",
+      "hideFilters": "Hide advanced filters",
+      "gender": {
+        "label": "Patient Gender",
+        "female": "Female",
+        "male": "Male",
+        "other": "Other"
+      },
+      "yearOfAdmission": "Year of Admission",
+      "diagnosis": "Patient Diagnosis",
+      "professional": "Attending Professional",
+      "medication": "Assigned Medication",
+      "searchButton": "Search",
+      "captchaWarning": "* Complete the captcha to enable search"
+    }
   }
 }

@@ -37,7 +37,7 @@ export default function NavButton({ menuKey, items }: NavButtonProps) {
         <ChevronDown className="mr-4 w-4 h-4" />
       </button>
       {isOpen && (
-        <ul className="absolute top-10 bg-[#4a6b59] text-white shadow-lg py-1.5 z-10 rounded">
+        <ul className="absolute top-10 bg-[#4a6b59]  text-white shadow-lg py-1.5 z-10 rounded">
           {items.map((item, index) => (
             <li key={index} className="w-40">
               {item.isExternal ? (

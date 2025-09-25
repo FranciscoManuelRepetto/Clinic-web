@@ -1,7 +1,6 @@
 {
   "navbar": {
     "logo": "CRZ",
-    "userGreeting": "Hello, Francisco",
     "menus": {
       "historiaClinica": "CLINICAL HISTORY ",
       "turnos": "APPOINTMENTS ",
@@ -24,7 +23,8 @@
       },
       "personal": {
         "gestionarPersonal": "Manage Staff",
-        "horarios": "Schedules"
+        "horarios": "Schedules",
+        "cerrarSesion": "Logout"
       }
     }
   },
@@ -227,6 +227,10 @@
     "images": {
       "building": "CRZ Clinic Building",
       "team": "CRZ Clinic Founding Team"
+    },
+    "video": {
+      "title": "What matters most to us",
+      "fallback": "Your browser does not support the video tag."
     }
   },
   "searchPatient": {
@@ -255,6 +259,19 @@
       "medication": "Assigned Medication",
       "searchButton": "Search",
       "captchaWarning": "* Complete the captcha to enable search"
+    }
+  },
+  "login": {
+    "title": "Sign In",
+    "username": "Username",
+    "password": "Password",
+    "loginButton": "Login",
+    "continueButton": "Continue",
+    "error": {
+      "emptyFields": "ERROR: Please complete all fields."
+    },
+    "captcha": {
+      "description": "Security captcha, press Tab to access."
     }
   }
 }

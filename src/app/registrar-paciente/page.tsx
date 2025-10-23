@@ -63,6 +63,7 @@ export default function RegistrarPaciente({ onLogout, t: propT, language: propLa
   const [showVirtualKeyboard, setShowVirtualKeyboard] = useState(false);
   const [activeInput, setActiveInput] = useState<string | null>(null);
   const [isUpperCase, setIsUpperCase] = useState(false); // Agregar este estado al inicio del componente
+  const [isGenderExpanded, setIsGenderExpanded] = useState(false);
   const [validationErrors, setValidationErrors] = useState<string[]>([]); // Agregar este estado para manejar los mensajes de error
   const [notification, setNotification] = useState<{
     show: boolean;
@@ -195,6 +196,8 @@ export default function RegistrarPaciente({ onLogout, t: propT, language: propLa
       className="ml-2 p-1 text-sm text-gray-500 hover:text-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded inline-flex items-center"
       aria-label={`Abrir teclado virtual para ${fieldName}`}
       title="Abrir teclado virtual"
+       aria-expanded={showVirtualKeyboard && activeInput === fieldName}
+      aria-controls="virtual-keyboard"
     >
       ⌨️
     </button>
@@ -350,6 +353,7 @@ export default function RegistrarPaciente({ onLogout, t: propT, language: propLa
                       value={formData.fechaIngreso} 
                       onChange={handleInputChange} 
                       required 
+                      aria-required="true"
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#a4eac3] bg-white text-black" 
                     />
                     <p className="text-xs text-red-500 mt-1">{t('registerPatient.form.messages.requiredField')}</p>
@@ -378,7 +382,7 @@ export default function RegistrarPaciente({ onLogout, t: propT, language: propLa
                               onChange={handleInputChange} 
                               onFocus={() => handleInputFocus('dni')}
                               onBlur={handleInputBlur}
-                              required 
+                              required
                               className={`w-full px-3 py-2 border ${
                                 validationErrors.includes('El campo DNI es obligatorio') 
                                   ? 'border-red-500 ring-1 ring-red-500' 
@@ -417,6 +421,7 @@ export default function RegistrarPaciente({ onLogout, t: propT, language: propLa
                               onFocus={() => handleInputFocus('nombres')}
                               onBlur={handleInputBlur}
                               required 
+                              aria-required="true"
                               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#a4eac3] bg-white text-black" 
                               placeholder={focusedFields.has('nombres') ? "" : t('registerPatient.form.placeholders.enterFirstName')}
                             />
@@ -438,6 +443,7 @@ export default function RegistrarPaciente({ onLogout, t: propT, language: propLa
                               onChange={handleInputChange} 
                               onFocus={() => handleInputFocus('apellido')}
                               required 
+                              aria-required="true"
                               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#a4eac3] bg-white text-black" 
                               placeholder={focusedFields.has('apellido') ? "" : t('registerPatient.form.placeholders.enterLastName')} 
                             />
@@ -448,7 +454,7 @@ export default function RegistrarPaciente({ onLogout, t: propT, language: propLa
                           </div>
                         </div>
 
-                        {/* Tercera fila: Género solo pero con ancho limitado */}
+                        {/* Tercera fila: Género*/}
                         <div className="flex justify-start">
                           <div className="w-full md:w-1/2">
                             <label htmlFor="genero" className="block text-sm font-medium text-gray-700 mb-1 uppercase">
@@ -460,7 +466,11 @@ export default function RegistrarPaciente({ onLogout, t: propT, language: propLa
                               value={formData.genero} 
                               onChange={handleInputChange} 
                               onFocus={() => handleInputFocus('genero')}
+                              onClick={() => setIsGenderExpanded(!isGenderExpanded)}
+                              onBlur={() => setIsGenderExpanded(false)}
                               required 
+                              aria-required="true"
+                              aria-expanded={isGenderExpanded}
                               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#a4eac3] bg-white text-black"
                             >
                               <option value="">{focusedFields.has('genero') ? t('registerPatient.form.placeholders.selectGenderOption') : t('registerPatient.form.placeholders.selectGender')}</option>
@@ -487,6 +497,7 @@ export default function RegistrarPaciente({ onLogout, t: propT, language: propLa
                               onChange={handleInputChange} 
                               onFocus={() => handleInputFocus('obraSocial')}
                               required 
+                              aria-required="true"
                               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#a4eac3] bg-white text-black" 
                               placeholder={focusedFields.has('obraSocial') ? "" : t('registerPatient.form.placeholders.enterSocialWork')} 
                             />
@@ -508,6 +519,7 @@ export default function RegistrarPaciente({ onLogout, t: propT, language: propLa
                               onChange={handleInputChange} 
                               onFocus={() => handleInputFocus('nroSocio')}
                               required 
+                              aria-required="true"
                               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#a4eac3] bg-white text-black" 
                               placeholder={focusedFields.has('nroSocio') ? "" : t('registerPatient.form.placeholders.enterMemberNumber')} 
                             />
@@ -618,7 +630,7 @@ export default function RegistrarPaciente({ onLogout, t: propT, language: propLa
                           />
                           <p className="text-xs text-gray-500 mt-1">Opcional</p>
                         </div>
-                        {/* Email - Último campo del formulario */}
+                        {/* Email*/}
                         <div>
                           <div className="flex items-center mb-1">
                             <label htmlFor="email" className="block text-sm font-medium text-gray-700 uppercase">
@@ -643,7 +655,7 @@ export default function RegistrarPaciente({ onLogout, t: propT, language: propLa
                 </div>
               </div>
               
-              {/* Botones de acción - Los movemos dentro del form y quitamos cualquier tabIndex específico */}
+              {/* Botones de acción*/}
               <div className="flex justify-end space-x-4 pt-8">
                 <button 
                   type="button"
@@ -655,6 +667,8 @@ export default function RegistrarPaciente({ onLogout, t: propT, language: propLa
                 <button 
                   type="submit" 
                   className="px-6 py-2 bg-[#69b594] text-white rounded-md hover:bg-[#5aa382] transition-colors font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#69b594]"
+                  aria-controls="confirmation-modal"
+                  aria-haspopup="dialog"
                 >
                   {t('registerPatient.form.buttons.save')}
                 </button>
@@ -664,7 +678,7 @@ export default function RegistrarPaciente({ onLogout, t: propT, language: propLa
         </main>
       </div>
 
-     {/* 📌 Render del teclado virtual */}
+     {/*Render del teclado virtual */}
       <VirtualKeyboard
         showKeyboard={showVirtualKeyboard}
         setShowKeyboard={setShowVirtualKeyboard}
@@ -677,7 +691,7 @@ export default function RegistrarPaciente({ onLogout, t: propT, language: propLa
 
       {/* Modal de Confirmación */}
       {showModal && (
-        <div className="fixed inset-0 flex items-center justify-center z-50">
+        <div id="confirmation-modal" className="fixed inset-0 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg shadow-lg p-6 sm:p-8 max-w-md mx-auto">
             <h2 className="text-xl font-semibold text-gray-800 mb-4 text-center">
               {t('registerPatient.form.modal.confirmRegistration')}

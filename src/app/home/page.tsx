@@ -1,23 +1,20 @@
 "use client";
 
 import { useTranslations } from "@/hooks/useTranslations";
-import Header from "@/components/Header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/card";
 import Footer from "@/components/Footer";
 
 
 interface HomeProps {
-    onLogout: () => void;
     t: (key: string) => string;
     language: string;
     changeLanguage: (lang: 'es' | 'en') => void;
 }
 
-export default function Home({ onLogout, t, language, changeLanguage }: HomeProps) {
+export default function Home({ t, language, changeLanguage }: HomeProps) {
 
     return (
         <div className="font-sans bg-gray-50 min-h-screen">
-            <Header onLogout={onLogout} t={t} language={language} changeLanguage={changeLanguage} />
             {/* Contenido */}
             <div className="max-w-6xl mx-auto px-6 py-16 space-y-20">
                 {/* Sobre Nosotros */}

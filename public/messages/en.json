@@ -273,5 +273,11 @@
     "captcha": {
       "description": "Security captcha, press Tab to access."
     }
+  },
+  "common": {
+    "back": "Back",
+    "home": "Home",
+    "collapse": "Collapse",
+    "expand": "Expand"
   }
 }

@@ -24,15 +24,9 @@ export default function Header({
 }: HeaderProps) {
 
   return (
-    <div className="bg-[#d2f0e0] flex  items-center px-8 py-4">
-      <Link
-        href="/home"
-        className="text-xl text-black font-bold flex items-center gap-1 hover:opacity-80 transition-opacity"
-      >
-        💚 {t("navbar.logo")}
-      </Link>
+    <div className="bg-[#88B497] flex  items-center px-8 py-4">
 
-      <ul className="flex gap-5 m-0 p-0 list-none justify-center w-full mt-4">
+      <ul className="flex gap-5 m-0 p-0 list-none justify-center w-full mt-4" role="menubar">
         <NavButton
           menuKey="historiaClinica"
           items={[
@@ -86,7 +80,8 @@ export default function Header({
           <select
             value={language}
             onChange={(e) => changeLanguage(e.target.value as "es" | "en")}
-            className="h-12 w-30 text-center bg-white border text-gray-900 border-gray-900 rounded px-3 py-1 text-sm font-bold "
+            className="h-12 w-30 text-center bg-white border text-gray-900 border-gray-900 rounded px-3 py-1 text-sm font-bold focus:outline-none focus:ring-2 focus:ring-[#5fa6b4] focus:ring-offset-2"
+            tabIndex={0}
           >
             <option value="es" className="text-center">🇪🇸 {t("language.spanish")}</option>
             <option value="en" className="text-center">🇺🇸 {t("language.english")}</option>
@@ -100,7 +95,8 @@ export default function Header({
           {showBackButton && (
             <Link
               href={backButtonHref}
-              className="bg-white border border-gray-300 rounded px-4 py-2 text-sm font-medium hover:bg-gray-50 transition-colors"
+              className="bg-white border border-gray-300 rounded px-4 py-2 text-sm font-medium hover:bg-gray-50 transition-colors focus:outline-none focus:ring-2 focus:ring-[#5fa6b4] focus:ring-offset-2"
+              tabIndex={0}
             >
               {backButtonText || t("registerPatient.backToHome")}
             </Link>
@@ -111,32 +107,14 @@ export default function Header({
           {onLogout && (
             <button
               onClick={onLogout}
-              className="bg-red-600  text-white px-4 py-2 rounded hover:bg-red-700 transition-colors text-sm font-bold h-12 w-30"
+              className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition-colors text-sm font-bold h-12 w-30 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+              tabIndex={0}
             >
               {t("navbar.submenus.personal.cerrarSesion")}
             </button>
           )}
         </div>
       </div>
-
- <div className="dropdown-content hidden group-hover:block absolute bg-white mt-1 py-2 w-48 rounded-md shadow-lg z-50">
-    <Link
-      href="/registrar-paciente"
-      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 
-                 hover:outline hover:outline-2 hover:outline-black 
-                 focus:outline focus:outline-2 focus:outline-black rounded"
-    >
-      {t("navbar.menus.historiaClinica.registrarPaciente")}
-    </Link>
-    <Link
-      href="/buscar-paciente"
-      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 
-                 hover:outline hover:outline-2 hover:outline-black 
-                 focus:outline focus:outline-2 focus:outline-black rounded"
-    >
-      {t("navbar.menus.historiaClinica.buscarPaciente")}
-    </Link>
-  </div>
-</div>
+    </div>
   );
 }

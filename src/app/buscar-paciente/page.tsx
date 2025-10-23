@@ -1,9 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Header from "@/components/Header";
 import { useTranslations } from "@/hooks/useTranslations";
 import VirtualKeyboard from "@/components/VirtualKeyboard";
+import Breadcrumb from "@/components/Breadcrumb";
 
 interface FormData {
   paciente: string;
@@ -16,13 +16,12 @@ interface FormData {
 }
 
 interface BuscarPacienteProps {
-  onLogout?: () => void;
   t?: (key: string) => string;
   language?: string;
   changeLanguage?: (lang: 'es' | 'en') => void;
 }
 
-export default function BuscarPaciente({ onLogout, t: propT, language: propLanguage, changeLanguage: propChangeLanguage }: BuscarPacienteProps) {
+export default function BuscarPaciente({ t: propT, language: propLanguage, changeLanguage: propChangeLanguage }: BuscarPacienteProps) {
   const { t: hookT, language: hookLanguage, changeLanguage: hookChangeLanguage } = useTranslations();
   
   // Usar props si están disponibles, sino usar hook
@@ -100,7 +99,7 @@ export default function BuscarPaciente({ onLogout, t: propT, language: propLangu
     <button
       type="button"
       onClick={() => openKeyboardForField(fieldName)}
-      className="ml-2 p-1 text-sm text-gray-500 hover:text-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded inline-flex items-center"
+      className="ml-2 p-1 text-sm text-gray-500 hover:text-[#5fa6b4] focus:outline-none focus:ring-2 focus:ring-[#5fa6b4] rounded inline-flex items-center"
       aria-label={t("registerPatient.form.virtualKeyboard.openKeyboard")}
       title={t("registerPatient.form.virtualKeyboard.openKeyboard")}
     >
@@ -110,16 +109,18 @@ export default function BuscarPaciente({ onLogout, t: propT, language: propLangu
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Header onLogout={onLogout} t={t} language={language} changeLanguage={changeLanguage} />
 
       {/* Breadcrumb */}
-      <div className="max-w-7xl mx-auto px-6 py-3 text-sm text-gray-600">
-        {t("common.home")} &gt; {t("navbar.menus.historiaClinica")} &gt;{" "}
-        <span className="font-semibold">{t("searchPatient.title")}</span>
-      </div>
+      <Breadcrumb 
+        items={[
+          { label: t("navbar.menus.historiaClinica") },
+          { label: t("searchPatient.title"), isActive: true }
+        ]}
+        t={t}
+      />
 
       {/* Contenido principal */}
-      <main className="max-w-4xl mx-auto px-6 py-6">
+      <main className="max-w-4xl mx-auto px-6 py-3">
         <h1 className="text-2xl font-semibold text-green-700 mb-2">
           {t("searchPatient.title")}
         </h1>
@@ -150,7 +151,7 @@ export default function BuscarPaciente({ onLogout, t: propT, language: propLangu
                            focus:ring-2 focus:ring-green-600"
               />
               <KeyboardIcon fieldName="paciente" />
-              <span className="bg-green-700 text-white px-3 flex items-center rounded-r-lg">
+              <span className="bg-[#5fa6b4] text-white px-3 flex items-center rounded-r-lg">
                 🔍
               </span>
             </div>
@@ -271,9 +272,9 @@ export default function BuscarPaciente({ onLogout, t: propT, language: propLangu
             <button
               type="submit"
               className="px-6 py-2 rounded-lg flex items-center transition-all duration-200 
-                     bg-green-700 text-white hover:bg-green-800 
+                     bg-[#5fa6b4] text-white hover:bg-[#5fa6b4]/80 
                      focus-visible:outline focus-visible:outline-2 
-                     focus-visible:outline-green-600"
+                     focus-visible:outline-[#5fa6b4]"
             >
               {t("searchPatient.form.searchButton")} <span className="ml-2">🔍</span>
             </button>

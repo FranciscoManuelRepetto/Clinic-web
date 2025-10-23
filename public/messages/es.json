@@ -276,6 +276,8 @@
   },
   "common": {
     "back": "Volver",
-    "home": "Inicio"
+    "home": "Inicio",
+    "collapse": "Colapsar",
+    "expand": "Expandir"
   }
 }

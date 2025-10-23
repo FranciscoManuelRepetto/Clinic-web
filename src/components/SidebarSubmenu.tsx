@@ -13,13 +13,15 @@ interface SidebarSubmenuProps {
   items: SubmenuItem[]
   isOpen: boolean
   isCollapsed: boolean
+  onExpandSidebar?: () => void
 }
 
 export default function SidebarSubmenu({
   menuKey,
   items,
   isOpen,
-  isCollapsed
+  isCollapsed,
+  onExpandSidebar
 }: SidebarSubmenuProps) {
   if (!isOpen || isCollapsed) return null
 
@@ -30,6 +32,7 @@ export default function SidebarSubmenu({
           <Link
             href={item.href}
             className="flex items-center gap-3 px-3 py-2 text-sm text-gray-700 rounded-lg hover:bg-gray-100 hover:text-gray-900 hover:font-bold transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#5fa6b4] focus:ring-offset-2"
+            onClick={() => onExpandSidebar?.()}
           >
             <div className="w-4 h-4">
               {item.icon}

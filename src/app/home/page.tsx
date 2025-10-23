@@ -20,6 +20,9 @@ export default function Home({ t, language, changeLanguage }: HomeProps) {
                 {/* Sobre Nosotros */}
                 <section className="space-y-8">
                     <div className="text-center mb-12">
+                        <h1 tabIndex={0} className="text-4xl text-gray-900 font-bold mb-4 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-green-800 rounded">Clinica de Salud Mental CRZ</h1>
+                    </div>
+                    <div className="text-center mb-12">
                         <h2 tabIndex={0} className="text-3xl text-black font-bold mb-4 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-green-800 rounded">{t('home.aboutUs.title')}</h2>
                         <div className="w-20 h-1 bg-green-800 mx-auto rounded-full"></div>
                     </div>

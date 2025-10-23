@@ -26,7 +26,7 @@ export default function Header({
   return (
     <div className="bg-[#88B497] flex  items-center px-8 py-4">
 
-      <ul className="flex gap-5 m-0 p-0 list-none justify-center w-full mt-4" role="menubar">
+      <ul className="flex gap-5 m-0 p-0 list-none justify-center w-full mt-4" role="navigation" aria-label="Main navigation">
         <NavButton
           menuKey="historiaClinica"
           items={[

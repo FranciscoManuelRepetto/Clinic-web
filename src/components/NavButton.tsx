@@ -72,7 +72,7 @@ export default function NavButton({ menuKey, items }: NavButtonProps) {
       {isOpen && (
         <ul 
           className="absolute top-10 bg-[#4a6b59] text-white shadow-lg py-1.5 z-10 rounded"
-          role="menu"
+          role="list"
           aria-labelledby={`menu-${menuKey}`}
           onKeyDown={(e) => {
             if (e.key === 'Escape') {
@@ -84,7 +84,7 @@ export default function NavButton({ menuKey, items }: NavButtonProps) {
           }}
         >
           {items.map((item, index) => (
-            <li key={index} className="w-40" role="none">
+            <li key={index} className="w-40">
               {item.isExternal ? (
                 <a
                   href={item.href}
@@ -94,7 +94,6 @@ export default function NavButton({ menuKey, items }: NavButtonProps) {
                   target="_blank"
                   rel="noopener noreferrer"
                   tabIndex={0}
-                  role="menuitem"
                   onClick={closeDropdown}
                 >
                   {item.text}
@@ -106,7 +105,6 @@ export default function NavButton({ menuKey, items }: NavButtonProps) {
                              hover:outline hover:outline-2 hover:outline-black 
                              focus:outline focus:outline-2 focus:outline-[#5fa6b4] rounded transition-colors"
                   tabIndex={0}
-                  role="menuitem"
                   onClick={closeDropdown}
                 >
                   {item.text}

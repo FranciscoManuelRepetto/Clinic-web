@@ -47,6 +47,13 @@ export default function Sidebar({ t, onCollapseChange }: SidebarProps) {
     onCollapseChange?.(newCollapsedState)
   }
 
+  const expandSidebar = () => {
+    if (isCollapsed) {
+      setIsCollapsed(false)
+      onCollapseChange?.(false)
+    }
+  }
+
   const handleKeyDown = (e: React.KeyboardEvent, menu: string) => {
     if (e.key === "Enter" || e.key === " ") {
       e.preventDefault()
@@ -85,6 +92,7 @@ export default function Sidebar({ t, onCollapseChange }: SidebarProps) {
             isCollapsed={isCollapsed}
             onToggle={toggleMenu}
             onKeyDown={handleKeyDown}
+            onExpandSidebar={expandSidebar}
             t={t}
           />
           <SidebarSubmenu
@@ -108,6 +116,7 @@ export default function Sidebar({ t, onCollapseChange }: SidebarProps) {
             ]}
             isOpen={openMenu === "home"}
             isCollapsed={isCollapsed}
+            onExpandSidebar={expandSidebar}
           />
         </div>
 
@@ -121,6 +130,7 @@ export default function Sidebar({ t, onCollapseChange }: SidebarProps) {
             isCollapsed={isCollapsed}
             onToggle={toggleMenu}
             onKeyDown={handleKeyDown}
+            onExpandSidebar={expandSidebar}
             t={t}
           />
           <SidebarSubmenu
@@ -139,6 +149,7 @@ export default function Sidebar({ t, onCollapseChange }: SidebarProps) {
             ]}
             isOpen={openMenu === "turnos"}
             isCollapsed={isCollapsed}
+            onExpandSidebar={expandSidebar}
           />
         </div>
 
@@ -152,6 +163,7 @@ export default function Sidebar({ t, onCollapseChange }: SidebarProps) {
             isCollapsed={isCollapsed}
             onToggle={toggleMenu}
             onKeyDown={handleKeyDown}
+            onExpandSidebar={expandSidebar}
             t={t}
           />
           <SidebarSubmenu
@@ -170,6 +182,7 @@ export default function Sidebar({ t, onCollapseChange }: SidebarProps) {
             ]}
             isOpen={openMenu === "medicamentos"}
             isCollapsed={isCollapsed}
+            onExpandSidebar={expandSidebar}
           />
         </div>
 
@@ -183,6 +196,7 @@ export default function Sidebar({ t, onCollapseChange }: SidebarProps) {
             isCollapsed={isCollapsed}
             onToggle={toggleMenu}
             onKeyDown={handleKeyDown}
+            onExpandSidebar={expandSidebar}
             t={t}
           />
           <SidebarSubmenu
@@ -201,6 +215,7 @@ export default function Sidebar({ t, onCollapseChange }: SidebarProps) {
             ]}
             isOpen={openMenu === "personal"}
             isCollapsed={isCollapsed}
+            onExpandSidebar={expandSidebar}
           />
         </div>
       </div>

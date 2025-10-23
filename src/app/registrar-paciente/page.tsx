@@ -391,7 +391,7 @@ export default function RegistrarPaciente({ t: propT, language: propLanguage, ch
                                   : 'border-gray-300'
                               } rounded-md focus:outline-none focus:ring-2 focus:ring-[#a4eac3] bg-white text-black`}
                               placeholder={focusedFields.has('dni') ? "" : t('registerPatient.form.placeholders.enterDni')}
-                              aria-describedby="dni-error"
+                              aria-describedby={validationErrors.includes('El campo DNI es obligatorio') ? "dni-error" : undefined}
                             />
                             {validationErrors.includes('El campo DNI es obligatorio') && (
                               <p id="dni-error" className="text-red-500 text-sm mt-1">
@@ -668,7 +668,7 @@ export default function RegistrarPaciente({ t: propT, language: propLanguage, ch
                 </button>
                 <button 
                   type="submit" 
-                  className="px-6 py-2 bg-[#88b497] text-white rounded-md hover:bg-[#5aa382] transition-colors font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#69b594]"
+                  className="px-6 py-2 bg-[#5aa382] text-black rounded-md hover:bg-[#5fa6b4] transition-colors font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#69b594]"
                   aria-controls="confirmation-modal"
                   aria-haspopup="dialog"
                 >

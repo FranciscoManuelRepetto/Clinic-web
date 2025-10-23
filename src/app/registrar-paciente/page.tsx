@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { useTranslations } from "@/hooks/useTranslations";
-import Header from "@/components/Header";
 import VirtualKeyboard from "@/components/VirtualKeyboard";
+import Breadcrumb from "@/components/Breadcrumb";
 
 
 
@@ -26,13 +26,12 @@ interface FormData {
 }
 
 interface RegistrarPacienteProps {
-  onLogout?: () => void;
   t?: (key: string) => string;
   language?: string;
   changeLanguage?: (lang: 'es' | 'en') => void;
 }
 
-export default function RegistrarPaciente({ onLogout, t: propT, language: propLanguage, changeLanguage: propChangeLanguage }: RegistrarPacienteProps) {
+export default function RegistrarPaciente({ t: propT, language: propLanguage, changeLanguage: propChangeLanguage }: RegistrarPacienteProps) {
   const { t: hookT, language: hookLanguage, changeLanguage: hookChangeLanguage } = useTranslations();
   
   // Usar props si están disponibles, sino usar hook
@@ -310,17 +309,20 @@ export default function RegistrarPaciente({ onLogout, t: propT, language: propLa
         onKeyUp={handleVirtualKeyboardToggle}
         tabIndex={-1}
       >
-        <Header onLogout={onLogout} t={t} language={language} changeLanguage={changeLanguage} />
 
         {/* Breadcrumb */}
-        <div className="max-w-7xl mx-auto px-6 py-3 text-sm text-gray-600">
-          {t("common.home")} &gt; {t("navbar.menus.historiaClinica")} &gt;{" "}
-          <span className="font-semibold">{t("registerPatient.title")}</span>
-        </div>
+        <Breadcrumb 
+          items={[
+            { label: t("navbar.menus.historiaClinica") },
+            { label: t("registerPatient.title"), isActive: true }
+          ]}
+          t={t}
+          className="px-12 py-12"
+        />
 
         <main className="p-4 sm:p-8 max-w-5xl mx-auto">
           <div className="bg-white rounded-lg shadow-lg p-6 sm:p-8">
-            <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-8 text-center">
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-4 text-center">
               {t('registerPatient.form.title')}
             </h1>
             
@@ -666,7 +668,7 @@ export default function RegistrarPaciente({ onLogout, t: propT, language: propLa
                 </button>
                 <button 
                   type="submit" 
-                  className="px-6 py-2 bg-[#69b594] text-white rounded-md hover:bg-[#5aa382] transition-colors font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#69b594]"
+                  className="px-6 py-2 bg-[#88b497] text-white rounded-md hover:bg-[#5aa382] transition-colors font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#69b594]"
                   aria-controls="confirmation-modal"
                   aria-haspopup="dialog"
                 >

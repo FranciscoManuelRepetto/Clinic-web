@@ -11,6 +11,7 @@ interface SidebarMenuItemProps {
   isCollapsed: boolean
   onToggle: (menuKey: string) => void
   onKeyDown: (e: React.KeyboardEvent, menuKey: string) => void
+  onExpandSidebar?: () => void
   t: (key: string) => string
 }
 
@@ -22,12 +23,19 @@ export default function SidebarMenuItem({
   isCollapsed,
   onToggle,
   onKeyDown,
+  onExpandSidebar,
   t
 }: SidebarMenuItemProps) {
   return (
-    <div className="mb-1">
+    <div className={`mb-1 ${isCollapsed ? 'relative' : ''}`}>
       <button
-        onClick={() => onToggle(menuKey)}
+        onClick={() => {
+          if (isCollapsed) {
+            onExpandSidebar?.()
+          } else {
+            onToggle(menuKey)
+          }
+        }}
         onKeyDown={(e) => onKeyDown(e, menuKey)}
         aria-expanded={isOpen}
         aria-controls={`menu-${menuKey}`}

@@ -152,7 +152,9 @@ export default function BuscarPaciente({ t: propT, language: propLanguage, chang
               />
               <KeyboardIcon fieldName="paciente" />
               <span className="bg-[#5fa6b4] text-white px-3 flex items-center rounded-r-lg">
-                🔍
+                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M21 21L16.514 16.506L21 21ZM19 10.5C19 15.194 15.194 19 10.5 19C5.806 19 2 15.194 2 10.5C2 5.806 5.806 2 10.5 2C15.194 2 19 5.806 19 10.5Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
               </span>
             </div>
           </div>
@@ -272,11 +274,14 @@ export default function BuscarPaciente({ t: propT, language: propLanguage, chang
             <button
               type="submit"
               className="px-6 py-2 rounded-lg flex items-center transition-all duration-200 
-                     bg-[#5fa6b4] text-white hover:bg-[#5fa6b4]/80 
+                     bg-[#5fa6b4] text-black hover:bg-[#5fa6b4]/80 
                      focus-visible:outline focus-visible:outline-2 
                      focus-visible:outline-[#5fa6b4]"
             >
-              {t("searchPatient.form.searchButton")} <span className="ml-2">🔍</span>
+              {t("searchPatient.form.searchButton")} 
+              <svg className="ml-2 w-6 h-6" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M21 21L16.514 16.506L21 21ZM19 10.5C19 15.194 15.194 19 10.5 19C5.806 19 2 15.194 2 10.5C2 5.806 5.806 2 10.5 2C15.194 2 19 5.806 19 10.5Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
             </button>
           </div>
         </form>

@@ -23,7 +23,7 @@ export default function Home({ onLogout, t, language, changeLanguage }: HomeProp
                 {/* Sobre Nosotros */}
                 <section className="space-y-8">
                     <div className="text-center mb-12">
-                        <h2 className="text-3xl text-black font-bold mb-4">{t('home.aboutUs.title')}</h2>
+                        <h2 tabIndex={0} className="text-3xl text-black font-bold mb-4 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-green-800 rounded">{t('home.aboutUs.title')}</h2>
                         <div className="w-20 h-1 bg-green-800 mx-auto rounded-full"></div>
                     </div>
 
@@ -64,7 +64,7 @@ export default function Home({ onLogout, t, language, changeLanguage }: HomeProp
 
                 {/* Valores */}
                 <section className="bg-gray-200 rounded-2xl p-8 md:p-12">
-                    <h2 className="text-3xl font-bold text-black mb-8 text-center">{t('home.values.title')}</h2>
+                    <h2 tabIndex={0} className="text-3xl font-bold text-black mb-8 text-center focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-green-800 rounded">{t('home.values.title')}</h2>
                     <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {[
                             {
@@ -103,7 +103,7 @@ export default function Home({ onLogout, t, language, changeLanguage }: HomeProp
                 {/* Equipo Fundador */}
                 <section className="space-y-8">
                     <div className="text-center mb-12">
-                        <h2 className="text-3xl font-bold text-black mb-4">{t('home.team.title')}</h2>
+                        <h2 tabIndex={0} className="text-3xl font-bold text-black mb-4 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-green-800 rounded">{t('home.team.title')}</h2>
                         <div className="w-20 h-1 bg-green-800 mx-auto rounded-full"></div>
                     </div>
 
@@ -141,7 +141,7 @@ export default function Home({ onLogout, t, language, changeLanguage }: HomeProp
                             ].map((doctor, index) => (
                                 <Card key={index} className="border-l-4 border-l-green-800 border-t-0 border-r-0 border-b-0 shadow-sm">
                                     <CardContent className="pt-4">
-                                        <h3 className="font-semibold text-black">{doctor.name}</h3>
+                                        <h3 tabIndex={0} className="font-semibold text-black focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-green-800 rounded">{doctor.name}</h3>
                                         <p className="text-green-800 text-lg font-medium mb-2">{doctor.role}</p>
                                         <p className="text-gray-600 text-lg leading-relaxed">{doctor.desc}</p>
                                     </CardContent>
@@ -154,7 +154,7 @@ export default function Home({ onLogout, t, language, changeLanguage }: HomeProp
                 {/* Video Institucional */}
                 <section className="space-y-8 bg-gray-200 rounded-2xl p-8 md:p-12 ">
                     <div className="text-center mb-12 ">
-                        <h2 className="text-3xl font-bold text-black mb-4">
+                        <h2 tabIndex={0} className="text-3xl font-bold text-black mb-4 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-green-800 rounded">
                             {t('home.video.title')}
                         </h2>
                     </div>
@@ -177,7 +177,7 @@ export default function Home({ onLogout, t, language, changeLanguage }: HomeProp
                 {/* Servicios */}
                 <section className="space-y-8">
                     <div className="text-center mb-12">
-                        <h2 className="text-3xl font-bold text-black mb-4">{t('home.services.title')}</h2>
+                        <h2 tabIndex={0} className="text-3xl font-bold text-black mb-4 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-green-800 rounded">{t('home.services.title')}</h2>
                         <div className="w-20 h-1 bg-green-800 mx-auto rounded-full"></div>
                     </div>
 

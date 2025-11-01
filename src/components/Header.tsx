@@ -1,22 +1,13 @@
-import Link from "next/link";
 import NavButton from "./NavButton";
 
 interface HeaderProps {
-  title?: string;
-  showBackButton?: boolean;
-  backButtonText?: string;
-  backButtonHref?: string;
-  onLogout?: () => void;
+  onLogout: () => void;
   t: (key: string) => string;
   language: string;
   changeLanguage: (lang: 'es' | 'en') => void;
 }
 
 export default function Header({
-  title,
-  showBackButton = false,
-  backButtonText,
-  backButtonHref = "/",
   onLogout,
   t,
   language,
@@ -24,8 +15,7 @@ export default function Header({
 }: HeaderProps) {
 
   return (
-    <div className="bg-[#88B497] flex  items-center px-8 py-4">
-
+    <div className="bg-[#88B497] flex items-center px-8 py-4">
       <ul className="flex gap-5 m-0 p-0 list-none justify-center w-full mt-4" role="navigation" aria-label="Main navigation">
         <NavButton
           menuKey="historiaClinica"
@@ -33,10 +23,9 @@ export default function Header({
             {
               href: "/registrar-paciente",
               text: t("navbar.submenus.historiaClinica.crearPaciente"),
-              
             },
             {
-              href: "/buscar-paciente", // Actualizar esta URL
+              href: "/buscar-paciente",
               text: t("navbar.submenus.historiaClinica.buscarPaciente"),
             },
             {
@@ -88,31 +77,15 @@ export default function Header({
           </select>
         </div>
 
-        {/* Título de la página o saludo del usuario */}
+        {/* Botón de logout */}
         <div className="flex items-center gap-4 text-gray-900">
-          {title && <div className="text-lg font-semibold">{title}</div>}
-
-          {showBackButton && (
-            <Link
-              href={backButtonHref}
-              className="bg-white border border-gray-300 rounded px-4 py-2 text-sm font-medium hover:bg-gray-50 transition-colors focus:outline-none focus:ring-2 focus:ring-[#5fa6b4] focus:ring-offset-2"
-              tabIndex={0}
-            >
-              {backButtonText || t("registerPatient.backToHome")}
-            </Link>
-          )}
-
-
-          {/* Botón de logout */}
-          {onLogout && (
-            <button
-              onClick={onLogout}
-              className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition-colors text-sm font-bold h-12 w-30 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
-              tabIndex={0}
-            >
-              {t("navbar.submenus.personal.cerrarSesion")}
-            </button>
-          )}
+          <button
+            onClick={onLogout}
+            className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition-colors text-sm font-bold h-12 w-30 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+            tabIndex={0}
+          >
+            {t("navbar.submenus.personal.cerrarSesion")}
+          </button>
         </div>
       </div>
     </div>

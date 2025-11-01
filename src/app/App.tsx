@@ -1,44 +1,55 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useTranslations } from "@/hooks/useTranslations";
 import Login from "./login/Login";
 import Home from "./home/page";
-import RegistrarPaciente from "./registrar-paciente/page";
-import BuscarPaciente from "./buscar-paciente/page";
+import HomeLogin from "./HomeLogin/HomeLogin";
+import RegistrarPaciente from "./registrar-paciente/registrar-paciente";
+import BuscarPaciente from "./buscar-paciente/buscar-paciente";
 import Header from "@/components/Header";
 import Sidebar from "@/components/Sidebar";
+import HeaderNotLogger from "@/components/HeaderNotLogger";
 
 export default function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const pathname = usePathname();
+  const router = useRouter();
   const { t, language, changeLanguage, isLoading: translationsLoading } = useTranslations();
 
   useEffect(() => {
-    // Verificar si hay una sesión activa en localStorage
-    const checkAuth = () => {
-      const token = localStorage.getItem('authToken');
-      if (token) {
-        setIsLoggedIn(true);
-      }
-      setIsLoading(false);
-    };
-
-    checkAuth();
+    const token = localStorage.getItem('authToken');
+    setIsLoggedIn(!!token);
+    setIsLoading(false);
   }, []);
 
+  useEffect(() => {
+    if (isLoading) return;
+
+    if (!isLoggedIn) {
+      if (pathname !== '/' && pathname !== '/login') {
+        router.replace('/');
+      }
+    } else {
+      if (pathname === '/login') {
+        router.replace('/home');
+      }
+    }
+  }, [isLoggedIn, isLoading, pathname, router]);
+
   const handleLogin = () => {
-    // Simular login exitoso
     localStorage.setItem('authToken', 'fake-token');
     setIsLoggedIn(true);
+    router.push('/home');
   };
 
   const handleLogout = () => {
     localStorage.removeItem('authToken');
     setIsLoggedIn(false);
+    router.replace('/');
   };
 
   if (isLoading || translationsLoading) {
@@ -49,27 +60,26 @@ export default function App() {
     );
   }
 
-  // Si no está logueado, mostrar login
   if (!isLoggedIn) {
-    return <Login onLogin={handleLogin} />;
+    if (pathname === '/login') {
+      return <Login onLogin={handleLogin} />;
+    }
+    
+    return (
+      <div className="min-h-screen bg-gray-50 flex flex-col">
+        <HeaderNotLogger t={t} />
+        <main className="flex-1">
+          <Home t={t} language={language} changeLanguage={changeLanguage} />
+        </main>
+      </div>
+    );
   }
 
-  // Si está logueado, mostrar la página correspondiente según la ruta
-  console.log('Current pathname:', pathname);
-  
-  const renderPage = () => {
-    switch (pathname) {
-      case '/home':
-        return <Home t={t} language={language} changeLanguage={changeLanguage} />;
-      case '/registrar-paciente':
-        return <RegistrarPaciente t={t} language={language} changeLanguage={changeLanguage} />;
-      case '/buscar-paciente':
-        return <BuscarPaciente t={t} language={language} changeLanguage={changeLanguage} />;
-      case '/':
-        return <Home t={t} language={language} changeLanguage={changeLanguage} />;
-      default:
-        return <Home t={t} language={language} changeLanguage={changeLanguage} />;
-    }
+  const routes = {
+    '/': <HomeLogin />,
+    '/home': <HomeLogin />,
+    '/registrar-paciente': <RegistrarPaciente t={t} language={language} changeLanguage={changeLanguage} />,
+    '/buscar-paciente': <BuscarPaciente t={t} language={language} changeLanguage={changeLanguage} />,
   };
 
   return (
@@ -83,7 +93,7 @@ export default function App() {
           changeLanguage={changeLanguage} 
         />
         <main className="flex-1">
-          {renderPage()}
+          {routes[pathname as keyof typeof routes] || <HomeLogin />}
         </main>
       </div>
     </div>

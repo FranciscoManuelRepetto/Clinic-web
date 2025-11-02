@@ -1,4 +1,4 @@
-import { useTranslations } from "@/hooks/useTranslations";
+import { useTranslations } from "@/globals/hooks/useTranslations";
 import { useState, useEffect } from "react";
 
 interface VirtualKeyboardProps {

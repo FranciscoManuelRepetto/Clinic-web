@@ -2,15 +2,15 @@
 
 import { useState, useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { useTranslations } from "@/hooks/useTranslations";
-import Login from "./login/Login";
-import Home from "./home/page";
-import HomeLogin from "./HomeLogin/HomeLogin";
-import RegistrarPaciente from "./registrar-paciente/registrar-paciente";
-import BuscarPaciente from "./buscar-paciente/buscar-paciente";
-import Header from "@/components/Header";
-import Sidebar from "@/components/Sidebar";
-import HeaderNotLogger from "@/components/HeaderNotLogger";
+import { useTranslations } from "@/globals/hooks/useTranslations";
+import Login from "@/modules/auth/components/Login";
+import Home from "@/modules/homeLoggout/components/Home";
+import HomeLogin from "@/modules/homeLogin/components/HomeLogin";
+import RegistrarPaciente from "@/modules/registrarPaciente/components/registrar-paciente";
+import BuscarPaciente from "@/modules/buscarPaciente/components/buscar-paciente";
+import Header from "@/globals/components/organismos/Header";
+import Sidebar from "@/globals/components/organismos/Sidebar";
+import HeaderNotLogger from "@/globals/components/organismos/HeaderNotLogger";
 
 export default function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);

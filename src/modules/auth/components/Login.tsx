@@ -1,9 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/card";
+import { Card, CardHeader, CardTitle, CardContent } from "@/globals/components/atomos/card";
 import ReCAPTCHA from "react-google-recaptcha";
-import { useTranslations } from "@/hooks/useTranslations";
+import { useTranslations } from "@/globals/hooks/useTranslations";
 
 interface LoginProps {
   onLogin: () => void;

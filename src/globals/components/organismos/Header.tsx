@@ -1,4 +1,4 @@
-import NavButton from "./NavButton";
+import NavButton from "../moleculas/NavButton";
 
 interface HeaderProps {
   onLogout: () => void;

@@ -1,8 +1,8 @@
 "use client";
 
-import { useTranslations } from "@/hooks/useTranslations";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/card";
-import Footer from "@/components/Footer";
+import { useTranslations } from "@/globals/hooks/useTranslations";
+import { Card, CardContent, CardHeader, CardTitle } from "@/globals/components/atomos/card";
+import Footer from "@/globals/components/organismos/Footer";
 
 
 interface HomeProps {

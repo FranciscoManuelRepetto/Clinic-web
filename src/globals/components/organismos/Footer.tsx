@@ -1,7 +1,7 @@
 // components/Footer.tsx
 "use client";
 
-import { useTranslations } from "@/hooks/useTranslations";
+import { useTranslations } from "@/globals/hooks/useTranslations";
 
 export default function Footer() {
   const { t } = useTranslations();

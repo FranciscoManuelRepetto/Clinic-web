@@ -1,9 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useTranslations } from "@/hooks/useTranslations";
-import VirtualKeyboard from "@/components/VirtualKeyboard";
-import Breadcrumb from "@/components/Breadcrumb";
+import { useTranslations } from "@/globals/hooks/useTranslations";
+import VirtualKeyboard from "@/globals/components/organismos/VirtualKeyboard";
+import Breadcrumb from "@/globals/components/moleculas/Breadcrumb";
 
 
 

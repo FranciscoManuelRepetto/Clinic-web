@@ -20,8 +20,8 @@ import {
   ChevronLeft,
   ChevronRight,
 } from "lucide-react"
-import SidebarMenuItem from "./SidebarMenuItem"
-import SidebarSubmenu from "./SidebarSubmenu"
+import SidebarMenuItem from "../moleculas/SidebarMenuItem"
+import SidebarSubmenu from "../moleculas/SidebarSubmenu"
 
 interface SidebarProps {
   t: (key: string) => string

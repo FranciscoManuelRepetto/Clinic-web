@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useTranslations } from "@/hooks/useTranslations";
+import { useTranslations } from "@/globals/hooks/useTranslations";
 import Link from "next/link";
 import { ChevronDown } from "lucide-react";
 

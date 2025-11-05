@@ -39,6 +39,7 @@
   },
   "registerPatient": {
     "title": "Registrar Paciente",
+    "description": "Ingrese los datos del paciente que desea registrar",
     "backToHome": "Volver al Inicio",
     "form": {
       "title": "Formulario de Registro de Paciente",

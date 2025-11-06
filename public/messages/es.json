@@ -241,7 +241,8 @@
       "patient": "Paciente",
       "placeholders": {
         "search": "Ingrese nombre, apellido o DNI...",
-        "year": "AAAA",
+        "yearFrom": "AAAA (desde)",
+        "yearTo": "AAAA (hasta)",
         "diagnosis": "Ingrese diagnóstico",
         "professional": "Ingrese nombre del profesional...",
         "medication": "Ingrese nombre del medicamento..."

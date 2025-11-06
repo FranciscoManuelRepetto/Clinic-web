@@ -1,4 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&family=Noto+Sans:ital,wght@0,100..900;1,100..900&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
 @import "tailwindcss";
 @tailwind base;
 @tailwind components;
@@ -21,8 +20,8 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-atkinson);
+  --font-mono: var(--font-atkinson);
   --color-manzana: var(--verde-manzana);
   --color-primary: var(--primary-color);
   --color-secondary: var(--secondary-color);
@@ -30,7 +29,7 @@
   --color-gris-claro: var(--gris-claro);
   --color-gris: var(--gris);
   --color-gris-oscuro: var(--gris-oscuro);
-  --font-main: "Atkinson Hyperlegible", "Roboto", sans-serif;
+  --font-main: var(--font-atkinson), system-ui, sans-serif;
 }
 
 /*
@@ -45,4 +44,5 @@
 body {
   background: var(--background);
   color: var(--foreground);
+  font-family: var(--font-atkinson), system-ui, sans-serif;
 }

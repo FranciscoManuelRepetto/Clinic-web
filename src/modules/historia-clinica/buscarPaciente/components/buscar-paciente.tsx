@@ -1,11 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useTranslations } from "@/globals/hooks/useTranslations";
 import VirtualKeyboard from "@/globals/components/organismos/VirtualKeyboard";
 import PageHeader from "@/globals/components/organismos/PageHeader";
-import axios from "axios";
-import ENDPOINTS from '@/services/endpoints';
+import { useBuscarPacientes } from "@/modules/historia-clinica/hooks/useBuscarPacientes";
 import Subtitle from "@/globals/components/atomos/Subtitle";
 /*De tabla*/
 import StrippedTable from "@/globals/components/atomos/Table";
@@ -41,15 +40,14 @@ export default function BuscarPaciente({ t: propT, language: propLanguage, chang
   const [showFilters, setShowFilters] = useState(false);
   const [showVirtualKeyboard, setShowVirtualKeyboard] = useState(false);
   const [activeInput, setActiveInput] = useState<string | null>(null);
-  const [pacientes, setPacientes] = useState<any[]>([])
-  const [totalPacientesPages, setTotalPacientesPages] = useState<number>(0);
   const [searched, setSearched] = useState<boolean>(false);
+  const { buscarPacientes, pacientes, getTotalPages, isLoading, error } = useBuscarPacientes();
   const [formData, setFormData] = useState<FormData>({
     nom_ap_dni: "",
     genero: "",
     anio_ingreso_desde: "",
     anio_ingreso_hasta: "",
-    limit: 1,
+    limit: 10,
     page: 1,
     order: "asc",
     sort: "apellido"
@@ -66,25 +64,25 @@ export default function BuscarPaciente({ t: propT, language: propLanguage, chang
   // 👉 Funciones para manipular el form desde el teclado virtual
   const insertText = (text: string) => {
     if (activeInput) {
-      setFormData((prev) => ({
+      setFormData((prev: FormData) => ({
         ...prev,
-        [activeInput]: prev[activeInput as keyof FormData] + text,
+        [activeInput]: (prev[activeInput as keyof FormData] as string) + text,
       }));
     }
   };
 
   const deleteText = () => {
     if (activeInput) {
-      setFormData((prev) => ({
+      setFormData((prev: FormData) => ({
         ...prev,
-        [activeInput]: prev[activeInput as keyof FormData].slice(0, -1),
+        [activeInput]: (prev[activeInput as keyof FormData] as string).slice(0, -1),
       }));
     }
   };
 
   const clearField = () => {
     if (activeInput) {
-      setFormData((prev) => ({
+      setFormData((prev: FormData) => ({
         ...prev,
         [activeInput]: "",
       }));
@@ -98,7 +96,7 @@ export default function BuscarPaciente({ t: propT, language: propLanguage, chang
     if (numericFields.includes(name) && !/^\d*$/.test(value)) {
       return;
     }
-    setFormData((prev) => ({
+    setFormData((prev: FormData) => ({
       ...prev,
       [name]: value,
     }));
@@ -115,45 +113,21 @@ export default function BuscarPaciente({ t: propT, language: propLanguage, chang
     datos.order = "asc"; 
     datos.sort = "apellido";
     datos.page = 1;
-    axios({
-        method: ENDPOINTS.HISTORIA_CLINICA.BUSCAR_PACIENTES.METHOD,
-        url: ENDPOINTS.HISTORIA_CLINICA.BUSCAR_PACIENTES.URL(datos),
-    })
-    .then(response => {
-      console.log(response.data.pacientes);
-      setFormData(datos);
-      let calculoPaginas = Math.floor(response.data.total / datos.limit)
-      if (response.data.total % datos.limit !== 0)
-        calculoPaginas++;
-      setTotalPacientesPages(calculoPaginas);
-      setPacientes(response.data.pacientes);
-      setSearched(true);
-    })
-    .catch(error => console.error(error));
+    await buscarPacientes(datos);
+    setFormData(datos);
+    setSearched(true);
   };
 
   const handlePageChange = async (pagenum: number) => {
-    if(pagenum > totalPacientesPages || pagenum < 1)
+    const totalPages = getTotalPages(formData.limit);
+    if(pagenum > totalPages || pagenum < 1)
       return;
     const datos = {...formData};
     datos.order = "asc"; 
     datos.sort = "apellido";
     datos.page = pagenum;
-    console.log("la url: ", ENDPOINTS.HISTORIA_CLINICA.BUSCAR_PACIENTES.URL(datos))
-    axios({
-        method: ENDPOINTS.HISTORIA_CLINICA.BUSCAR_PACIENTES.METHOD,
-        url: ENDPOINTS.HISTORIA_CLINICA.BUSCAR_PACIENTES.URL(datos),
-    })
-    .then(response => {
-      console.log(response.data.pacientes);
-      setFormData(datos);
-      let calculoPaginas = Math.floor(response.data.total / datos.limit)
-      if (response.data.total % datos.limit !== 0)
-        calculoPaginas++;
-      setTotalPacientesPages(calculoPaginas);
-      setPacientes(response.data.pacientes);
-    })
-    .catch(error => console.error(error));
+    await buscarPacientes(datos);
+    setFormData(datos);
   };
 
   // 📌 Ícono del teclado junto a cada input
@@ -393,7 +367,9 @@ export default function BuscarPaciente({ t: propT, language: propLanguage, chang
           </div>
         </form>
         <div className="my-5 mx-2">
-          {totalPacientesPages != 0 ? 
+          {isLoading && <p>Cargando...</p>}
+          {error && <p className="text-red-500">Error: {error}</p>}
+          {!isLoading && !error && searched && pacientes.length > 0 ? 
             <div className="flex flex-col">
             <Subtitle subtitle="Resultados"/>
             <StrippedTable
@@ -406,13 +382,13 @@ export default function BuscarPaciente({ t: propT, language: propLanguage, chang
               sortKeys={["nombre", "apellido", "fecha_ingreso"]}
             />
             <Paginator 
-              totalPages={totalPacientesPages}
+              totalPages={getTotalPages(formData.limit)}
               currentPage={formData.page}
               pageClickHandler={handlePageChange}
             />
           </div>
-          : searched && (
-            (<p>Su consulta no produjo resultados.</p>)
+          : searched && !isLoading && !error && pacientes.length === 0 && (
+            <p>Su consulta no produjo resultados.</p>
           )
           }
         </div>

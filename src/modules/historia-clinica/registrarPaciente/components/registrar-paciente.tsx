@@ -367,7 +367,7 @@ export default function RegistrarPaciente({ t: propT, language: propLanguage, ch
                 
                 {/* Columna principal de datos */}
                 <div className="lg:col-span-2 space-y-6">
-                   <fieldset className="border border-gray-200 p-4 rounded-md">
+                   <fieldset className="border border-gray-500 p-4 rounded-md">
                       <legend className="text-lg font-semibold text-gray-700 px-2">{t('registerPatient.form.labels.personalData')}</legend>
                       <div className="space-y-4 mt-4">
                         {/* Primera fila: DNI solo pero con ancho limitado */}
@@ -537,7 +537,7 @@ export default function RegistrarPaciente({ t: propT, language: propLanguage, ch
                       </div>
                    </fieldset>
                    
-                   <fieldset className="border border-gray-200 p-4 rounded-md">
+                   <fieldset className="border border-gray-500 p-4 rounded-md">
                       <legend className="text-lg font-semibold text-gray-700 px-2">{t('registerPatient.form.labels.contactData')}</legend>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
                         {/* Domicilio */}

@@ -1,16 +1,17 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import localFont from "next/font/local";
 import "../styles/globals.css";
 import App from "./App";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+const atkinson = localFont({
+  src: [
+    { path: "../../public/assets/Atkinson_Hyperlegible/AtkinsonHyperlegible-Regular.ttf", weight: "400", style: "normal" },
+    { path: "../../public/assets/Atkinson_Hyperlegible/AtkinsonHyperlegible-Italic.ttf", weight: "400", style: "italic" },
+    { path: "../../public/assets/Atkinson_Hyperlegible/AtkinsonHyperlegible-Bold.ttf", weight: "700", style: "normal" },
+    { path: "../../public/assets/Atkinson_Hyperlegible/AtkinsonHyperlegible-BoldItalic.ttf", weight: "700", style: "italic" },
+  ],
+  variable: "--font-atkinson",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -24,9 +25,7 @@ export const metadata: Metadata = {
 export default function RootLayout() {
   return (
     <html lang="es">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+      <body className={`${atkinson.variable} font-sans antialiased`}>
       <App />
       </body>
     </html>

@@ -1,4 +1,15 @@
-export default function StrippedTable({color, columnNames, data, keys, className, idKey, dateKeys, sortKeys}: {columnNames: string[], keys: string[], className?: string, idKey?:string, color?:string, dateKeys?:string[], sortKeys?: string[]}){
+interface StrippedTableProps {
+    columnNames: string[];
+    keys: string[];
+    data: any[];
+    className?: string;
+    idKey?: string;
+    color?: string;
+    dateKeys?: string[];
+    sortKeys?: string[];
+}
+
+export default function StrippedTable({color, columnNames, data, keys, className, idKey, dateKeys, sortKeys}: StrippedTableProps){
     //data = el arreglo de datos para llenar la tabla
     //keys = las claves para acceder al valor del dato, en el mismo orden semantico que columnNames
     // Ej: columnNames = ["Nombre", "Apellido"] keys = ["name", "surname"]

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useTranslations } from "@/globals/hooks/useTranslations";
+import { useVirtualKeyboard } from "@/globals/hooks/useVirtualKeyboard";
 import VirtualKeyboard from "@/globals/components/organismos/VirtualKeyboard";
 import PageHeader from "@/globals/components/organismos/PageHeader";
 import { useBuscarPacientes } from "@/modules/historia-clinica/hooks/useBuscarPacientes";
@@ -38,8 +39,6 @@ export default function BuscarPaciente({ t: propT, language: propLanguage, chang
   const language = propLanguage || hookLanguage;
   const changeLanguage = propChangeLanguage || hookChangeLanguage;
   const [showFilters, setShowFilters] = useState(false);
-  const [showVirtualKeyboard, setShowVirtualKeyboard] = useState(false);
-  const [activeInput, setActiveInput] = useState<string | null>(null);
   const [searched, setSearched] = useState<boolean>(false);
   const { buscarPacientes, pacientes, getTotalPages, isLoading, error } = useBuscarPacientes();
   const [formData, setFormData] = useState<FormData>({
@@ -61,33 +60,16 @@ export default function BuscarPaciente({ t: propT, language: propLanguage, chang
 
   const numericFields = ["anio_ingreso_desde", "anio_ingreso_hasta"];
 
-  // 👉 Funciones para manipular el form desde el teclado virtual
-  const insertText = (text: string) => {
-    if (activeInput) {
-      setFormData((prev: FormData) => ({
-        ...prev,
-        [activeInput]: (prev[activeInput as keyof FormData] as string) + text,
-      }));
-    }
-  };
-
-  const deleteText = () => {
-    if (activeInput) {
-      setFormData((prev: FormData) => ({
-        ...prev,
-        [activeInput]: (prev[activeInput as keyof FormData] as string).slice(0, -1),
-      }));
-    }
-  };
-
-  const clearField = () => {
-    if (activeInput) {
-      setFormData((prev: FormData) => ({
-        ...prev,
-        [activeInput]: "",
-      }));
-    }
-  };
+  // 👉 Hook del teclado virtual
+  const {
+    showVirtualKeyboard,
+    setShowVirtualKeyboard,
+    activeInput,
+    insertText,
+    deleteText,
+    clearField,
+    openKeyboardForField,
+  } = useVirtualKeyboard({ formData, setFormData });
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -100,11 +82,6 @@ export default function BuscarPaciente({ t: propT, language: propLanguage, chang
       ...prev,
       [name]: value,
     }));
-  };
-
-  const openKeyboardForField = (fieldName: string) => {
-    setActiveInput(fieldName);
-    setShowVirtualKeyboard(true);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {

@@ -2,11 +2,15 @@ import { useState } from 'react';
 import axios from 'axios';
 import { Paciente } from '../types/Paciente';
 import { BUSCAR_PACIENTES_ENDPOINT, BuscarPacientesParams } from '../services/buscarPacientesEndpoint';
+import { error } from 'console';
+import errorHandler from '@/globals/services/errorHandler';
 
 export interface UseBuscarPacientesReturn {
   buscarPacientes: (params: BuscarPacientesParams) => Promise<void>;
   pacientes: Paciente[];
   totalPacientes: number;
+  //sortBy: string;
+  //order: string;
   getTotalPages: (limit: number) => number;
   isLoading: boolean;
   error: string | null;
@@ -15,6 +19,10 @@ export interface UseBuscarPacientesReturn {
 export const useBuscarPacientes = (): UseBuscarPacientesReturn => {
   const [pacientes, setPacientes] = useState<Paciente[]>([]);
   const [totalPacientes, setTotalPacientes] = useState<number>(0);
+  /*
+  const [sortBy, setSortBy] = useState<string>("apellido");
+  const [order, setOrder] = useState<string>("asc");
+  */
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -28,13 +36,12 @@ export const useBuscarPacientes = (): UseBuscarPacientesReturn => {
         url: BUSCAR_PACIENTES_ENDPOINT.URL(params),
       });
 
-      // El backend devuelve un array de pacientes directamente
-      const pacientesData: Paciente[] = response.data;
+      const pacientesData: Paciente[] = response.data.pacientes;
       setPacientes(pacientesData);
-      setTotalPacientes(pacientesData.length);
+      setTotalPacientes(response.data.total);
     } catch (err) {
       console.error('Error al buscar pacientes:', err);
-      setError(err instanceof Error ? err.message : 'Error desconocido al buscar pacientes');
+      setError(errorHandler(err.response.data.detail));
       setPacientes([]);
       setTotalPacientes(0);
     } finally {
@@ -52,6 +59,8 @@ export const useBuscarPacientes = (): UseBuscarPacientesReturn => {
     buscarPacientes,
     pacientes,
     totalPacientes,
+    //order,
+    //sortBy,
     getTotalPages,
     isLoading,
     error,
@@ -59,4 +68,3 @@ export const useBuscarPacientes = (): UseBuscarPacientesReturn => {
 };
 
 export default useBuscarPacientes;
-

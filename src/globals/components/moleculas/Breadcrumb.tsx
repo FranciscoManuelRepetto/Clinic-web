@@ -43,7 +43,7 @@ export default function Breadcrumb({ items, t, className = "" }: BreadcrumbProps
                 href={item.href}
                 className="text-gris hover:text-secundario transition-colors"
               >
-                {item.label}
+                {item.label.toUpperCase()}
               </Link>
             ) : (
               <span 
@@ -54,7 +54,7 @@ export default function Breadcrumb({ items, t, className = "" }: BreadcrumbProps
                 }`}
                 aria-current={item.isActive ? "page" : undefined}
               >
-                {item.label}
+                {item.label.toUpperCase()}
               </span>
             )}
           </li>

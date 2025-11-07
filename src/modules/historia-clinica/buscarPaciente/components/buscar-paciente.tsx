@@ -3,12 +3,13 @@
 import { useState } from "react";
 import { useTranslations } from "@/globals/hooks/useTranslations";
 import { useVirtualKeyboard } from "@/globals/hooks/useVirtualKeyboard";
+import { useRouter } from 'next/navigation';
 import VirtualKeyboard from "@/globals/components/organismos/VirtualKeyboard";
 import PageHeader from "@/globals/components/organismos/PageHeader";
 import { useBuscarPacientes } from "@/modules/historia-clinica/hooks/useBuscarPacientes";
 import Subtitle from "@/globals/components/atomos/Subtitle";
 /*De tabla*/
-import StrippedTable from "@/globals/components/atomos/Table";
+import StripedTable from "@/globals/components/atomos/Table";
 import Paginator from "@/globals/components/moleculas/Paginator";
 
 interface FormData {
@@ -33,6 +34,7 @@ interface BuscarPacienteProps {
 }
 
 export default function BuscarPaciente({ t: propT, language: propLanguage, changeLanguage: propChangeLanguage }: BuscarPacienteProps) {
+  const router = useRouter();
   const { t: hookT, language: hookLanguage, changeLanguage: hookChangeLanguage } = useTranslations();
   // Usar props si están disponibles, sino usar hook
   const t = propT || hookT;
@@ -41,12 +43,14 @@ export default function BuscarPaciente({ t: propT, language: propLanguage, chang
   const [showFilters, setShowFilters] = useState(false);
   const [searched, setSearched] = useState<boolean>(false);
   const { buscarPacientes, pacientes, getTotalPages, isLoading, error } = useBuscarPacientes();
+  const [sort, setSort] = useState<string>("apellido");
+  const [order, setOrder] = useState<string>("asc");
   const [formData, setFormData] = useState<FormData>({
     nom_ap_dni: "",
     genero: "",
     anio_ingreso_desde: "",
     anio_ingreso_hasta: "",
-    limit: 10,
+    limit: 5,
     page: 1,
     order: "asc",
     sort: "apellido"
@@ -90,9 +94,12 @@ export default function BuscarPaciente({ t: propT, language: propLanguage, chang
     datos.order = "asc"; 
     datos.sort = "apellido";
     datos.page = 1;
+    setSort(datos.sort);
+    setOrder(datos.order);
     await buscarPacientes(datos);
     setFormData(datos);
     setSearched(true);
+    console.log(pacientes);
   };
 
   const handlePageChange = async (pagenum: number) => {
@@ -100,9 +107,20 @@ export default function BuscarPaciente({ t: propT, language: propLanguage, chang
     if(pagenum > totalPages || pagenum < 1)
       return;
     const datos = {...formData};
-    datos.order = "asc"; 
-    datos.sort = "apellido";
+    datos.order = order;
+    datos.sort = sort;
     datos.page = pagenum;
+    await buscarPacientes(datos);
+    setFormData(datos);
+  };
+
+  const handleSortChange = async (sort: string, order: string) => {
+    const datos = {...formData};
+    datos.page = 1; // Reiniciamos la pagina si cambia el sort y esta por ej en la pagina 2
+    datos.order = order;
+    datos.sort = sort;
+    setSort(datos.sort);
+    setOrder(datos.order);
     await buscarPacientes(datos);
     setFormData(datos);
   };
@@ -119,6 +137,62 @@ export default function BuscarPaciente({ t: propT, language: propLanguage, chang
       ⌨️
     </button>
   );
+
+  const tableContentConfig = [
+    {
+      columnName: "ID",
+      key: "id_usuario",
+      isId: true,
+      sorts: false,
+      draw: false
+    },
+    {
+      columnName: "DNI",
+      key: "dni",
+      isId: false,
+      sorts: false,
+      draw: true
+    },
+    {
+      columnName: "Apellido",
+      key: "apellido",
+      isId: false,
+      sorts: true,
+      draw: true
+    },
+    {
+      columnName: "Nombre",
+      key: "nombre",
+      isId: false,
+      sorts: true,
+      draw: true
+    },
+    {
+      columnName: "Genero",
+      key: "genero",
+      isId: false,
+      sorts: false,
+      draw: true
+    },
+    {
+      columnName: "Fecha de Ingreso",
+      key: "fecha_ingreso",
+      isId: false,
+      sorts: true,
+      formatFunction: (elem: any) => new Date(elem).toLocaleDateString('en-GB'),
+      draw: true,
+    },
+  ]
+
+  const tableSortConfig = {
+    currentSort: sort,
+    currentOrder: order,
+    sortHandler: handleSortChange
+  }
+
+  const rowClickAction = (row) => {
+        router.push(`/historia-clinica/${row.id_usuario}`); // Example: Navigate to a detail page for the item
+    };
 
   return (
     <>
@@ -184,50 +258,52 @@ export default function BuscarPaciente({ t: propT, language: propLanguage, chang
             <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4 border rounded-lg p-4">
               {/* Genero */}
               <fieldset>
-                <legend>{t("searchPatient.form.gender.label")}</legend>
-                <div>
-                  <input 
-                    onChange={handleInputChange} 
-                    type="radio"
-                    id="inputNoEspecificarGenero"
-                    name="genero"
-                    value=""
-                    checked={formData.genero === ''}
-                    />
-                  <label htmlFor="inputNoEspecificarGenero">Sin Especificar</label>
-                </div>
-                <div>
-                  <input 
-                    onChange={handleInputChange} 
-                    type="radio"
-                    id="inputMujer"
-                    name="genero"
-                    value="mujer"
-                    checked={formData.genero === 'mujer'}
-                    />
-                  <label htmlFor="inputMujer">Mujer</label>
-                </div>
-                <div>
-                  <input 
-                    onChange={handleInputChange} 
-                    type="radio"
-                    id="inputHombre"
-                    name="genero"
-                    value="hombre"
-                    checked={formData.genero === 'hombre'}
-                    />
-                  <label htmlFor="inputHombre">Hombre</label>
-                </div>
-                <div>
-                  <input 
-                    onChange={handleInputChange} 
-                    type="radio"
-                    id="inputOtro"
-                    name="genero"
-                    value="otro"
-                    checked={formData.genero === 'otro'}
-                    />
-                  <label htmlFor="inputOtro">Otro</label>
+                <legend className="block text-sm font-medium text-black">{t("searchPatient.form.gender.label")}</legend>
+                <div className="border rounded-lg p-3 mt-1 w-1/2">
+                  <div>
+                    <input 
+                      onChange={handleInputChange} 
+                      type="radio"
+                      id="inputNoEspecificarGenero"
+                      name="genero"
+                      value=""
+                      checked={formData.genero === ''}
+                      />
+                    <label htmlFor="inputNoEspecificarGenero">Sin Especificar</label>
+                  </div>
+                  <div>
+                    <input 
+                      onChange={handleInputChange} 
+                      type="radio"
+                      id="inputMujer"
+                      name="genero"
+                      value="mujer"
+                      checked={formData.genero === 'mujer'}
+                      />
+                    <label htmlFor="inputMujer">Mujer</label>
+                  </div>
+                  <div>
+                    <input 
+                      onChange={handleInputChange} 
+                      type="radio"
+                      id="inputHombre"
+                      name="genero"
+                      value="hombre"
+                      checked={formData.genero === 'hombre'}
+                      />
+                    <label htmlFor="inputHombre">Hombre</label>
+                  </div>
+                  <div>
+                    <input 
+                      onChange={handleInputChange} 
+                      type="radio"
+                      id="inputOtro"
+                      name="genero"
+                      value="otro"
+                      checked={formData.genero === 'otro'}
+                      />
+                    <label htmlFor="inputOtro">Otro</label>
+                  </div>
                 </div>
               </fieldset>
 
@@ -349,14 +425,12 @@ export default function BuscarPaciente({ t: propT, language: propLanguage, chang
           {!isLoading && !error && searched && pacientes.length > 0 ? 
             <div className="flex flex-col">
             <Subtitle subtitle="Resultados"/>
-            <StrippedTable
-              columnNames={["DNI", "Apellido", "Nombre", "Genero", "Fecha de Ingreso"]}
-              keys={["dni", "apellido", "nombre", "genero", "fecha_ingreso"]}
-              dateKeys={["fecha_ingreso"]}
+            <StripedTable
               data={pacientes}
               className="mb-5 mt-2"
-              idKey="id_usuario"
-              sortKeys={["nombre", "apellido", "fecha_ingreso"]}
+              contentConfig={tableContentConfig}
+              sortConfig={tableSortConfig}
+              rowAction={rowClickAction}
             />
             <Paginator 
               totalPages={getTotalPages(formData.limit)}

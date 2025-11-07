@@ -1,6 +1,12 @@
 import SmallButton from "../atomos/SmallButton";
 
-export default function Paginator({currentPage, totalPages, pageClickHandler}: {currentPage: number, totalPages: number}) {
+interface PaginatorProps {
+    currentPage: number;
+    totalPages: number;
+    pageClickHandler: (page: number) => void | Promise<void>;
+}
+
+export default function Paginator({currentPage, totalPages, pageClickHandler}: PaginatorProps) {
     return (
         <div className="flex flex-row justify-center">
         {totalPages !== 1 &&

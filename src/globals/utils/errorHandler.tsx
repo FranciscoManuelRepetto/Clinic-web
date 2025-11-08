@@ -1,4 +1,3 @@
-//FRAN!! No se si esto va aca o no se considera servicio, porfi reorganizalo si esta mal
 import translate from "./translation";
 
 export default function errorHandler(errorDetail: string) {

@@ -2,8 +2,7 @@ import { useState } from 'react';
 import axios from 'axios';
 import { Paciente } from '../types/Paciente';
 import { BUSCAR_PACIENTES_ENDPOINT, BuscarPacientesParams } from '../services/buscarPacientesEndpoint';
-import { error } from 'console';
-import errorHandler from '@/globals/services/errorHandler';
+import errorHandler from '@/globals/utils/errorHandler';
 
 export interface UseBuscarPacientesReturn {
   buscarPacientes: (params: BuscarPacientesParams) => Promise<void>;
@@ -36,12 +35,18 @@ export const useBuscarPacientes = (): UseBuscarPacientesReturn => {
         url: BUSCAR_PACIENTES_ENDPOINT.URL(params),
       });
 
-      const pacientesData: Paciente[] = response.data.pacientes;
+      // El backend devuelve un objeto con: { pacientes: [...], total: number, limit: number }
+      const { pacientes: pacientesData, total } = response.data;
+      
       setPacientes(pacientesData);
-      setTotalPacientes(response.data.total);
+      setTotalPacientes(total);
     } catch (err) {
       console.error('Error al buscar pacientes:', err);
-      setError(errorHandler(err.response.data.detail));
+      if (axios.isAxiosError(err) && err.response?.data?.detail) {
+        setError(errorHandler(err.response.data.detail));
+      } else {
+        setError(err instanceof Error ? err.message : 'Error desconocido al buscar pacientes');
+      }
       setPacientes([]);
       setTotalPacientes(0);
     } finally {

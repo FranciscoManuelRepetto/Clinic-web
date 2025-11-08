@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation';
 import VirtualKeyboard from "@/globals/components/organismos/VirtualKeyboard";
 import PageHeader from "@/globals/components/organismos/PageHeader";
 import { useBuscarPacientes } from "@/modules/historia-clinica/hooks/useBuscarPacientes";
+import { Paciente } from "@/modules/historia-clinica/types/Paciente";
 import Subtitle from "@/globals/components/atomos/Subtitle";
 /*De tabla*/
 import StripedTable from "@/globals/components/atomos/Table";
@@ -99,7 +100,6 @@ export default function BuscarPaciente({ t: propT, language: propLanguage, chang
     await buscarPacientes(datos);
     setFormData(datos);
     setSearched(true);
-    console.log(pacientes);
   };
 
   const handlePageChange = async (pagenum: number) => {
@@ -190,9 +190,9 @@ export default function BuscarPaciente({ t: propT, language: propLanguage, chang
     sortHandler: handleSortChange
   }
 
-  const rowClickAction = (row) => {
-        router.push(`/historia-clinica/${row.id_usuario}`); // Example: Navigate to a detail page for the item
-    };
+  const rowClickAction = (row: Paciente) => {
+    router.push(`/historia-clinica/${row.id_usuario}`);
+  };
 
   return (
     <>

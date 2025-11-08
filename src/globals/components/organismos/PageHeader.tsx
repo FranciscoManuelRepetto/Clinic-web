@@ -14,7 +14,7 @@ export default function PageHeader({title, description, breadCrumbConf}: PageHea
    let t = breadCrumbConf.t;
    let className = breadCrumbConf.className;
   return (
-    <section className="border-b-1 border-manzana m-6">
+    <section className="border-b-1 border-manzana my-6">
       {breadCrumbConf && <Breadcrumb 
         items={items}
         t={t}

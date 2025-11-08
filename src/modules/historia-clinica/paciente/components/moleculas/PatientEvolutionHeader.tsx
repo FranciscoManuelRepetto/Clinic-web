@@ -1,0 +1,40 @@
+"use client";
+
+import { Plus, ChevronUp } from "lucide-react";
+
+interface Props {
+  title?: string;
+  leftLabel?: string;
+  rightLabel?: string;
+  onCreate?: () => void;
+  onRightClick?: () => void;
+}
+
+export default function PatientEvolutionHeader({
+  title = 'Evolución del Paciente',
+  leftLabel = 'Crear Evolución',
+  rightLabel = 'Más recientes',
+  onCreate,
+  onRightClick,
+}: Props) {
+  return (
+    <section className="mt-6">
+      <h3 className="text-3xl font-semibold text-[var(--color-manzana)] mb-3">{title}</h3>
+
+      <div className="flex items-center justify-between">
+        <button
+          onClick={onCreate}
+          className="inline-flex items-center gap-3 bg-[var(--color-manzana)] text-black px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)] hover:bg-[var(--color-primary)] hover:text-white transition-colors duration-150"
+        >
+          <span>{leftLabel}</span>
+          <Plus className="w-4 h-4" />
+        </button>
+
+        <button onClick={onRightClick} className="inline-flex items-center gap-2 text-gray-800 hover:text-black focus:outline-none">
+          <span className="mr-1">{rightLabel}</span>
+          <ChevronUp className="w-5 h-5" />
+        </button>
+      </div>
+    </section>
+  );
+}

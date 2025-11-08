@@ -8,6 +8,7 @@ import Home from "@/modules/home/homeLoggout/components/Home";
 import HomeLogin from "@/modules/home/homeLogin/components/HomeLogin";
 import RegistrarPaciente from "@/modules/historia-clinica/registrarPaciente/components/registrar-paciente";
 import BuscarPaciente from "@/modules/historia-clinica/buscarPaciente/components/buscar-paciente";
+import HistoriaClinicaPaciente from "@/modules/historia-clinica/paciente/components/historia-clinica-paciente";
 import Header from "@/globals/components/organismos/Header";
 import Sidebar from "@/globals/components/organismos/Sidebar";
 import HeaderNotLogger from "@/globals/components/organismos/HeaderNotLogger";
@@ -78,6 +79,7 @@ export default function App() {
   const routes = {
     '/': <HomeLogin />,
     '/home': <HomeLogin />,
+  '/paciente': <HistoriaClinicaPaciente t={t} />,
     '/registrar-paciente': <RegistrarPaciente t={t} language={language} changeLanguage={changeLanguage} />,
     '/buscar-paciente': <BuscarPaciente t={t} language={language} changeLanguage={changeLanguage} />,
   };

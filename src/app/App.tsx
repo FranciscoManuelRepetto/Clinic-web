@@ -6,11 +6,13 @@ import { useTranslations } from "@/globals/hooks/useTranslations";
 import Login from "@/modules/auth/components/Login";
 import Home from "@/modules/home/homeLoggout/components/Home";
 import HomeLogin from "@/modules/home/homeLogin/components/HomeLogin";
+import HistoriaClinica from "@/modules/historia-clinica/historia-clinica";
 import RegistrarPaciente from "@/modules/historia-clinica/registrarPaciente/components/registrar-paciente";
 import BuscarPaciente from "@/modules/historia-clinica/buscarPaciente/components/buscar-paciente";
 import Header from "@/globals/components/organismos/Header";
 import Sidebar from "@/globals/components/organismos/Sidebar";
 import HeaderNotLogger from "@/globals/components/organismos/HeaderNotLogger";
+import Medicamentos from "@/modules/medicamentos/medicamentos";
 
 export default function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -78,8 +80,10 @@ export default function App() {
   const routes = {
     '/': <HomeLogin />,
     '/home': <HomeLogin />,
+    '/historia-clinica': <HistoriaClinica />,
     '/registrar-paciente': <RegistrarPaciente t={t} language={language} changeLanguage={changeLanguage} />,
     '/buscar-paciente': <BuscarPaciente t={t} language={language} changeLanguage={changeLanguage} />,
+    '/medicamentos': <Medicamentos />
   };
 
   return (

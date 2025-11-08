@@ -205,7 +205,7 @@ export default function BuscarPaciente({ t: propT, language: propLanguage, chang
             breadCrumbConf={
               {
                 items:[
-                  { label: t("navbar.menus.historiaClinica") },
+                  { label: t("navbar.menus.historiaClinica"), href: "/historia-clinica" },
                   { label: t("searchPatient.title"), isActive: true }
                 ],
                 t: t

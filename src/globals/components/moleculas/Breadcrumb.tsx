@@ -74,7 +74,7 @@ const handleItemClick = (e:React.MouseEvent, href:string) => {
                 }`}
                 aria-current={item.isActive ? "page" : undefined}
               >
-                {item.label}
+                {item.label.toUpperCase()}
               </span>
             )}
           </li>

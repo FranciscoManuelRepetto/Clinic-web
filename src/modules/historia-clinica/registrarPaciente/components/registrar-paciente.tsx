@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useTranslations } from "@/globals/hooks/useTranslations";
+import { useVirtualKeyboard } from "@/globals/hooks/useVirtualKeyboard";
 import VirtualKeyboard from "@/globals/components/organismos/VirtualKeyboard";
 import PageHeader from "@/globals/components/organismos/PageHeader";
 
@@ -59,11 +60,9 @@ export default function RegistrarPaciente({ t: propT, language: propLanguage, ch
   
   const [showModal, setShowModal] = useState(false);
   const [focusedFields, setFocusedFields] = useState<Set<string>>(new Set());
-  const [showVirtualKeyboard, setShowVirtualKeyboard] = useState(false);
-  const [activeInput, setActiveInput] = useState<string | null>(null);
-  const [isUpperCase, setIsUpperCase] = useState(false); // Agregar este estado al inicio del componente
+  const [isUpperCase, setIsUpperCase] = useState(false);
   const [isGenderExpanded, setIsGenderExpanded] = useState(false);
-  const [validationErrors, setValidationErrors] = useState<string[]>([]); // Agregar este estado para manejar los mensajes de error
+  const [validationErrors, setValidationErrors] = useState<string[]>([]);
   const [notification, setNotification] = useState<{
     show: boolean;
     message: string;
@@ -72,10 +71,21 @@ export default function RegistrarPaciente({ t: propT, language: propLanguage, ch
     show: false,
     message: '',
     type: 'error'
-  }); // Agregar este estado para la notificación
+  });
 
-  // Agregar esta constante al inicio del componente
   const numericFields = ['dni', 'nroSocio', 'telefono', 'numero', 'piso'];
+
+  // 👉 Hook del teclado virtual
+  const {
+    showVirtualKeyboard,
+    setShowVirtualKeyboard,
+    activeInput,
+    setActiveInput,
+    insertText,
+    deleteText,
+    clearField,
+    openKeyboardForField,
+  } = useVirtualKeyboard({ formData, setFormData });
 
 
   // Función para manejar el focus en los inputs
@@ -96,35 +106,6 @@ export default function RegistrarPaciente({ t: propT, language: propLanguage, ch
     }, 1000);
   };
 
-  // Función para insertar texto desde el teclado virtual
-  const insertText = (text: string) => {
-    if (activeInput) {
-      setFormData(prev => ({
-        ...prev,
-        [activeInput]: prev[activeInput as keyof FormData] + text
-      }));
-    }
-  };
-
-  // Función para borrar texto
-  const deleteText = () => {
-    if (activeInput) {
-      setFormData(prev => ({
-        ...prev,
-        [activeInput]: (prev[activeInput as keyof FormData] as string).slice(0, -1)
-      }));
-    }
-  };
-
-  // Función para limpiar el campo
-  const clearField = () => {
-    if (activeInput) {
-      setFormData(prev => ({
-        ...prev,
-        [activeInput]: ""
-      }));
-    }
-  };
 
   // Función para navegación por teclado
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -175,11 +156,6 @@ export default function RegistrarPaciente({ t: propT, language: propLanguage, ch
     }
   };
 
-  // Función para abrir teclado virtual para un campo específico
-  const openKeyboardForField = (fieldName: string) => {
-    setActiveInput(fieldName);
-    setShowVirtualKeyboard(true);
-  };
 
   // Componente de ícono de teclado
   const KeyboardIcon = ({ fieldName }: { fieldName: string }) => (
@@ -317,7 +293,7 @@ export default function RegistrarPaciente({ t: propT, language: propLanguage, ch
             breadCrumbConf={
               {
                 items:[
-                  { label: t("navbar.menus.historiaClinica") },
+                  { label: t("navbar.menus.historiaClinica"), href: "/historia-clinica" },
                   { label: t("registerPatient.title"), isActive: true }
                 ],
                 t: t

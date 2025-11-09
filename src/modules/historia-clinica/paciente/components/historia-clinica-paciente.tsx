@@ -7,6 +7,7 @@ import PatientEvolutionHeader from "./moleculas/PatientEvolutionHeader";
 import MultiaxialCard from "./organismos/MultiaxialCard";
 import EvolucionCard from "./organismos/EvolucionCard";
 import CorreccionCard from "./organismos/CorreccionCard";
+import SOTCard from "./organismos/SOTCard";
 import RecetaCard from "./organismos/RecetaCard";
 
 interface Props {
@@ -62,6 +63,24 @@ export default function HistoriaClinicaPaciente({ t: propT }: Props) {
 
   const correccionMarkerName = 'Administradora Lucía Mendoza';
 
+  const sotApi = {
+    motivo: 'El paciente realizó una llamada ya que tenía miedo de la oscuridad.',
+    dni_profesional: '27.654.321',
+    fecha: '2025-11-09',
+    hora: '21:14:02.691Z',
+    observacion: 'Paciente refiere mejoría parcial en el sueño y disminución de la ansiedad en situaciones sociales.',
+    id_sot: 42,
+    creado_por: 555,
+    fecha_creacion: '2025-11-09T21:14:02.691Z',
+    dni_paciente: '12.345.678',
+    motivo_modificado: 'Se corrigió un dato de horario mal cargado.',
+    modificado_por: 789,
+    fecha_modificacion: '2025-11-09T22:00:00.000Z',
+    modificado: true,
+  };
+
+  const sotProfessionalName = 'Enfermero/a Marta Gómez';
+
   return (
     <main className="flex-1 p-6">
       <div className="max-w-4xl mx-auto px-6 py-3">
@@ -86,6 +105,9 @@ export default function HistoriaClinicaPaciente({ t: propT }: Props) {
   <EvolucionCard data={evolucionApi} creatorName={evolucionCreatorName} />
 
   <CorreccionCard data={evolucionApi} markerName={correccionMarkerName} creatorName={evolucionCreatorName} />
+
+  {/* SOT card (comes from SOT API). If modified, the SOTCard will render a CorreccionCard derived from the SOT data. */}
+  <SOTCard data={sotApi} professionalName={sotProfessionalName} creatorName={sotProfessionalName} />
 
   <RecetaCard />
       </div>

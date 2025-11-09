@@ -27,6 +27,7 @@ export default function RootLayout() {
     <html lang="es">
       <body className={`${atkinson.variable} font-sans antialiased`}>
       <App />
+      <div id="modal-root"></div>
       </body>
     </html>
   );

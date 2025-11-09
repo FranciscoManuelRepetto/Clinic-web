@@ -268,7 +268,7 @@ export default function BuscarMedicamento({ t: propT, language: propLanguage, ch
                 onChange={handleInputChange}
                 placeholder="Ingrese nombre comercial o genérico"
                 className="flex-1 border rounded-l-lg px-3 py-2 text-gray-900 
-                           placeholder-gray-700 focus:outline-none 
+                          focus:outline-none 
                            focus:ring-2 focus:ring-accent"
               />
               <KeyboardIcon fieldName="nomCom_NomGene" />
@@ -300,7 +300,7 @@ export default function BuscarMedicamento({ t: propT, language: propLanguage, ch
                     value={formData.laboratorio_titular}
                     onChange={handleInputChange}
                     placeholder="CELNOVA ARGENTINA S.A."
-                    className="w-full border rounded-lg px-3 py-2 placeholder-gray-700"
+                    className="w-full border rounded-lg px-3 py-2"
                   />
                   <KeyboardIcon fieldName="laboratorio_titular" />
                 </div>
@@ -317,7 +317,7 @@ export default function BuscarMedicamento({ t: propT, language: propLanguage, ch
                     value={formData.concentracion}
                     onChange={handleInputChange}
                     placeholder="250 MG"
-                    className="w-full border rounded-lg px-3 py-2 placeholder-gray-700"
+                    className="w-full border rounded-lg px-3 py-2"
                   />
                   <KeyboardIcon fieldName="concentracion" />
                 </div>
@@ -342,7 +342,7 @@ export default function BuscarMedicamento({ t: propT, language: propLanguage, ch
                     value={formData.presentacion}
                     onChange={handleInputChange}
                     placeholder="30 COMPRIMIDOS RECUBIERTOS"
-                    className="w-full border rounded-lg px-3 py-2 placeholder-gray-700"
+                    className="w-full border rounded-lg px-3 py-2"
                   />
                   <KeyboardIcon fieldName="presentacion" />
                 </div>

@@ -46,7 +46,7 @@ export default function Header({
         <NavButton
           menuKey="medicamentos"
           items={[
-            { href: "#", text: t("navbar.submenus.medicamentos.inventario") },
+            { href: "/buscar-medicamentos", text: t("navbar.submenus.medicamentos.inventario") },
             { href: "#", text: t("navbar.submenus.medicamentos.recetas") },
           ]}
         />

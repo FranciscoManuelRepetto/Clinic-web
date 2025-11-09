@@ -293,7 +293,7 @@ export default function RegistrarPaciente({ t: propT, language: propLanguage, ch
             breadCrumbConf={
               {
                 items:[
-                  { label: t("navbar.menus.historiaClinica") },
+                  { label: t("navbar.menus.historiaClinica"), href: "/historia-clinica" },
                   { label: t("registerPatient.title"), isActive: true }
                 ],
                 t: t

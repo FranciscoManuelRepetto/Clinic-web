@@ -6,36 +6,34 @@ import { useVirtualKeyboard } from "@/globals/hooks/useVirtualKeyboard";
 import { useRouter } from 'next/navigation';
 import VirtualKeyboard from "@/globals/components/organismos/VirtualKeyboard";
 import PageHeader from "@/globals/components/organismos/PageHeader";
-import { useBuscarPacientes } from "@/modules/historia-clinica/hooks/useBuscarPacientes";
-import { Paciente } from "@/modules/historia-clinica/types/Paciente";
-import Subtitle from "@/globals/components/atomos/Subtitle";
+import { useBuscarMedicamentos } from "@/modules/medicamentos/hooks/useBuscarMedicamentos";
+import { Medicamento } from "@/modules/medicamentos/types/Medicamento";
 import RadioField from "@/globals/components/atomos/RadioField";
+import { buildFormaFarmaceuticaOptions } from "@/modules/medicamentos/const/const";
+import Subtitle from "@/globals/components/atomos/Subtitle";
 /*De tabla*/
 import StripedTable from "@/globals/components/atomos/Table";
 import Paginator from "@/globals/components/moleculas/Paginator";
 
 interface FormData {
-  nom_ap_dni: string;
-  genero: string;
-  anio_ingreso_desde: string;
-  anio_ingreso_hasta: string;
+  nomCom_NomGene: string;
+  laboratorio_titular: string;
+  concentracion: string;
+  forma_farmaceutica: string;
+  presentacion: string;
   limit: number;
   page: number;
   order: string;
   sort: string;
-  /* Estos se comentan porque la API no los procesa todavia */
-  /*diagnostico: string;
-  profesional: string;
-  medicacion: string;*/
 }
 
-interface BuscarPacienteProps {
+interface BuscarMedicamentoProps {
   t?: (key: string) => string;
   language?: string;
   changeLanguage?: (lang: 'es' | 'en') => void;
 }
 
-export default function BuscarPaciente({ t: propT, language: propLanguage, changeLanguage: propChangeLanguage }: BuscarPacienteProps) {
+export default function BuscarMedicamento({ t: propT, language: propLanguage, changeLanguage: propChangeLanguage }: BuscarMedicamentoProps) {
   const router = useRouter();
   const { t: hookT, language: hookLanguage, changeLanguage: hookChangeLanguage } = useTranslations();
   // Usar props si están disponibles, sino usar hook
@@ -44,18 +42,19 @@ export default function BuscarPaciente({ t: propT, language: propLanguage, chang
   const changeLanguage = propChangeLanguage || hookChangeLanguage;
   const [showFilters, setShowFilters] = useState(false);
   const [searched, setSearched] = useState<boolean>(false);
-  const { buscarPacientes, pacientes, getTotalPages, isLoading, error } = useBuscarPacientes();
-  const [sort, setSort] = useState<string>("apellido");
+  const { buscarMedicamentos, medicamentos, getTotalPages, isLoading, error } = useBuscarMedicamentos();
+  const [sort, setSort] = useState<string>("nombre_comercial");
   const [order, setOrder] = useState<string>("asc");
   const [formData, setFormData] = useState<FormData>({
-    nom_ap_dni: "",
-    genero: "",
-    anio_ingreso_desde: "",
-    anio_ingreso_hasta: "",
-    limit: 5,
+    nomCom_NomGene: "",
+    laboratorio_titular: "",
+    concentracion: "",
+    forma_farmaceutica: "",
+    presentacion: "",
+    limit: 10,
     page: 1,
     order: "asc",
-    sort: "apellido"
+    sort: "nombre_comercial"
 
     /*
     diagnostico: "",
@@ -64,21 +63,19 @@ export default function BuscarPaciente({ t: propT, language: propLanguage, chang
     */
   });
 
-  const numericFields = ["anio_ingreso_desde", "anio_ingreso_hasta"];
-  const handleGeneroChange = (value: string) => {
+  const numericFields: string[] = [];
+
+  const handleFormaFarmaceuticaChange = (value: string) => {
     setFormData((prev) => ({
       ...prev,
-      genero: value,
+      forma_farmaceutica: value,
     }));
   };
 
-  const generoOptions = [
-    { id: "inputNoEspecificarGenero", label: "Sin Especificar", value: "" },
-    { id: "inputMujer", label: "Mujer", value: "mujer" },
-    { id: "inputHombre", label: "Hombre", value: "hombre" },
-    { id: "inputOtro", label: "Otro", value: "otro" },
-  ];
-
+  const formaFarmaceuticaOptions = buildFormaFarmaceuticaOptions({
+    selectedValue: formData.forma_farmaceutica,
+    onChange: handleFormaFarmaceuticaChange,
+  });
 
   // 👉 Hook del teclado virtual
   const {
@@ -106,37 +103,37 @@ export default function BuscarPaciente({ t: propT, language: propLanguage, chang
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const datos = {...formData};
-    datos.order = "asc"; 
-    datos.sort = "apellido";
+    const datos = { ...formData };
+    datos.order = "asc";
+    datos.sort = "nombre_comercial";
     datos.page = 1;
     setSort(datos.sort);
     setOrder(datos.order);
-    await buscarPacientes(datos);
+    await buscarMedicamentos(datos);
     setFormData(datos);
     setSearched(true);
   };
 
   const handlePageChange = async (pagenum: number) => {
     const totalPages = getTotalPages(formData.limit);
-    if(pagenum > totalPages || pagenum < 1)
+    if (pagenum > totalPages || pagenum < 1)
       return;
-    const datos = {...formData};
+    const datos = { ...formData };
     datos.order = order;
     datos.sort = sort;
     datos.page = pagenum;
-    await buscarPacientes(datos);
+    await buscarMedicamentos(datos);
     setFormData(datos);
   };
 
   const handleSortChange = async (sort: string, order: string) => {
-    const datos = {...formData};
+    const datos = { ...formData };
     datos.page = 1; // Reiniciamos la pagina si cambia el sort y esta por ej en la pagina 2
     datos.order = order;
     datos.sort = sort;
     setSort(datos.sort);
     setOrder(datos.order);
-    await buscarPacientes(datos);
+    await buscarMedicamentos(datos);
     setFormData(datos);
   };
 
@@ -156,45 +153,66 @@ export default function BuscarPaciente({ t: propT, language: propLanguage, chang
   const tableContentConfig = [
     {
       columnName: "ID",
-      key: "id_usuario",
+      key: "id_medicamento",
       isId: true,
       sorts: false,
       draw: false
     },
     {
-      columnName: "DNI",
-      key: "dni",
+      columnName: "Nombre Comercial",
+      key: "nombre_comercial",
+      isId: false,
+      sorts: true,
+      draw: true
+    },
+    {
+      columnName: "Nombre Genérico",
+      key: "nombre_generico",
+      isId: false,
+      sorts: true,
+      draw: true
+    },
+    {
+      columnName: "Laboratorio",
+      key: "laboratorio_titular",
+      isId: false,
+      sorts: true,
+      draw: true
+    },
+    {
+      columnName: "Concentración",
+      key: "concentracion",
+      isId: false,
+      sorts: true,
+      draw: true,
+    },
+    {
+      columnName: "Forma Farmacéutica",
+      key: "forma_farmaceutica",
       isId: false,
       sorts: false,
       draw: true
     },
     {
-      columnName: "Apellido",
-      key: "apellido",
-      isId: false,
-      sorts: true,
-      draw: true
-    },
-    {
-      columnName: "Nombre",
-      key: "nombre",
-      isId: false,
-      sorts: true,
-      draw: true
-    },
-    {
-      columnName: "Genero",
-      key: "genero",
+      columnName: "Presentación",
+      key: "presentacion",
       isId: false,
       sorts: false,
       draw: true
     },
     {
-      columnName: "Fecha de Ingreso",
-      key: "fecha_ingreso",
+      columnName: "Stock",
+      key: "stock",
       isId: false,
       sorts: true,
-      formatFunction: (elem: any) => new Date(elem).toLocaleDateString('en-GB'),
+      draw: true
+    },
+    {
+      columnName: "Fecha de creación",
+      key: "fecha_creacion",
+      isId: false,
+      sorts: true,
+      formatFunction: (elem: string) => new Date(elem).toLocaleDateString('es-AR'),
       draw: true,
     },
   ]
@@ -205,28 +223,28 @@ export default function BuscarPaciente({ t: propT, language: propLanguage, chang
     sortHandler: handleSortChange
   }
 
-  const rowClickAction = (row: Paciente) => {
-    router.push(`/historia-clinica/${row.id_usuario}`);
+  const rowClickAction = (row: Medicamento) => {
+    router.push(`/medicamentos/${row.id_medicamento}`);
   };
 
   return (
     <>
       {/* Contenido principal */}
       <div className="max-w-4xl mx-auto px-6 py-3">
-          {/* Header */}
-          <PageHeader
-            title={t("searchPatient.title")}
-            description={t("searchPatient.description")}
-            breadCrumbConf={
-              {
-                items:[
-                  { label: t("navbar.menus.historiaClinica") },
-                  { label: t("searchPatient.title"), isActive: true }
-                ],
-                t: t
-              }
+        {/* Header */}
+        <PageHeader
+          title="Buscar Medicamento"
+          description="Busque y seleccione un medicamento para acceder a sus datos"
+          breadCrumbConf={
+            {
+              items: [
+                { label: "MEDICAMENTOS" },
+                { label: "INVENTARIO", isActive: true }
+              ],
+              t: t
             }
-          />
+          }
+        />
 
         <form
           id="formulario-busqueda"
@@ -236,24 +254,24 @@ export default function BuscarPaciente({ t: propT, language: propLanguage, chang
           {/* Campo principal */}
           <div>
             <label
-              htmlFor="paciente"
+              htmlFor="medicamento"
               className="block text-sm font-medium text-gray-700"
             >
-              {t("searchPatient.form.patient")}
+              Medicamento
             </label>
             <div className="mt-1 flex">
               <input
-                id="paciente"
-                name="nom_ap_dni"
+                id="medicamento"
+                name="nomCom_NomGene"
                 type="text"
-                value={formData.nom_ap_dni}
+                value={formData.nomCom_NomGene}
                 onChange={handleInputChange}
-                placeholder={t("searchPatient.form.placeholders.search")}
+                placeholder="Ingrese nombre comercial o genérico"
                 className="flex-1 border rounded-l-lg px-3 py-2 text-gray-900 
                            placeholder-gray-700 focus:outline-none 
                            focus:ring-2 focus:ring-accent"
               />
-              <KeyboardIcon fieldName="nom_ap_dni" />     
+              <KeyboardIcon fieldName="nomCom_NomGene" />
             </div>
           </div>
 
@@ -264,108 +282,71 @@ export default function BuscarPaciente({ t: propT, language: propLanguage, chang
             className="mt-4 text-green-700 underline text-sm"
           >
             {showFilters
-              ? t("searchPatient.form.hideFilters")
-              : t("searchPatient.form.advancedFilters")}
+              ? "Ocultar filtros avanzados"
+              : "Filtros avanzados"}
           </button>
 
           {/* Filtros */}
           {showFilters && (
             <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4 border rounded-lg p-4">
-              {/* Genero */}
-              <RadioField
-                legend={t("searchPatient.form.gender.label")}
-                name="genero"
-                options={generoOptions}
-                selectedValue={formData.genero}
-                onChange={handleGeneroChange}
-                className="w-1/2"
-              />
-
-              {/* Año ingreso */}
               <div>
                 <label className="block text-sm font-medium text-black">
-                  {t("searchPatient.form.yearOfAdmission")}
+                  Laboratorio titular
                 </label>
                 <div className="flex space-x-2 mt-1">
                   <input
                     type="text"
-                    name="anio_ingreso_desde"
-                    value={formData.anio_ingreso_desde}
+                    name="laboratorio_titular"
+                    value={formData.laboratorio_titular}
                     onChange={handleInputChange}
-                    placeholder={t("searchPatient.form.placeholders.yearFrom")}
-                    className="w-1/2 border rounded-lg px-3 py-2 placeholder-gray-700"
+                    placeholder="CELNOVA ARGENTINA S.A."
+                    className="w-full border rounded-lg px-3 py-2 placeholder-gray-700"
                   />
-                  <KeyboardIcon fieldName="anio_ingreso_desde" />
-                  <span className="inline-flex items-center text-4xl"> - </span>
-                  <input
-                    type="text"
-                    name="anio_ingreso_hasta"
-                    value={formData.anio_ingreso_hasta}
-                    onChange={handleInputChange}
-                    placeholder={t("searchPatient.form.placeholders.yearTo")}
-                    className="w-1/2 border rounded-lg px-3 py-2 placeholder-gray-700"
-                  />
-                  <KeyboardIcon fieldName="anio_ingreso_hasta" />
+                  <KeyboardIcon fieldName="laboratorio_titular" />
                 </div>
               </div>
 
-              {/* Diagnóstico 
               <div>
                 <label className="block text-sm font-medium text-black">
-                  {t("searchPatient.form.diagnosis")}
+                  Concentración
                 </label>
-                <div className="flex">
+                <div className="flex space-x-2 mt-1">
                   <input
                     type="text"
-                    name="diagnostico"
-                    value={formData.diagnostico}
+                    name="concentracion"
+                    value={formData.concentracion}
                     onChange={handleInputChange}
-                    placeholder={t("searchPatient.form.placeholders.diagnosis")}
-                    className="mt-1 w-full border rounded-lg px-3 py-2 placeholder-gray-700"
+                    placeholder="250 MG"
+                    className="w-full border rounded-lg px-3 py-2 placeholder-gray-700"
                   />
-                  <KeyboardIcon fieldName="diagnostico" />
+                  <KeyboardIcon fieldName="concentracion" />
                 </div>
               </div>
-              */}
-              {/* Profesional 
+
+              <RadioField
+                legend="Forma farmacéutica"
+                name="forma_farmaceutica"
+                options={formaFarmaceuticaOptions}
+                selectedValue={formData.forma_farmaceutica}
+                onChange={handleFormaFarmaceuticaChange}
+              />
+
               <div>
                 <label className="block text-sm font-medium text-black">
-                  {t("searchPatient.form.professional")}
+                  Presentación
                 </label>
-                <div className="flex">
+                <div className="flex space-x-2 mt-1">
                   <input
                     type="text"
-                    name="profesional"
-                    value={formData.profesional}
+                    name="presentacion"
+                    value={formData.presentacion}
                     onChange={handleInputChange}
-                    placeholder={t(
-                      "searchPatient.form.placeholders.professional"
-                    )}
-                    className="mt-1 w-full border rounded-lg px-3 py-2 placeholder-gray-700"
+                    placeholder="30 COMPRIMIDOS RECUBIERTOS"
+                    className="w-full border rounded-lg px-3 py-2 placeholder-gray-700"
                   />
-                  <KeyboardIcon fieldName="profesional" />
+                  <KeyboardIcon fieldName="presentacion" />
                 </div>
               </div>
-                */}
-              {/* Medicación 
-              <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-black">
-                  {t("searchPatient.form.medication")}
-                </label>
-                <div className="flex">
-                  <input
-                    type="text"
-                    name="medicacion"
-                    value={formData.medicacion}
-                    onChange={handleInputChange}
-                    placeholder={t(
-                      "searchPatient.form.placeholders.medication"
-                    )}
-                    className="mt-1 w-full border rounded-lg px-3 py-2 placeholder-gray-700"
-                  />
-                  <KeyboardIcon fieldName="medicacion" />
-                </div>
-              </div>*/}
             </div>
           )}
 
@@ -378,7 +359,7 @@ export default function BuscarPaciente({ t: propT, language: propLanguage, chang
                      transition-all duration-200 focus-visible:outline focus-visible:outline-2 
                      focus-visible:outline-gray-600"
             >
-              {t("common.back", )}
+              {t("common.back",)}
             </button>
             <button
               className="px-6 py-2 rounded-lg flex items-center transition-all duration-200 
@@ -386,9 +367,9 @@ export default function BuscarPaciente({ t: propT, language: propLanguage, chang
                      focus-visible:outline focus-visible:outline-2 
                      focus-visible:outline-[#5fa6b4]"
             >
-              {t("searchPatient.form.searchButton")} 
+              {t("searchPatient.form.searchButton")}
               <svg className="ml-2 w-6 h-6" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M21 21L16.514 16.506L21 21ZM19 10.5C19 15.194 15.194 19 10.5 19C5.806 19 2 15.194 2 10.5C2 5.806 5.806 2 10.5 2C15.194 2 19 5.806 19 10.5Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M21 21L16.514 16.506L21 21ZM19 10.5C19 15.194 15.194 19 10.5 19C5.806 19 2 15.194 2 10.5C2 5.806 5.806 2 10.5 2C15.194 2 19 5.806 19 10.5Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </button>
           </div>
@@ -396,28 +377,29 @@ export default function BuscarPaciente({ t: propT, language: propLanguage, chang
         <div className="my-5 mx-2">
           {isLoading && <p>Cargando...</p>}
           {error && <p className="text-red-500">Error: {error}</p>}
-          {!isLoading && !error && searched && pacientes.length > 0 ? 
-            <div className="flex flex-col">
-            <Subtitle subtitle="Resultados"/>
-            <StripedTable
-              data={pacientes}
-              className="mb-5 mt-2"
-              contentConfig={tableContentConfig}
-              sortConfig={tableSortConfig}
-              rowAction={rowClickAction}
-            />
-            <Paginator 
-              totalPages={getTotalPages(formData.limit)}
-              currentPage={formData.page}
-              pageClickHandler={handlePageChange}
-            />
-          </div>
-          : searched && !isLoading && !error && pacientes.length === 0 && (
-            <p>Su consulta no produjo resultados.</p>
-          )
-          }
+
         </div>
       </div>
+      {!isLoading && !error && searched && medicamentos.length > 0 ?
+        <div className="flex flex-col  max-w-4xl mx-auto items-center mb-12">
+          <Subtitle subtitle="Resultados" />
+          <StripedTable
+            data={medicamentos}
+            className="mb-5 mt-2"
+            contentConfig={tableContentConfig}
+            sortConfig={tableSortConfig}
+            rowAction={rowClickAction}
+          />
+          <Paginator
+            totalPages={getTotalPages(formData.limit)}
+            currentPage={formData.page}
+            pageClickHandler={handlePageChange}
+          />
+        </div>
+        : searched && !isLoading && !error && medicamentos.length === 0 && (
+          <p className="text-center mb-12">Su consulta no produjo resultados.</p>
+        )
+      }
 
       {/* 📌 Render del teclado virtual */}
       <VirtualKeyboard

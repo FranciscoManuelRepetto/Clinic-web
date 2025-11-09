@@ -1,4 +1,4 @@
-import { BASE_URL_HISTORIA_CLINICA } from './config';
+import { BASE_URL_HISTORIA_CLINICA } from '@/globals/services/config';
 
 export interface RegistrarPacienteData {
   dni: string;

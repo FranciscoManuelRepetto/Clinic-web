@@ -9,6 +9,7 @@ import HomeLogin from "@/modules/home/homeLogin/components/HomeLogin";
 import HistoriaClinica from "@/modules/historia-clinica/historia-clinica";
 import RegistrarPaciente from "@/modules/historia-clinica/registrarPaciente/components/registrar-paciente";
 import BuscarPaciente from "@/modules/historia-clinica/buscarPaciente/components/buscar-paciente";
+import BuscarMedicamentos from "@/modules/medicamentos/buscarMedicamentos/components/buscar-Medicamentos";
 import Header from "@/globals/components/organismos/Header";
 import Sidebar from "@/globals/components/organismos/Sidebar";
 import HeaderNotLogger from "@/globals/components/organismos/HeaderNotLogger";
@@ -83,7 +84,8 @@ export default function App() {
     '/historia-clinica': <HistoriaClinica />,
     '/registrar-paciente': <RegistrarPaciente t={t} language={language} changeLanguage={changeLanguage} />,
     '/buscar-paciente': <BuscarPaciente t={t} language={language} changeLanguage={changeLanguage} />,
-    '/medicamentos': <Medicamentos />
+    '/buscar-medicamentos': <BuscarMedicamentos t={t} language={language} changeLanguage={changeLanguage} />,
+
   };
 
   return (

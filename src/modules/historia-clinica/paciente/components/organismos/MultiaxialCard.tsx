@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import ToggleCompactButton from "../atoms/ToggleCompactButton";
+import MarkAsErroneousButton from "../atoms/MarkAsErroneousButton";
 
 interface ApiData {
   id_item1?: string;
@@ -74,9 +75,7 @@ export default function MultiaxialCard({
         </div>
 
         <div className="mt-6 flex justify-end">
-          <button className="inline-flex items-center gap-2 bg-rose-300 text-black px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-rose-200 hover:bg-rose-400 transition-colors duration-150">
-            Marcar como Erróneo
-          </button>
+          <MarkAsErroneousButton ariaLabel="Marcar como Erróneo" />
         </div>
       </div>
     </div>

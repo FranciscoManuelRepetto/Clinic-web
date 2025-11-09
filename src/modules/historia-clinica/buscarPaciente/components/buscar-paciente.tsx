@@ -1,18 +1,31 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useTranslations } from "@/globals/hooks/useTranslations";
+import { useVirtualKeyboard } from "@/globals/hooks/useVirtualKeyboard";
+import { useRouter } from 'next/navigation';
 import VirtualKeyboard from "@/globals/components/organismos/VirtualKeyboard";
 import PageHeader from "@/globals/components/organismos/PageHeader";
+import { useBuscarPacientes } from "@/modules/historia-clinica/hooks/useBuscarPacientes";
+import { Paciente } from "@/modules/historia-clinica/types/Paciente";
+import Subtitle from "@/globals/components/atomos/Subtitle";
+/*De tabla*/
+import StripedTable from "@/globals/components/atomos/Table";
+import Paginator from "@/globals/components/moleculas/Paginator";
 
 interface FormData {
-  paciente: string;
+  nom_ap_dni: string;
   genero: string;
-  yearInicio: string;
-  yearFin: string;
-  diagnostico: string;
+  anio_ingreso_desde: string;
+  anio_ingreso_hasta: string;
+  limit: number;
+  page: number;
+  order: string;
+  sort: string;
+  /* Estos se comentan porque la API no los procesa todavia */
+  /*diagnostico: string;
   profesional: string;
-  medicacion: string;
+  medicacion: string;*/
 }
 
 interface BuscarPacienteProps {
@@ -22,54 +35,46 @@ interface BuscarPacienteProps {
 }
 
 export default function BuscarPaciente({ t: propT, language: propLanguage, changeLanguage: propChangeLanguage }: BuscarPacienteProps) {
+  const router = useRouter();
   const { t: hookT, language: hookLanguage, changeLanguage: hookChangeLanguage } = useTranslations();
-  
   // Usar props si están disponibles, sino usar hook
   const t = propT || hookT;
   const language = propLanguage || hookLanguage;
   const changeLanguage = propChangeLanguage || hookChangeLanguage;
   const [showFilters, setShowFilters] = useState(false);
-  const [showVirtualKeyboard, setShowVirtualKeyboard] = useState(false);
-  const [activeInput, setActiveInput] = useState<string | null>(null);
+  const [searched, setSearched] = useState<boolean>(false);
+  const { buscarPacientes, pacientes, getTotalPages, isLoading, error } = useBuscarPacientes();
+  const [sort, setSort] = useState<string>("apellido");
+  const [order, setOrder] = useState<string>("asc");
   const [formData, setFormData] = useState<FormData>({
-    paciente: "",
+    nom_ap_dni: "",
     genero: "",
-    yearInicio: "",
-    yearFin: "",
+    anio_ingreso_desde: "",
+    anio_ingreso_hasta: "",
+    limit: 5,
+    page: 1,
+    order: "asc",
+    sort: "apellido"
+
+    /*
     diagnostico: "",
     profesional: "",
     medicacion: "",
+    */
   });
 
-  const numericFields = ["yearInicio", "yearFin"];
+  const numericFields = ["anio_ingreso_desde", "anio_ingreso_hasta"];
 
-  // 👉 Funciones para manipular el form desde el teclado virtual
-  const insertText = (text: string) => {
-    if (activeInput) {
-      setFormData((prev) => ({
-        ...prev,
-        [activeInput]: prev[activeInput as keyof FormData] + text,
-      }));
-    }
-  };
-
-  const deleteText = () => {
-    if (activeInput) {
-      setFormData((prev) => ({
-        ...prev,
-        [activeInput]: prev[activeInput as keyof FormData].slice(0, -1),
-      }));
-    }
-  };
-
-  const clearField = () => {
-    if (activeInput) {
-      setFormData((prev) => ({
-        ...prev,
-        [activeInput]: "",
-      }));
-    }
-  };
+  // 👉 Hook del teclado virtual
+  const {
+    showVirtualKeyboard,
+    setShowVirtualKeyboard,
+    activeInput,
+    insertText,
+    deleteText,
+    clearField,
+    openKeyboardForField,
+  } = useVirtualKeyboard({ formData, setFormData });
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -78,20 +83,46 @@ export default function BuscarPaciente({ t: propT, language: propLanguage, chang
     if (numericFields.includes(name) && !/^\d*$/.test(value)) {
       return;
     }
-    setFormData((prev) => ({
+    setFormData((prev: FormData) => ({
       ...prev,
       [name]: value,
     }));
   };
 
-  const openKeyboardForField = (fieldName: string) => {
-    setActiveInput(fieldName);
-    setShowVirtualKeyboard(true);
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const datos = {...formData};
+    datos.order = "asc"; 
+    datos.sort = "apellido";
+    datos.page = 1;
+    setSort(datos.sort);
+    setOrder(datos.order);
+    await buscarPacientes(datos);
+    setFormData(datos);
+    setSearched(true);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    alert("Búsqueda realizada ✅");
+  const handlePageChange = async (pagenum: number) => {
+    const totalPages = getTotalPages(formData.limit);
+    if(pagenum > totalPages || pagenum < 1)
+      return;
+    const datos = {...formData};
+    datos.order = order;
+    datos.sort = sort;
+    datos.page = pagenum;
+    await buscarPacientes(datos);
+    setFormData(datos);
+  };
+
+  const handleSortChange = async (sort: string, order: string) => {
+    const datos = {...formData};
+    datos.page = 1; // Reiniciamos la pagina si cambia el sort y esta por ej en la pagina 2
+    datos.order = order;
+    datos.sort = sort;
+    setSort(datos.sort);
+    setOrder(datos.order);
+    await buscarPacientes(datos);
+    setFormData(datos);
   };
 
   // 📌 Ícono del teclado junto a cada input
@@ -107,6 +138,62 @@ export default function BuscarPaciente({ t: propT, language: propLanguage, chang
     </button>
   );
 
+  const tableContentConfig = [
+    {
+      columnName: "ID",
+      key: "id_usuario",
+      isId: true,
+      sorts: false,
+      draw: false
+    },
+    {
+      columnName: "DNI",
+      key: "dni",
+      isId: false,
+      sorts: false,
+      draw: true
+    },
+    {
+      columnName: "Apellido",
+      key: "apellido",
+      isId: false,
+      sorts: true,
+      draw: true
+    },
+    {
+      columnName: "Nombre",
+      key: "nombre",
+      isId: false,
+      sorts: true,
+      draw: true
+    },
+    {
+      columnName: "Genero",
+      key: "genero",
+      isId: false,
+      sorts: false,
+      draw: true
+    },
+    {
+      columnName: "Fecha de Ingreso",
+      key: "fecha_ingreso",
+      isId: false,
+      sorts: true,
+      formatFunction: (elem: any) => new Date(elem).toLocaleDateString('en-GB'),
+      draw: true,
+    },
+  ]
+
+  const tableSortConfig = {
+    currentSort: sort,
+    currentOrder: order,
+    sortHandler: handleSortChange
+  }
+
+  const rowClickAction = (row: Paciente) => {
+    router.push(`/historia-clinica/${row.id_usuario}`);
+  };
+
   return (
     <>
       {/* Contenido principal */}
@@ -118,7 +205,7 @@ export default function BuscarPaciente({ t: propT, language: propLanguage, chang
             breadCrumbConf={
               {
                 items:[
-                  { label: t("navbar.menus.historiaClinica") },
+                  { label: t("navbar.menus.historiaClinica"), href: "/historia-clinica" },
                   { label: t("searchPatient.title"), isActive: true }
                 ],
                 t: t
@@ -127,6 +214,7 @@ export default function BuscarPaciente({ t: propT, language: propLanguage, chang
           />
 
         <form
+          id="formulario-busqueda"
           onSubmit={handleSubmit}
           className="bg-white shadow-sm rounded-lg p-6 border border-gray-200"
         >
@@ -141,21 +229,16 @@ export default function BuscarPaciente({ t: propT, language: propLanguage, chang
             <div className="mt-1 flex">
               <input
                 id="paciente"
-                name="paciente"
+                name="nom_ap_dni"
                 type="text"
-                value={formData.paciente}
+                value={formData.nom_ap_dni}
                 onChange={handleInputChange}
                 placeholder={t("searchPatient.form.placeholders.search")}
                 className="flex-1 border rounded-l-lg px-3 py-2 text-gray-900 
                            placeholder-gray-700 focus:outline-none 
-                           focus:ring-2 focus:ring-green-600"
+                           focus:ring-2 focus:ring-accent"
               />
-              <KeyboardIcon fieldName="paciente" />
-              <span className="bg-[#5fa6b4] text-white px-3 flex items-center rounded-r-lg">
-                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M21 21L16.514 16.506L21 21ZM19 10.5C19 15.194 15.194 19 10.5 19C5.806 19 2 15.194 2 10.5C2 5.806 5.806 2 10.5 2C15.194 2 19 5.806 19 10.5Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-              </span>
+              <KeyboardIcon fieldName="nom_ap_dni" />     
             </div>
           </div>
 
@@ -173,6 +256,57 @@ export default function BuscarPaciente({ t: propT, language: propLanguage, chang
           {/* Filtros */}
           {showFilters && (
             <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4 border rounded-lg p-4">
+              {/* Genero */}
+              <fieldset>
+                <legend className="block text-sm font-medium text-black">{t("searchPatient.form.gender.label")}</legend>
+                <div className="border rounded-lg p-3 mt-1 w-1/2">
+                  <div>
+                    <input 
+                      onChange={handleInputChange} 
+                      type="radio"
+                      id="inputNoEspecificarGenero"
+                      name="genero"
+                      value=""
+                      checked={formData.genero === ''}
+                      />
+                    <label htmlFor="inputNoEspecificarGenero">Sin Especificar</label>
+                  </div>
+                  <div>
+                    <input 
+                      onChange={handleInputChange} 
+                      type="radio"
+                      id="inputMujer"
+                      name="genero"
+                      value="mujer"
+                      checked={formData.genero === 'mujer'}
+                      />
+                    <label htmlFor="inputMujer">Mujer</label>
+                  </div>
+                  <div>
+                    <input 
+                      onChange={handleInputChange} 
+                      type="radio"
+                      id="inputHombre"
+                      name="genero"
+                      value="hombre"
+                      checked={formData.genero === 'hombre'}
+                      />
+                    <label htmlFor="inputHombre">Hombre</label>
+                  </div>
+                  <div>
+                    <input 
+                      onChange={handleInputChange} 
+                      type="radio"
+                      id="inputOtro"
+                      name="genero"
+                      value="otro"
+                      checked={formData.genero === 'otro'}
+                      />
+                    <label htmlFor="inputOtro">Otro</label>
+                  </div>
+                </div>
+              </fieldset>
+
               {/* Año ingreso */}
               <div>
                 <label className="block text-sm font-medium text-black">
@@ -181,26 +315,27 @@ export default function BuscarPaciente({ t: propT, language: propLanguage, chang
                 <div className="flex space-x-2 mt-1">
                   <input
                     type="text"
-                    name="yearInicio"
-                    value={formData.yearInicio}
+                    name="anio_ingreso_desde"
+                    value={formData.anio_ingreso_desde}
                     onChange={handleInputChange}
-                    placeholder={t("searchPatient.form.placeholders.year")}
+                    placeholder={t("searchPatient.form.placeholders.yearFrom")}
                     className="w-1/2 border rounded-lg px-3 py-2 placeholder-gray-700"
                   />
-                  <KeyboardIcon fieldName="yearInicio" />
+                  <KeyboardIcon fieldName="anio_ingreso_desde" />
+                  <span className="inline-flex items-center text-4xl"> - </span>
                   <input
                     type="text"
-                    name="yearFin"
-                    value={formData.yearFin}
+                    name="anio_ingreso_hasta"
+                    value={formData.anio_ingreso_hasta}
                     onChange={handleInputChange}
-                    placeholder={t("searchPatient.form.placeholders.year")}
+                    placeholder={t("searchPatient.form.placeholders.yearTo")}
                     className="w-1/2 border rounded-lg px-3 py-2 placeholder-gray-700"
                   />
-                  <KeyboardIcon fieldName="yearFin" />
+                  <KeyboardIcon fieldName="anio_ingreso_hasta" />
                 </div>
               </div>
 
-              {/* Diagnóstico */}
+              {/* Diagnóstico 
               <div>
                 <label className="block text-sm font-medium text-black">
                   {t("searchPatient.form.diagnosis")}
@@ -217,8 +352,8 @@ export default function BuscarPaciente({ t: propT, language: propLanguage, chang
                   <KeyboardIcon fieldName="diagnostico" />
                 </div>
               </div>
-
-              {/* Profesional */}
+              */}
+              {/* Profesional 
               <div>
                 <label className="block text-sm font-medium text-black">
                   {t("searchPatient.form.professional")}
@@ -237,8 +372,8 @@ export default function BuscarPaciente({ t: propT, language: propLanguage, chang
                   <KeyboardIcon fieldName="profesional" />
                 </div>
               </div>
-
-              {/* Medicación */}
+                */}
+              {/* Medicación 
               <div className="md:col-span-2">
                 <label className="block text-sm font-medium text-black">
                   {t("searchPatient.form.medication")}
@@ -256,7 +391,7 @@ export default function BuscarPaciente({ t: propT, language: propLanguage, chang
                   />
                   <KeyboardIcon fieldName="medicacion" />
                 </div>
-              </div>
+              </div>*/}
             </div>
           )}
 
@@ -272,7 +407,6 @@ export default function BuscarPaciente({ t: propT, language: propLanguage, chang
               {t("common.back", )}
             </button>
             <button
-              type="submit"
               className="px-6 py-2 rounded-lg flex items-center transition-all duration-200 
                      bg-[#5fa6b4] text-black hover:bg-[#5fa6b4]/80 
                      focus-visible:outline focus-visible:outline-2 
@@ -285,6 +419,30 @@ export default function BuscarPaciente({ t: propT, language: propLanguage, chang
             </button>
           </div>
         </form>
+        <div className="my-5 mx-2">
+          {isLoading && <p>Cargando...</p>}
+          {error && <p className="text-red-500">Error: {error}</p>}
+          {!isLoading && !error && searched && pacientes.length > 0 ? 
+            <div className="flex flex-col">
+            <Subtitle subtitle="Resultados"/>
+            <StripedTable
+              data={pacientes}
+              className="mb-5 mt-2"
+              contentConfig={tableContentConfig}
+              sortConfig={tableSortConfig}
+              rowAction={rowClickAction}
+            />
+            <Paginator 
+              totalPages={getTotalPages(formData.limit)}
+              currentPage={formData.page}
+              pageClickHandler={handlePageChange}
+            />
+          </div>
+          : searched && !isLoading && !error && pacientes.length === 0 && (
+            <p>Su consulta no produjo resultados.</p>
+          )
+          }
+        </div>
       </div>
 
       {/* 📌 Render del teclado virtual */}

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import ToggleCompactButton from "../atoms/ToggleCompactButton";
+import MarkAsErroneousButton from "../atoms/MarkAsErroneousButton";
 
 interface ApiData {
   observacion?: string;
@@ -55,7 +56,7 @@ export default function EvolucionCard({
       <div className={`bg-white transition-all duration-300 ease-in-out overflow-hidden ${isCompact ? 'max-h-0 opacity-0 p-0' : 'max-h-[800px] opacity-100 p-4'}`}>
         <div className="prose prose-sm text-gray-800 whitespace-pre-line">{data?.observacion ?? content}</div>
 
-        <div className="mt-6 flex justify-between">
+  <div className="mt-6 flex justify-between">
           {/* Grey button is non-interactive for now: no hover/focus changes */}
           <button
             className="inline-flex items-center gap-2 bg-gray-400 text-black px-4 py-2 rounded-md cursor-not-allowed"
@@ -65,9 +66,7 @@ export default function EvolucionCard({
             Sin turno Vinculado
           </button>
 
-          <button className="inline-flex items-center gap-2 bg-rose-300 text-black px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-rose-200 hover:bg-rose-400 transition-colors duration-150">
-            Marcar como Errónea
-          </button>
+          <MarkAsErroneousButton ariaLabel="Marcar como Errónea" />
         </div>
       </div>
     </div>

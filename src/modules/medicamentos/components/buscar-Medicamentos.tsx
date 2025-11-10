@@ -389,6 +389,7 @@ export default function BuscarMedicamento({ t: propT, language: propLanguage, ch
             contentConfig={tableContentConfig}
             sortConfig={tableSortConfig}
             rowAction={rowClickAction}
+            showMedicationActions={true}
           />
           <Paginator
             totalPages={getTotalPages(formData.limit)}

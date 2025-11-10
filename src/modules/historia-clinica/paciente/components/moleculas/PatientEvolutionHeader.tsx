@@ -4,8 +4,11 @@ import { Plus, ChevronUp, CreditCard } from "lucide-react";
 import { useState } from "react";
 import Modal from "../../../../../globals/components/moleculas/Modal";
 import CrearEvolucion from "../organismos/FormCrearEvolucion";
+import { EvolucionCompleta } from "@/modules/historia-clinica/types/EvolucionCompleta";
 
 interface Props {
+  evoluciones?:EvolucionCompleta[];
+  setEvoluciones?: any;
   title?: string;
   leftLabel?: string;
   rightLabel?: string;
@@ -19,6 +22,8 @@ export default function PatientEvolutionHeader({
   rightLabel = 'Más recientes',
   onCreate,
   onRightClick,
+  evoluciones,
+  setEvoluciones
 }: Props) {
   if (!onCreate) {
     onCreate = () => setShowModal(true)
@@ -38,7 +43,7 @@ export default function PatientEvolutionHeader({
         </button>
         {showModal &&
             <Modal title="Cargar Evolucion" onClose={() => setShowModal(false)}>
-                <CrearEvolucion goBack={() => setShowModal(false)}/>
+                <CrearEvolucion evoluciones={evoluciones} setEvoluciones={setEvoluciones} goBack={() => setShowModal(false)}/>
             </Modal>
         }
         <button onClick={onRightClick} className="inline-flex items-center gap-2 text-gray-800 hover:text-black focus:outline-none">

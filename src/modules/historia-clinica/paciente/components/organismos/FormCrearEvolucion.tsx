@@ -1,17 +1,16 @@
 'use client'
 import useObtenerItemsDM from "@/modules/historia-clinica/hooks/useObtenerItemsDM";
 import useCargarEvolucion from "@/modules/historia-clinica/hooks/useCargarEvolucion";
+import useObtenerEvolucion from "@/modules/historia-clinica/hooks/useObtenerEvolucion";
 import { useState, useEffect } from "react";
+import { EvolucionCompleta } from "@/modules/historia-clinica/types/EvolucionCompleta";
 
-export default function CrearEvolucion({goBack}: {goBack(): void}) {
-    /*
-      obtenerItemsDM: () => Promise<void>;
-      itemsDM: ItemDM[];
-      isLoading: boolean;
-      error: string | null;
-    */
+export default function CrearEvolucion({goBack, evoluciones, setEvoluciones}:
+     {goBack(): void, evoluciones: EvolucionCompleta[], setEvoluciones: any}) {
+    
     const { obtenerItemsDM, itemsDM, isLoading: buscandoItems, error: errorItems} = useObtenerItemsDM()
     const { cargarEvolucion, isLoading: cargandoEvolucion, error: errorCargaEvolucion} = useCargarEvolucion()
+    const { obtenerEvolucion, evolucion, isLoading: obteniendoEvolucion, error: errorObtenerEvolucion} = useObtenerEvolucion()
     const [itemsPorEje, setItemsPorEje] = useState({})
     const [pedirConfirmacion, setPedirConfirmacion] = useState(false);
     const [mostrarResultado, setMostrarResultado] = useState(false);
@@ -117,19 +116,20 @@ export default function CrearEvolucion({goBack}: {goBack(): void}) {
         if (missingFields())
             return;
 
-        // Hasta aca todo OK
+
         setValidationErrors([]);
         setPedirConfirmacion(true);
     };
     
-    // VER DESPUES
-    const handleConfirmarGuardado = () => {
+    const handleConfirmarGuardado = async () => {
         setMostrarResultado(true);
         setPedirConfirmacion(false);
-        cargarEvolucion(10, formData); // hardcodeamos con 10 a ver si funca
-        //setNotification({ show: true, message: t('registerPatient.form.messages.patientSavedSuccessfully'), type: 'success' });
-        //setShowModal(false);
-        // Opcional: limpiar el formulario o redirigir
+        let id_evolucion_cargada = await cargarEvolucion(10, formData); // EL 10 ESTA HARDCODEADO!!
+        if (id_evolucion_cargada != null) {
+            // Obtengo los datos completos
+            const mi_evolucion_cargada = await obtenerEvolucion(10, id_evolucion_cargada) // EL 10 ESTA HARDCODEADO!!
+            setEvoluciones([...evoluciones, mi_evolucion_cargada])
+        }
     };
 
     return (

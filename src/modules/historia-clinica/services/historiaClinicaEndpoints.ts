@@ -10,3 +10,13 @@ export const CARGAR_EVOLUCION = {
   URL: (id_usuario: string | number) => `${BASE_URL_HISTORIA_CLINICA}/pacientes/${id_usuario}/evoluciones`,
   METHOD: 'post' as const
 };
+
+export const OBTENER_EVOLUCION = {
+  URL: (id_usuario: string | number, id_evolucion: string | number) => `${BASE_URL_HISTORIA_CLINICA}/pacientes/${id_usuario}/evoluciones/${id_evolucion}`,
+  METHOD: 'get' as const
+}
+
+export const MARCAR_ERRONEA = {
+  URL: (id_usuario: string | number, id_evolucion: string | number) => `${BASE_URL_HISTORIA_CLINICA}/pacientes/${id_usuario}/evoluciones/${id_evolucion}/marcar-erronea`,
+  METHOD: 'patch' as const
+}

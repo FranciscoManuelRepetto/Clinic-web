@@ -24,7 +24,7 @@ export const useCargarEvolucion = (): UseItemsDMReturn => {
     setIsLoading(true);
     setError(null);
     console.log("vamos a cargar en la url: ", CARGAR_EVOLUCION.URL(id_usuario))
-    let id_evolucion_cargada;
+    let id_evolucion_cargada = null;
     try {
       const response = await axios({
         method: CARGAR_EVOLUCION.METHOD,
@@ -42,7 +42,6 @@ export const useCargarEvolucion = (): UseItemsDMReturn => {
     } finally {
       setIsLoading(false);
     }
-    //setItemsDM(itemsDM);
     return id_evolucion_cargada;
   };
 

@@ -1,5 +1,5 @@
 "use client";
-
+import { useState } from 'react';
 import { useTranslations } from "@/globals/hooks/useTranslations";
 import PageHeader from "@/globals/components/organismos/PageHeader";
 import PatientCard from "./organismos/PatientCard";
@@ -9,7 +9,7 @@ import EvolucionCard from "./organismos/EvolucionCard";
 import CorreccionCard from "./organismos/CorreccionCard";
 import SOTCard from "./organismos/SOTCard";
 import RecetaCard from "./organismos/RecetaCard";
-
+import { EvolucionCompleta } from '../../types/EvolucionCompleta';
 interface Props {
   t?: (key: string) => string;
 }
@@ -17,6 +17,7 @@ interface Props {
 export default function HistoriaClinicaPaciente({ t: propT }: Props) {
   const { t: hookT } = useTranslations();
   const t = propT || hookT;
+  const [evoluciones, setEvoluciones] = useState<EvolucionCompleta[]>([]);
 
   // ejemplo mínimo de datos; en el futuro esto vendrá desde la API
   const patientData = {
@@ -98,11 +99,36 @@ export default function HistoriaClinicaPaciente({ t: propT }: Props) {
 
         <PatientCard t={t} data={patientData} />
 
-        <PatientEvolutionHeader />
+        <PatientEvolutionHeader evoluciones={evoluciones} setEvoluciones={setEvoluciones}/>
+
+        {
+          evoluciones.length != 0 &&
+          evoluciones.map(evolucion => { 
+            let data = {
+                id_evolucion: evolucion.id_evolucion,
+                fecha_creacion: evolucion.creacion.fecha,
+                observacion: evolucion.observacion
+              }
+            if (evolucion.erronea) {
+              data.marcada_erronea = true;
+              data.motivo_erronea = evolucion.erronea.motivo;
+              data.marcada_erronea_por = evolucion.erronea.nombre;
+            }
+
+            return (
+            <EvolucionCard key={evolucion.id_evolucion} data={data}
+             creatorName={evolucion.creacion.nombre}
+             evoluciones={evoluciones}
+             setEvoluciones={setEvoluciones}
+             />
+          )})
+        }
 
   <MultiaxialCard data={multiaxialApi} creatorName={multiaxialCreatorName} />
 
-  <EvolucionCard data={evolucionApi} creatorName={evolucionCreatorName} />
+  <EvolucionCard data={evolucionApi} creatorName={evolucionCreatorName}
+            evoluciones={evoluciones}
+            setEvoluciones={setEvoluciones}/>
 
   <CorreccionCard data={evolucionApi} markerName={correccionMarkerName} creatorName={evolucionCreatorName} />
 

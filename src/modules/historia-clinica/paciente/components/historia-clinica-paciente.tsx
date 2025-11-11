@@ -13,6 +13,8 @@ import useEvoluciones from '@/modules/historia-clinica/hooks/useEvoluciones';
 import useSots from '@/modules/historia-clinica/hooks/useSots';
 import usePaciente from '@/modules/historia-clinica/hooks/usePaciente';
 import { EvolucionCompleta } from '../../types/EvolucionCompleta';
+import { useSearchParams } from 'next/navigation';
+
 interface Props {
   t?: (key: string) => string;
   /** id_usuario used to fetch evoluciones from the API */
@@ -20,11 +22,12 @@ interface Props {
 }
 
 export default function HistoriaClinicaPaciente({ t: propT, id_usuario: propId }: Props) {
+  const searchParams = useSearchParams();
   const [sortNewestFirst, setSortNewestFirst] = useState<boolean>(true);
   const { t: hookT } = useTranslations();
   const t = propT || hookT;
   // use hook to fetch evoluciones from API; fallback demo id 9 when prop not provided
-  const id_usuario = propId ?? 8;
+  const id_usuario = propId ?? searchParams.get('id');
   const { data: evolucionesData, isLoading, error, reload, setData: setEvoluciones } = useEvoluciones(id_usuario);
   const evoluciones = evolucionesData ?? [];
   const { data: sotsData } = useSots(id_usuario);
@@ -224,9 +227,11 @@ export default function HistoriaClinicaPaciente({ t: propT, id_usuario: propId }
                     if (it.kind === 'evolucion') {
                       const ev = it.data;
                       const evData: any = {
+                        id_usuario: Number(ev.id_usuario),
                         id_evolucion: Number(ev.id_evolucion),
                         fecha_creacion: ev.creacion?.fecha ? new Date(ev.creacion.fecha).toISOString() : undefined,
                         observacion: ev.observacion,
+                        tipo: ev.tipo,
                       };
                       const isErr = !!ev.erronea;
                       if (isErr) {
@@ -273,9 +278,11 @@ export default function HistoriaClinicaPaciente({ t: propT, id_usuario: propId }
               if (it.kind === 'evolucion') {
                 const ev = it.data;
                 const evData: any = {
+                  id_usuario: Number(ev.id_usuario),
                   id_evolucion: Number(ev.id_evolucion),
                   fecha_creacion: ev.creacion?.fecha ? new Date(ev.creacion.fecha).toISOString() : undefined,
                   observacion: ev.observacion,
+                  tipo: ev.tipo
                 };
                 const isErr = !!ev.erronea;
                 if (isErr) {

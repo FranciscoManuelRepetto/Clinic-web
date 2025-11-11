@@ -34,7 +34,7 @@ export default function PatientCard({ t, data }: Props) {
       <div className={`grid grid-cols-1 md:grid-cols-3 gap-2 items-start transition-all duration-300 ease-in-out overflow-hidden ${isCompact ? 'max-h-0 opacity-0' : 'max-h-[1000px] opacity-100'}`}>
         <div className="col-span-1 flex flex-col items-start space-y-2">
           <PatientAvatar />
-          <PatientActions editLabel={t ? t('patient.edit') : 'Editar Datos'} />
+          <PatientActions editLabel={'Editar Datos'} />
         </div>
 
         <PatientInfoColumns data={data} isCompact={isCompact} onToggle={() => setIsCompact(s => !s)} />

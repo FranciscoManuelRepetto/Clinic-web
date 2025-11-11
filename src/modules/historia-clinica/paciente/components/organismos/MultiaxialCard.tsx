@@ -28,6 +28,7 @@ export default function MultiaxialCard({
   creatorName,
 }: Props) {
   const [isCompact, setIsCompact] = useState(true);
+  // Multiaxial diagnostics cannot be marked as erroneous per new requirement.
 
   const items = [data?.id_item1, data?.id_item2, data?.id_item3, data?.id_item4, data?.id_item5].filter(Boolean) as string[];
 
@@ -75,7 +76,7 @@ export default function MultiaxialCard({
         </div>
 
         <div className="mt-6 flex justify-end">
-          <MarkAsErroneousButton ariaLabel="Marcar como Erróneo" />
+          {/* Marcado deshabilitado para diagnósticos multiaxiales por decisión de producto */}
         </div>
       </div>
     </div>

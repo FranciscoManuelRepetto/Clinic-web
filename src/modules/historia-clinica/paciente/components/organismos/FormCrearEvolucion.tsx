@@ -5,8 +5,8 @@ import useObtenerEvolucion from "@/modules/historia-clinica/hooks/useObtenerEvol
 import { useState, useEffect } from "react";
 import { EvolucionCompleta } from "@/modules/historia-clinica/types/EvolucionCompleta";
 
-export default function CrearEvolucion({goBack, evoluciones, setEvoluciones}:
-     {goBack(): void, evoluciones: EvolucionCompleta[], setEvoluciones: any}) {
+export default function CrearEvolucion({goBack, evoluciones, setEvoluciones, id_usuario}:
+    {goBack(): void, evoluciones: EvolucionCompleta[], setEvoluciones: any, id_usuario?: string | number}) {
     
     const { obtenerItemsDM, itemsDM, isLoading: buscandoItems, error: errorItems} = useObtenerItemsDM()
     const { cargarEvolucion, isLoading: cargandoEvolucion, error: errorCargaEvolucion} = useCargarEvolucion()
@@ -124,11 +124,12 @@ export default function CrearEvolucion({goBack, evoluciones, setEvoluciones}:
     const handleConfirmarGuardado = async () => {
         setMostrarResultado(true);
         setPedirConfirmacion(false);
-        let id_evolucion_cargada = await cargarEvolucion(10, formData); // EL 10 ESTA HARDCODEADO!!
+        const targetIdUsuario = typeof id_usuario !== 'undefined' && id_usuario !== null ? id_usuario : 10;
+        let id_evolucion_cargada = await cargarEvolucion(Number(targetIdUsuario), formData);
         if (id_evolucion_cargada != null) {
             // Obtengo los datos completos
-            const mi_evolucion_cargada = await obtenerEvolucion(10, id_evolucion_cargada) // EL 10 ESTA HARDCODEADO!!
-            setEvoluciones([...evoluciones, mi_evolucion_cargada])
+            const mi_evolucion_cargada = await obtenerEvolucion(Number(targetIdUsuario), id_evolucion_cargada);
+            setEvoluciones([...evoluciones, mi_evolucion_cargada]);
         }
     };
 

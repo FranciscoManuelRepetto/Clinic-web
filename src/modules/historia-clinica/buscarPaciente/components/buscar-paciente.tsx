@@ -206,7 +206,7 @@ export default function BuscarPaciente({ t: propT, language: propLanguage, chang
   }
 
   const rowClickAction = (row: Paciente) => {
-    router.push(`/historia-clinica/${row.id_usuario}`);
+    router.push(`/paciente?id=${row.id_usuario}`);
   };
 
   return (

@@ -9,6 +9,7 @@ import MarcarErronea from "./FormMarcarErronea";
 import { EvolucionCompleta } from "@/modules/historia-clinica/types/EvolucionCompleta";
 
 interface ApiData {
+  id_usuario: string | number;
   observacion?: string;
   id_turno?: number;
   tipo?: string;
@@ -45,7 +46,8 @@ export default function EvolucionCard({
     ? `${String(createdAt.getDate()).padStart(2, '0')}/${String(createdAt.getMonth() + 1).padStart(2, '0')}/${String(createdAt.getFullYear()).slice(-2)} ${String(createdAt.getHours()).padStart(2, '0')}:${String(createdAt.getMinutes()).padStart(2, '0')} hs`
     : undefined;
 
-  const baseTitle = title.includes(' - ') ? title.split(' - ')[0] : title;
+  let baseTitle = title.includes(' - ') ? title.split(' - ')[0] : title;
+  baseTitle = data?.tipo === 'grupal' ? `${baseTitle } GRUPAL` : baseTitle;
   const headerTitle = creatorName
     ? `${baseTitle} - ${creatorName}${formattedCreatedAt ? ` (${formattedCreatedAt})` : ''}`
     : title;
@@ -94,7 +96,7 @@ export default function EvolucionCard({
                 <MarkAsErroneousButton onClick={onMarcarErronea} ariaLabel="Marcar como Errónea" />
                 {showModal && idEvolucion && (
                   <Modal title="Marcar Evolucion como Erronea" onClose={() => setShowModal(false)}>
-                    <MarcarErronea id_usuario={9} id_evolucion={idEvolucion} evoluciones={evoluciones} setEvoluciones={setEvoluciones} goBack={() => setShowModal(false)} />
+                    <MarcarErronea id_usuario={data.id_usuario} id_evolucion={idEvolucion} evoluciones={evoluciones} setEvoluciones={setEvoluciones} goBack={() => setShowModal(false)} />
                   </Modal>
                 )}
               </>

@@ -5,13 +5,20 @@ import { useTranslations } from "@/globals/hooks/useTranslations";
 import { useVirtualKeyboard } from "@/globals/hooks/useVirtualKeyboard";
 import VirtualKeyboard from "@/globals/components/organismos/VirtualKeyboard";
 import PageHeader from "@/globals/components/organismos/PageHeader";
-
+import {useRegistrarPaciente}  from "@/modules/historia-clinica/hooks/useRegistrarPaciente";
+import FormField from "@/globals/components/atomos/FormField";
+import FormDateField from "@/globals/components/atomos/FormDateField";
+import FormSelectField from "@/globals/components/atomos/FormSelectField";
+import FormFieldset from "@/globals/components/moleculas/FormFieldset";
+import ConfirmationModal from "@/globals/components/moleculas/ConfirmationModal";
+import NotificationToast from "@/globals/components/moleculas/NotificationToast";
 
 
 
 interface FormData {
   dni: string;
   fechaIngreso: string;
+  fehcaNacimiento: string;
   genero: string;
   nombres: string;
   apellido: string;
@@ -34,7 +41,8 @@ interface RegistrarPacienteProps {
 
 export default function RegistrarPaciente({ t: propT, language: propLanguage, changeLanguage: propChangeLanguage }: RegistrarPacienteProps) {
   const { t: hookT, language: hookLanguage, changeLanguage: hookChangeLanguage } = useTranslations();
-  
+  const { registrarPaciente, isLoading: saving, error: saveError } = useRegistrarPaciente();
+
   // Usar props si están disponibles, sino usar hook
   const t = propT || hookT;
   const language = propLanguage || hookLanguage;
@@ -44,6 +52,7 @@ export default function RegistrarPaciente({ t: propT, language: propLanguage, ch
   const [formData, setFormData] = useState({
     dni: "",
     fechaIngreso: new Date().toISOString().slice(0, 10), // Fecha de hoy por defecto
+    fehcaNacimiento: new Date().toISOString().slice(0, 10),
     genero: "",
     nombres: "",
     apellido: "",
@@ -75,7 +84,7 @@ export default function RegistrarPaciente({ t: propT, language: propLanguage, ch
 
   const numericFields = ['dni', 'nroSocio', 'telefono', 'numero', 'piso'];
 
-  // 👉 Hook del teclado virtual
+  // Hook del teclado virtual
   const {
     showVirtualKeyboard,
     setShowVirtualKeyboard,
@@ -157,27 +166,6 @@ export default function RegistrarPaciente({ t: propT, language: propLanguage, ch
   };
 
 
-  // Componente de ícono de teclado
-  const KeyboardIcon = ({ fieldName }: { fieldName: string }) => (
-    <button
-      type="button"
-      onClick={() => openKeyboardForField(fieldName)}
-      onKeyDown={(e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          openKeyboardForField(fieldName);
-        }
-      }}
-      className="ml-2 p-1 text-sm text-gray-500 hover:text-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded inline-flex items-center"
-      aria-label={`Abrir teclado virtual para ${fieldName}`}
-      title="Abrir teclado virtual"
-       aria-expanded={showVirtualKeyboard && activeInput === fieldName}
-      aria-controls="virtual-keyboard"
-    >
-      ⌨️
-    </button>
-  );
-
   // Función para manejar cambios en los inputs
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
@@ -212,8 +200,8 @@ export default function RegistrarPaciente({ t: propT, language: propLanguage, ch
       { key: 'nombres', label: 'Nombre' },
       { key: 'apellido', label: 'Apellido' },
       { key: 'genero', label: 'Género' },
-      { key: 'obraSocial', label: 'Obra Social' },
-      { key: 'nroSocio', label: 'Número de Socio' }
+      { key: 'email', label: 'Email' },
+      { key: 'telefono', label: 'Telefono' }
     ];
     
     // Verificar campos vacíos
@@ -242,13 +230,33 @@ export default function RegistrarPaciente({ t: propT, language: propLanguage, ch
     setShowModal(true);
   };
   
-  const handleConfirmarGuardado = () => {
-    console.log("Datos del paciente:", formData);
-    // Aquí iría la lógica para enviar los datos al backend
+const handleConfirmarGuardado = async () => {
+  try {
+    await registrarPaciente(formData); // Llama al hook para registrar el paciente
     setNotification({ show: true, message: t('registerPatient.form.messages.patientSavedSuccessfully'), type: 'success' });
     setShowModal(false);
     // Opcional: limpiar el formulario o redirigir
-  };
+    setFormData({
+      dni: "",
+      fechaIngreso: new Date().toISOString().slice(0, 10),
+      fehcaNacimiento: new Date().toISOString().slice(0, 10),
+      genero: "",
+      nombres: "",
+      apellido: "",
+      obraSocial: "",
+      nroSocio: "",
+      calle: "",
+      numero: "",
+      piso: "",
+      dpto: "",
+      telefono: "",
+      email: "",
+      fotoPerfil: null,
+    });
+  } catch (error) {
+    setNotification({ show: true, message: saveError || 'Error al guardar paciente', type: 'error' });
+  }
+};
 
   const handleKeyboardNavigation = (isShiftKey: boolean) => {
     const buttons = document.querySelectorAll('[data-keyboard-button="true"]');
@@ -321,318 +329,266 @@ export default function RegistrarPaciente({ t: propT, language: propLanguage, ch
                   
                   {/* Fecha de Ingreso debajo de la imagen */}
                   <div className="mt-6 w-full">
-                    <div className="flex items-center mb-1">
-                      <label htmlFor="fechaIngreso" className="block text-sm font-medium text-gray-700 uppercase">
-                        {t('registerPatient.form.labels.admissionDate')} <span className="text-red-500">*</span>
-                      </label>
-                      <KeyboardIcon fieldName="fechaIngreso" />
-                    </div>
-                    <input 
-                      id="fechaIngreso" 
-                      name="fechaIngreso" 
-                      type="date" 
-                      value={formData.fechaIngreso} 
-                      onChange={handleInputChange} 
-                      required 
-                      aria-required="true"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#a4eac3] bg-white text-black" 
+                    <FormDateField
+                      id="fechaIngreso"
+                      name="fechaIngreso"
+                      label={t('registerPatient.form.labels.admissionDate')}
+                      value={formData.fechaIngreso}
+                      onChange={handleInputChange}
+                      required
+                      onKeyboardIconClick={() => openKeyboardForField('fechaIngreso')}
+                      helpText={t('registerPatient.form.messages.requiredField')}
+                      width="full"
                     />
-                    <p className="text-xs text-red-500 mt-1">{t('registerPatient.form.messages.requiredField')}</p>
                   </div>
                 </div>
                 
                 {/* Columna principal de datos */}
                 <div className="lg:col-span-2 space-y-6">
-                   <fieldset className="border border-gray-500 p-4 rounded-md">
-                      <legend className="text-lg font-semibold text-gray-700 px-2">{t('registerPatient.form.labels.personalData')}</legend>
+                   <FormFieldset legend={t('registerPatient.form.labels.personalData')}>
                       <div className="space-y-4 mt-4">
                         {/* Primera fila: DNI solo pero con ancho limitado */}
-                        <div className="flex justify-start">
-                          <div className="w-full md:w-1/2">
-                            <div className="flex items-center mb-1">
-                              <label htmlFor="dni" className="block text-sm font-medium text-gray-700 uppercase">
-                                {t('registerPatient.form.labels.dni')} <span className="text-red-500">*</span>
-                              </label>
-                              <KeyboardIcon fieldName="dni" />
-                            </div>
-                            <input 
-                              id="dni" 
-                              name="dni" 
-                              type="text" 
-                              value={formData.dni} 
-                              onChange={handleInputChange} 
-                              onFocus={() => handleInputFocus('dni')}
-                              onBlur={handleInputBlur}
-                              required
-                              className={`w-full px-3 py-2 border ${
-                                validationErrors.includes('El campo DNI es obligatorio') 
-                                  ? 'border-red-500 ring-1 ring-red-500' 
-                                  : 'border-gray-300'
-                              } rounded-md focus:outline-none focus:ring-2 focus:ring-[#a4eac3] bg-white text-black`}
-                              placeholder={focusedFields.has('dni') ? "" : t('registerPatient.form.placeholders.enterDni')}
-                              aria-describedby={validationErrors.includes('El campo DNI es obligatorio') ? "dni-error" : undefined}
-                            />
-                            {validationErrors.includes('El campo DNI es obligatorio') && (
-                              <p id="dni-error" className="text-red-500 text-sm mt-1">
-                                El campo DNI es obligatorio
-                              </p>
-                            )}
-                            <p className="text-xs text-red-500 mt-1">{t('registerPatient.form.messages.requiredField')}</p>
-                            <p className="text-xs text-blue-600 mt-1 flex items-center">
-                              <span className="mr-1">ℹ️</span> {t('registerPatient.form.messages.dniInstructions')}
-                            </p>
-                          </div>
-                        </div>
+                        <FormField
+                          id="dni"
+                          name="dni"
+                          label={t('registerPatient.form.labels.dni')}
+                          value={formData.dni}
+                          onChange={handleInputChange}
+                          onFocus={() => handleInputFocus('dni')}
+                          onBlur={handleInputBlur}
+                          placeholder={t('registerPatient.form.placeholders.enterDni')}
+                          required
+                          onKeyboardIconClick={() => openKeyboardForField('dni')}
+                          isFocused={focusedFields.has('dni')}
+                          error={validationErrors.includes('El campo DNI es obligatorio') ? 'El campo DNI es obligatorio' : undefined}
+                          helpText={t('registerPatient.form.messages.requiredField')}
+                          instructionText={t('registerPatient.form.messages.dniInstructions')}
+                          width="half"
+                        />
+
+
 
                         {/* Segunda fila: Nombres y Apellido juntos */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          <div>
-                            <div className="flex items-center mb-1">
-                              <label htmlFor="nombres" className="block text-sm font-medium text-gray-700 uppercase">
-                                {t('registerPatient.form.labels.firstName')} <span className="text-red-500">*</span>
-                              </label>
-                              <KeyboardIcon fieldName="nombres" />
-                            </div>
-                            <input 
-                              id="nombres" 
-                              name="nombres" 
-                              type="text" 
-                              value={formData.nombres} 
-                              onChange={handleInputChange} 
-                              onFocus={() => handleInputFocus('nombres')}
-                              onBlur={handleInputBlur}
-                              required 
-                              aria-required="true"
-                              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#a4eac3] bg-white text-black" 
-                              placeholder={focusedFields.has('nombres') ? "" : t('registerPatient.form.placeholders.enterFirstName')}
-                            />
-                            <p className="text-xs text-red-500 mt-1">{t('registerPatient.form.messages.requiredField')}</p>
-                            <p className="text-xs text-blue-600 mt-1 flex items-center">
-                              <span className="mr-1">ℹ️</span> {t('registerPatient.form.messages.nameInstructions')}
-                            </p>
-                          </div>
-                          <div>
-                            <label htmlFor="apellido" className="block text-sm font-medium text-gray-700 mb-1 uppercase">
-                              {t('registerPatient.form.labels.lastName')} <span className="text-red-500">*</span>
-                              <KeyboardIcon fieldName="apellido" />
-                            </label>
-                            <input 
-                              id="apellido" 
-                              name="apellido" 
-                              type="text" 
-                              value={formData.apellido} 
-                              onChange={handleInputChange} 
-                              onFocus={() => handleInputFocus('apellido')}
-                              required 
-                              aria-required="true"
-                              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#a4eac3] bg-white text-black" 
-                              placeholder={focusedFields.has('apellido') ? "" : t('registerPatient.form.placeholders.enterLastName')} 
-                            />
-                            <p className="text-xs text-red-500 mt-1">{t('registerPatient.form.messages.requiredField')}</p>
-                            <p className="text-xs text-blue-600 mt-1 flex items-center">
-                              <span className="mr-1">ℹ️</span> {t('registerPatient.form.messages.nameInstructions')}
-                            </p>
-                          </div>
+                          <FormField
+                            id="nombres"
+                            name="nombres"
+                            label={t('registerPatient.form.labels.firstName')}
+                            value={formData.nombres}
+                            onChange={handleInputChange}
+                            onFocus={() => handleInputFocus('nombres')}
+                            onBlur={handleInputBlur}
+                            placeholder={t('registerPatient.form.placeholders.enterFirstName')}
+                            required
+                            onKeyboardIconClick={() => openKeyboardForField('nombres')}
+                            isFocused={focusedFields.has('nombres')}
+                            helpText={t('registerPatient.form.messages.requiredField')}
+                            instructionText={t('registerPatient.form.messages.nameInstructions')}
+                            width="full"
+                          />
+                          <FormField
+                            id="apellido"
+                            name="apellido"
+                            label={t('registerPatient.form.labels.lastName')}
+                            value={formData.apellido}
+                            onChange={handleInputChange}
+                            onFocus={() => handleInputFocus('apellido')}
+                            placeholder={t('registerPatient.form.placeholders.enterLastName')}
+                            required
+                            onKeyboardIconClick={() => openKeyboardForField('apellido')}
+                            isFocused={focusedFields.has('apellido')}
+                            helpText={t('registerPatient.form.messages.requiredField')}
+                            instructionText={t('registerPatient.form.messages.nameInstructions')}
+                            width="full"
+                          />
                         </div>
 
                         {/* Tercera fila: Género*/}
-                        <div className="flex justify-start">
-                          <div className="w-full md:w-1/2">
-                            <label htmlFor="genero" className="block text-sm font-medium text-gray-700 mb-1 uppercase">
-                              {t('registerPatient.form.labels.gender')} <span className="text-red-500">*</span>
-                            </label>
-                            <select 
-                              id="genero" 
-                              name="genero" 
-                              value={formData.genero} 
-                              onChange={handleInputChange} 
-                              onFocus={() => handleInputFocus('genero')}
-                              onClick={() => setIsGenderExpanded(!isGenderExpanded)}
-                              onBlur={() => setIsGenderExpanded(false)}
-                              required 
-                              aria-required="true"
-                              aria-expanded={isGenderExpanded}
-                              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#a4eac3] bg-white text-black"
-                            >
-                              <option value="">{focusedFields.has('genero') ? t('registerPatient.form.placeholders.selectGenderOption') : t('registerPatient.form.placeholders.selectGender')}</option>
-                              <option value="masculino">{t('registerPatient.form.genderOptions.male')}</option>
-                              <option value="femenino">{t('registerPatient.form.genderOptions.female')}</option>
-                              <option value="otro">{t('registerPatient.form.genderOptions.other')}</option>
-                            </select>
-                            <p className="text-xs text-red-500 mt-1">{t('registerPatient.form.messages.requiredField')}</p>
-                          </div>
-                        </div>
+                        <FormSelectField
+                          id="genero"
+                          name="genero"
+                          label={t('registerPatient.form.labels.gender')}
+                          value={formData.genero}
+                          onChange={handleInputChange}
+                          onFocus={() => handleInputFocus('genero')}
+                          onToggleExpanded={() => setIsGenderExpanded(!isGenderExpanded)}
+                          onBlur={() => setIsGenderExpanded(false)}
+                          options={[
+                            { value: 'hombre', label: "Hombre" },
+                            { value: 'mujer', label: "Mujer" },
+                            { value: 'otro', label: "Otro" },
+                          ]}
+                          placeholder={focusedFields.has('genero') ? t('registerPatient.form.placeholders.selectGenderOption') : t('registerPatient.form.placeholders.selectGender')}
+                          required
+                          isFocused={focusedFields.has('genero')}
+                          isExpanded={isGenderExpanded}
+                          helpText={t('registerPatient.form.messages.requiredField')}
+                          width="half"
+                        />
+
+                        {/*fechaNac solo pero con ancho limitado */}
+                        <FormDateField
+                          id="fechaNacimiento"
+                          name="fechaNacimiento"
+                          label="Fecha Nacimiento"
+                          value={formData.fehcaNacimiento}
+                          onChange={handleInputChange}
+                          placeholder={t('registerPatient.form.placeholders.enterBirthDate')}
+                          required
+                          showKeyboardIcon={false}
+                          isFocused={focusedFields.has('fechaNacimiento')}
+                          error={validationErrors.includes('El campo Fecha Nacimiento es obligatorio') ? 'El campo Fecha Nacimiento es obligatorio' : undefined}
+                          helpText={t('registerPatient.form.messages.requiredField')}
+                          width="half"
+                        />
 
                         {/* Cuarta fila: Obra Social y Nro Socio juntos */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          <div>
-                            <label htmlFor="obraSocial" className="block text-sm font-medium text-gray-700 mb-1 uppercase">
-                              {t('registerPatient.form.labels.socialWork')} <span className="text-red-500">*</span>
-                              <KeyboardIcon fieldName="obraSocial" />
-                            </label>
-                            <input 
-                              id="obraSocial" 
-                              name="obraSocial" 
-                              type="text" 
-                              value={formData.obraSocial} 
-                              onChange={handleInputChange} 
-                              onFocus={() => handleInputFocus('obraSocial')}
-                              required 
-                              aria-required="true"
-                              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#a4eac3] bg-white text-black" 
-                              placeholder={focusedFields.has('obraSocial') ? "" : t('registerPatient.form.placeholders.enterSocialWork')} 
-                            />
-                            <p className="text-xs text-red-500 mt-1">{t('registerPatient.form.messages.requiredField')}</p>
-                            <p className="text-xs text-blue-600 mt-1 flex items-center">
-                              <span className="mr-1">ℹ️</span> {t('registerPatient.form.messages.nameInstructions')}
-                            </p>
-                          </div>
-                          <div>
-                            <label htmlFor="nroSocio" className="block text-sm font-medium text-gray-700 mb-1 uppercase">
-                              {t('registerPatient.form.labels.memberNumber')} <span className="text-red-500">*</span>
-                              <KeyboardIcon fieldName="nroSocio" />
-                            </label>
-                            <input 
-                              id="nroSocio" 
-                              name="nroSocio" 
-                              type="text" 
-                              value={formData.nroSocio} 
-                              onChange={handleInputChange} 
-                              onFocus={() => handleInputFocus('nroSocio')}
-                              required 
-                              aria-required="true"
-                              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#a4eac3] bg-white text-black" 
-                              placeholder={focusedFields.has('nroSocio') ? "" : t('registerPatient.form.placeholders.enterMemberNumber')} 
-                            />
-                            <p className="text-xs text-red-500 mt-1">{t('registerPatient.form.messages.requiredField')}</p>
-                            <p className="text-xs text-blue-600 mt-1 flex items-center">
-                              <span className="mr-1">ℹ️</span> {t('registerPatient.form.messages.memberNumberInstructions')}
-                            </p>
-                          </div>
+                          <FormField
+                            id="obraSocial"
+                            name="obraSocial"
+                            label={t('registerPatient.form.labels.socialWork')}
+                            value={formData.obraSocial}
+                            onChange={handleInputChange}
+                            onFocus={() => handleInputFocus('obraSocial')}
+                            placeholder={t('registerPatient.form.placeholders.enterSocialWork')}
+                            onKeyboardIconClick={() => openKeyboardForField('obraSocial')}
+                            isFocused={focusedFields.has('obraSocial')}
+                            instructionText={t('registerPatient.form.messages.nameInstructions')}
+                            width="full"
+                          />
+                          <FormField
+                            id="nroSocio"
+                            name="nroSocio"
+                            label={t('registerPatient.form.labels.memberNumber')}
+                            value={formData.nroSocio}
+                            onChange={handleInputChange}
+                            onFocus={() => handleInputFocus('nroSocio')}
+                            placeholder={t('registerPatient.form.placeholders.enterMemberNumber')}
+                            onKeyboardIconClick={() => openKeyboardForField('nroSocio')}
+                            isFocused={focusedFields.has('nroSocio')}
+                            instructionText={t('registerPatient.form.messages.memberNumberInstructions')}
+                            width="full"
+                          />
                         </div>
+
                       </div>
-                   </fieldset>
+                   </FormFieldset>
                    
-                   <fieldset className="border border-gray-500 p-4 rounded-md">
-                      <legend className="text-lg font-semibold text-gray-700 px-2">{t('registerPatient.form.labels.contactData')}</legend>
+                    
+
+                   <FormFieldset legend={t('registerPatient.form.labels.contactData')}>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
                         {/* Domicilio */}
                         <div className="md:col-span-2">
                             <div className="grid grid-cols-1 sm:grid-cols-12 gap-2">
                                 {/* Calle */}
                                 <div className="sm:col-span-6">
-                                    <label htmlFor="calle" className="block text-sm font-medium text-gray-700 mb-1">
-                                        {t('registerPatient.form.labels.street')}
-                                        <KeyboardIcon fieldName="calle" />
-                                    </label>
-                                    <input 
+                                    <FormField
                                         id="calle"
-                                        type="text" 
-                                        name="calle" 
-                                        placeholder={focusedFields.has('calle') ? "" : t('registerPatient.form.placeholders.enterStreet')} 
-                                        onChange={handleInputChange} 
+                                        name="calle"
+                                        label={t('registerPatient.form.labels.street')}
+                                        value={formData.calle}
+                                        onChange={handleInputChange}
                                         onFocus={() => handleInputFocus('calle')}
-                                        value={formData.calle} 
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#a4eac3] bg-white text-black" 
+                                        placeholder={t('registerPatient.form.placeholders.enterStreet')}
+                                        onKeyboardIconClick={() => openKeyboardForField('calle')}
+                                        isFocused={focusedFields.has('calle')}
+                                        showKeyboardIcon={true}
+                                        width="full"
                                     />
                                 </div>
 
                                 {/* Número */}
                                 <div className="sm:col-span-2">
-                                    <label htmlFor="numero" className="block text-sm font-medium text-gray-700 mb-1">
-                                        {t('registerPatient.form.labels.number')}
-                                        <KeyboardIcon fieldName="numero" />
-                                    </label>
-                                    <input 
+                                    <FormField
                                         id="numero"
-                                        type="text" 
-                                        name="numero" 
-                                        placeholder={focusedFields.has('numero') ? "" : t('registerPatient.form.placeholders.enterNumber')} 
-                                        onChange={handleInputChange} 
+                                        name="numero"
+                                        label={t('registerPatient.form.labels.number')}
+                                        value={formData.numero}
+                                        onChange={handleInputChange}
                                         onFocus={() => handleInputFocus('numero')}
-                                        value={formData.numero} 
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#a4eac3] bg-white text-black" 
+                                        placeholder={t('registerPatient.form.placeholders.enterNumber')}
+                                        onKeyboardIconClick={() => openKeyboardForField('numero')}
+                                        isFocused={focusedFields.has('numero')}
+                                        showKeyboardIcon={true}
+                                        width="full"
                                     />
                                 </div>
 
                                 {/* Piso */}
                                 <div className="sm:col-span-2">
-                                    <label htmlFor="piso" className="block text-sm font-medium text-gray-700 mb-1">
-                                        {t('registerPatient.form.labels.floor')}
-                                        <KeyboardIcon fieldName="piso" />
-                                    </label>
-                                    <input 
+                                    <FormField
                                         id="piso"
-                                        type="text" 
-                                        name="piso" 
-                                        placeholder={focusedFields.has('piso') ? "" : t('registerPatient.form.placeholders.enterFloor')} 
-                                        onChange={handleInputChange} 
+                                        name="piso"
+                                        label={t('registerPatient.form.labels.floor')}
+                                        value={formData.piso}
+                                        onChange={handleInputChange}
                                         onFocus={() => handleInputFocus('piso')}
-                                        value={formData.piso} 
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#a4eac3] bg-white text-black" 
+                                        placeholder={t('registerPatient.form.placeholders.enterFloor')}
+                                        onKeyboardIconClick={() => openKeyboardForField('piso')}
+                                        isFocused={focusedFields.has('piso')}
+                                        showKeyboardIcon={true}
+                                        width="full"
                                     />
                                 </div>
 
                                 {/* Departamento */}
                                 <div className="sm:col-span-2">
-                                    <label htmlFor="dpto" className="block text-sm font-medium text-gray-700 mb-1">
-                                        {t('registerPatient.form.labels.apartment')}
-                                        <KeyboardIcon fieldName="dpto" />
-                                    </label>
-                                    <input 
+                                    <FormField
                                         id="dpto"
-                                        type="text" 
-                                        name="dpto" 
-                                        placeholder={focusedFields.has('dpto') ? "" : t('registerPatient.form.placeholders.enterApartment')} 
-                                        onChange={handleInputChange} 
+                                        name="dpto"
+                                        label={t('registerPatient.form.labels.apartment')}
+                                        value={formData.dpto}
+                                        onChange={handleInputChange}
                                         onFocus={() => handleInputFocus('dpto')}
-                                        value={formData.dpto} 
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#a4eac3] bg-white text-black" 
+                                        placeholder={t('registerPatient.form.placeholders.enterApartment')}
+                                        onKeyboardIconClick={() => openKeyboardForField('dpto')}
+                                        isFocused={focusedFields.has('dpto')}
+                                        showKeyboardIcon={true}
+                                        width="full"
                                     />
                                 </div>
                             </div>
                             <p className="text-xs text-gray-500 mt-1">{t('registerPatient.form.messages.optionalField')}</p>
                         </div>
+
                         {/* Teléfono */}
-                        <div>
-                          <label htmlFor="telefono" className="block text-sm font-medium text-gray-700 mb-1 uppercase">
-                            {t('registerPatient.form.labels.phone')}
-                            <KeyboardIcon fieldName="telefono" />
-                          </label>
-                          <input 
-                            id="telefono" 
-                            name="telefono" 
-                            type="tel" 
-                            value={formData.telefono} 
-                            onChange={handleInputChange} 
-                            onFocus={() => handleInputFocus('telefono')}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#a4eac3] bg-white text-black" 
-                            placeholder={focusedFields.has('telefono') ? "" : t('registerPatient.form.placeholders.enterPhone')} 
-                          />
-                          <p className="text-xs text-gray-500 mt-1">Opcional</p>
-                        </div>
+                        <FormField
+                          id="telefono"
+                          name="telefono"
+                          label={t('registerPatient.form.labels.phone')}
+                          value={formData.telefono}
+                          onChange={handleInputChange}
+                          onFocus={() => handleInputFocus('telefono')}
+                          placeholder={t('registerPatient.form.placeholders.enterPhone')}
+                          type="tel"
+                          required
+                          onKeyboardIconClick={() => openKeyboardForField('telefono')}
+                          isFocused={focusedFields.has('telefono')}
+                          helpText={t('registerPatient.form.messages.requiredField')}
+                          instructionText="Ingrese solo numeros, sin espacios ni guiones."
+                          width="full"
+                        />
                         {/* Email*/}
-                        <div>
-                          <div className="flex items-center mb-1">
-                            <label htmlFor="email" className="block text-sm font-medium text-gray-700 uppercase">
-                              {t('registerPatient.form.labels.email')}
-                            </label>
-                            <KeyboardIcon fieldName="email" />
-                          </div>
-                          <input 
-                            id="email" 
-                            name="email" 
-                            type="email" 
-                            value={formData.email} 
-                            onChange={handleInputChange} 
-                            onFocus={() => handleInputFocus('email')}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#a4eac3] bg-white text-black" 
-                            placeholder={focusedFields.has('email') ? "" : t('registerPatient.form.placeholders.enterEmail')} 
-                          />
-                          <p className="text-xs text-gray-500 mt-1">Opcional</p>
-                        </div>
+                        <FormField
+                          id="email"
+                          name="email"
+                          label={t('registerPatient.form.labels.email')}
+                          value={formData.email}
+                          onChange={handleInputChange}
+                          onFocus={() => handleInputFocus('email')}
+                          placeholder={t('registerPatient.form.placeholders.enterEmail')}
+                          type="email"
+                          required
+                          onKeyboardIconClick={() => openKeyboardForField('email')}
+                          isFocused={focusedFields.has('email')}
+                          helpText={t('registerPatient.form.messages.requiredField')}
+                          instructionText="Debe seguir el formato ejemplo: hola@...com"
+                          width="full"
+                        />
                       </div>
-                   </fieldset>
+                   </FormFieldset>
                 </div>
               </div>
               
@@ -670,74 +626,25 @@ export default function RegistrarPaciente({ t: propT, language: propLanguage, ch
       />
 
       {/* Modal de Confirmación */}
-      {showModal && (
-        <div id="confirmation-modal" className="fixed inset-0 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg shadow-lg p-6 sm:p-8 max-w-md mx-auto">
-            <h2 className="text-xl font-semibold text-gray-800 mb-4 text-center">
-              {t('registerPatient.form.modal.confirmRegistration')}
-            </h2>
-            <p className="text-gray-700 mb-4 text-center">
-              {t('registerPatient.form.modal.confirmSavePatient')}
-            </p>
-            <div className="flex justify-center gap-4">
-              <button 
-                onClick={() => setShowModal(false)}
-                className="px-4 py-2 bg-gray-200 rounded-md text-gray-700 hover:bg-gray-300 transition-colors font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400"
-              >
-                {t('registerPatient.form.modal.cancel')}
-              </button>
-              <button 
-                onClick={handleConfirmarGuardado}
-                className="px-4 py-2 bg-[#69b594] text-white rounded-md hover:bg-[#5aa382] transition-colors font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#69b594]"
-              >
-                {t('registerPatient.form.modal.confirm')}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <ConfirmationModal
+        show={showModal}
+        title={t('registerPatient.form.modal.confirmRegistration')}
+        message={t('registerPatient.form.modal.confirmSavePatient')}
+        confirmLabel={t('registerPatient.form.modal.confirm')}
+        cancelLabel={t('registerPatient.form.modal.cancel')}
+        onConfirm={handleConfirmarGuardado}
+        onCancel={() => setShowModal(false)}
+      />
 
       {/* Componente de Notificación */}
-      {notification.show && (
-        <div 
-          className={`fixed top-4 right-4 p-4 rounded-md shadow-lg ${
-            notification.type === 'error' ? 'bg-red-100 border-l-4 border-red-500' : 'bg-green-100 border-l-4 border-green-500'
-          }`}
-          role="alert"
-        >
-          <div className="flex">
-            <div className="flex-shrink-0">
-              {notification.type === 'error' ? (
-                <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" />
-                </svg>
-              ) : (
-                <svg className="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" />
-                </svg>
-              )}
-            </div>
-            <div className="ml-3">
-              <p className={`text-sm ${notification.type === 'error' ? 'text-red-700' : 'text-green-700'}`}>
-                {notification.message}
-              </p>
-            </div>
-            <div className="ml-auto pl-3">
-              <button
-                onClick={() => setNotification(prev => ({ ...prev, show: false }))}
-                className="inline-flex text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
-              >
-                <span className="sr-only">{t('registerPatient.form.notifications.close')}</span>
-                <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" />
-                </svg>
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <NotificationToast
+        show={notification.show}
+        message={notification.message}
+        type={notification.type}
+        onClose={() => setNotification(prev => ({ ...prev, show: false }))}
+        closeLabel={t('registerPatient.form.notifications.close')}
+      />
     </>
   );
 }
-
 

@@ -4,8 +4,8 @@ import Title from "../atomos/Title";
 import { BreadcrumbProps, BreadcrumbItem } from "@/globals/components/moleculas/Breadcrumb";
 
 interface PageHeaderProps {
-  title: string;
-  description: string;
+  title?: string;
+  description?: string;
   breadCrumbConf: {items: BreadcrumbProps["items"], t: BreadcrumbProps["t"], className?: BreadcrumbProps["className"]};
 }
 
@@ -20,8 +20,9 @@ export default function PageHeader({title, description, breadCrumbConf}: PageHea
         t={t}
         className={className}
       />}
-          <Title title={title} />
-          <p className="text-sm mb-3">{description}</p>
+      {/* Render title and description only when provided */}
+      {title && <Title title={title} />}
+      {description && <p className="text-sm mb-3">{description}</p>}
     </section>
   );
 }

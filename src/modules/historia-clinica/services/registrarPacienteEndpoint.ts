@@ -2,23 +2,29 @@ import { BASE_URL_HISTORIA_CLINICA } from '@/globals/services/config';
 
 export interface RegistrarPacienteData {
   dni: string;
-  nombre: string;
-  apellido: string;
+  fechaIngreso: string;
   genero: string;
-  obra_social: string;
-  nro_socio: string;
-  fecha_nacimiento: string;
-  fecha_ingreso: string;
-  domicilio?: string;
-  telefono?: string;
-  email?: string;
-  [key: string]: any;
+  nombres: string;
+  fehcaNacimiento: string;
+  apellido: string;
+  obraSocial?: string;
+  nroSocio?: string;
+  calle?: string;
+  numero?: string;
+  piso?: string;
+  dpto?: string;
+  telefono: string;
+  email: string;
+  fotoPerfil?: File | null;
 }
 
 export const REGISTRAR_PACIENTE_ENDPOINT = {
-  URL: () => `${BASE_URL_HISTORIA_CLINICA}/pacientes`,
-  METHOD: 'post' as const
+  URL: () => `${BASE_URL_HISTORIA_CLINICA}/pacientes/`,
+  METHOD: 'post' as const,
+  headers: {
+    Accept: 'application/json',
+    // No incluimos Content-Type porque FormData lo establece automáticamente
+  },
 };
 
 export default REGISTRAR_PACIENTE_ENDPOINT;
-

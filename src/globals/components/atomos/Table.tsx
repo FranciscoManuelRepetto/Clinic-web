@@ -80,9 +80,13 @@ export default function StripedTable({
             <tbody className="text-center">
                 {
                     data.map((elem, index) => {
-                        return (
-                            <tr
-                                className={index % 2 == 0 ? color ? `bg-${color}` : 'bg-primary' : ''}
+                        return(
+                            <tr 
+                                className={`
+                                    ${index % 2 == 0 ? color ? `bg-${color}` : 'bg-primary' : ''}
+                                    ${rowAction ? 'cursor-pointer' : ''}
+                                `
+                                }
                                 key={idKey ? elem[idKey] : index}
                                 onClick={() => rowAction ? rowAction(elem) : {}}
                             >

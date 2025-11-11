@@ -63,7 +63,11 @@ export default function StripedTable({contentConfig, data, className, color, sor
                     data.map((elem, index) => {
                         return(
                             <tr 
-                                className={index % 2 == 0 ? color ? `bg-${color}` : 'bg-primary' : ''}
+                                className={`
+                                    ${index % 2 == 0 ? color ? `bg-${color}` : 'bg-primary' : ''}
+                                    ${rowAction ? 'cursor-pointer' : ''}
+                                `
+                                }
                                 key={idKey ? elem[idKey] : index}
                                 onClick={() => rowAction ? rowAction(elem) : {}}
                             >

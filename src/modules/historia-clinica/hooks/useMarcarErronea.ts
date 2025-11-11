@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import axios from 'axios';
-import { MARCAR_ERRONEA } from '../services/historiaClinicaEndpoints';
+import { MARCAR_ERRONEA, MARCAR_ERRONEA_SOT } from '../services/historiaClinicaEndpoints';
 import errorHandler from '@/globals/utils/errorHandler';
 import { EvolucionCompleta } from '../types/EvolucionCompleta';
 
@@ -9,6 +9,10 @@ export interface UseMarcarErronea {
   marcarErronea: (id_usuario: number | string, id_evolucion: number | string, body: {
     motivo_erronea: string
   }) => Promise<EvolucionCompleta | null>;
+  
+  marcarErroneaSOT: (id_usuario: number | string, id_sot: number | string, body: {
+    motivo_erronea: string
+  }) => Promise<any | null>;
   isLoading: boolean;
   error: string | null;
 }
@@ -21,11 +25,9 @@ export const useMarcarErronea = (): UseMarcarErronea => {
     body: {
         motivo_erronea: string
     })  => {
-    //retiramos los inputs con ""
-    Object.entries(body).forEach(([key, value]) => {
-      if(!value)
-        delete body[key];
-    });
+    // remove empty string fields safely
+    const payload: Partial<{ motivo_erronea: string }> = {};
+    if (body.motivo_erronea) payload.motivo_erronea = body.motivo_erronea;
     setIsLoading(true);
     setError(null);
     console.log("vamos a cargar en la url: ", MARCAR_ERRONEA.URL(id_usuario, id_evolucion))
@@ -34,7 +36,7 @@ export const useMarcarErronea = (): UseMarcarErronea => {
       const response = await axios({
         method: MARCAR_ERRONEA.METHOD,
         url: MARCAR_ERRONEA.URL(id_usuario, id_evolucion),
-        data: body
+        data: payload
       });
       evolucion = response.data;
     } catch (err) {
@@ -50,9 +52,37 @@ export const useMarcarErronea = (): UseMarcarErronea => {
     return evolucion;
   };
 
+  const marcarErroneaSOT = async (id_usuario: number | string, id_sot: number | string,
+    body: { motivo_erronea: string }) => {
+    const payload: Partial<{ motivo_erronea: string }> = {};
+    if (body.motivo_erronea) payload.motivo_erronea = body.motivo_erronea;
+    setIsLoading(true);
+    setError(null);
+    let result = null;
+    try {
+      const response = await axios({
+        method: MARCAR_ERRONEA_SOT.METHOD,
+        url: MARCAR_ERRONEA_SOT.URL(id_usuario, id_sot),
+        data: payload,
+      });
+      result = response.data;
+    } catch (err) {
+      console.error('Error al marcar SOT como erronea:', err);
+      if (axios.isAxiosError(err) && err.response?.data?.detail) {
+        setError(errorHandler(err.response.data.detail));
+      } else {
+        setError(err instanceof Error ? err.message : 'Error desconocido al marcar como erronea SOT');
+      }
+    } finally {
+      setIsLoading(false);
+    }
+    return result;
+  };
+
 
   return {
     marcarErronea,
+    marcarErroneaSOT,
     isLoading,
     error,
   };

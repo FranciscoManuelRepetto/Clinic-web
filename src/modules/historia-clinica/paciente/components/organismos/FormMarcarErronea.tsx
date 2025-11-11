@@ -3,40 +3,51 @@ import useMarcarErronea from "@/modules/historia-clinica/hooks/useMarcarErronea"
 import { useState, useEffect } from "react";
 import { EvolucionCompleta } from "@/modules/historia-clinica/types/EvolucionCompleta";
 
-export default function MarcarErronea({goBack, id_usuario, id_evolucion, evoluciones, setEvoluciones}:
-     {goBack(): void, id_usuario: number, id_evolucion: number, evoluciones: EvolucionCompleta[], setEvoluciones: any}) {
-    id_usuario = 10; //HARDCODEADO!!
+export default function MarcarErronea({
+    goBack,
+    id_usuario,
+    id_evolucion,
+    evoluciones,
+    setEvoluciones,
+    onSubmit,
+    entityKind = 'evolucion',
+}:
+    {goBack(): void, id_usuario?: number, id_evolucion?: number, evoluciones?: EvolucionCompleta[], setEvoluciones?: any, onSubmit?: (id_usuario: number | string, id_evolucion: number | string, body:{motivo_erronea: string}) => Promise<any>, entityKind?: 'evolucion' | 'sot'}
+) {
+    // fallback id_usuario when not provided (kept for backward compatibility)
+    const fallbackIdUsuario = id_usuario ?? 9;
     const { marcarErronea, isLoading, error} = useMarcarErronea()
     const [pedirConfirmacion, setPedirConfirmacion] = useState(false);
     const [mostrarResultado, setMostrarResultado] = useState(false);
-    const initialFormState = {
+    type FormValues = { motivo_erronea: string };
+    const initialFormState: FormValues = {
         motivo_erronea: "",
     }
-    const [formData, setFormData] = useState(initialFormState);
+    const [formData, setFormData] = useState<FormValues>(initialFormState);
     const [validationErrors, setValidationErrors] = useState<{campo: string, msg: string}[]>([]); // Agregar este estado para manejar los mensajes de error
 
     // Función para manejar cambios en los inputs
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
-        const { name, value, type } = e.target;
+        const { name, value } = e.target;
         setFormData(prev => ({
             ...prev,
-            [name]: value
-        }));
+            [name as keyof FormValues]: value
+        } as FormValues));
     };
 
     // Funcion para verificar campos obligatorios
     const missingFields = () => {
         // Lista de campos requeridos con sus nombres amigables
-        const requiredFields: { key: keyof FormData; label: string }[] = [
+        const requiredFields: { key: keyof FormValues; label: string }[] = [
             { key: 'motivo_erronea', label: 'Motivo' },
         ];
-        
+
         // Verificar campos vacíos
         let missingFields = requiredFields.filter(field => !formData[field.key]);
         
         if (missingFields.length > 0) {
             // Crear mensajes de error específicos
-            const errors: {campo: string, msg: string}[] = missingFields.map(field => ({campo: field.key, msg: `El campo ${field.label} es obligatorio.`}));
+            const errors: {campo: string, msg: string}[] = missingFields.map(field => ({campo: String(field.key), msg: `El campo ${field.label} es obligatorio.`}));
             setValidationErrors(errors);
             
             // Mostrar alerta con los campos faltantes
@@ -44,7 +55,7 @@ export default function MarcarErronea({goBack, id_usuario, id_evolucion, evoluci
             alert(errorMessage);
             
             // Enfocar el primer campo faltante
-            const firstMissingField = document.getElementById(missingFields[0].key);
+            const firstMissingField = document.getElementById(String(missingFields[0].key));
             if (firstMissingField) {
                 firstMissingField.focus();
             }
@@ -67,13 +78,31 @@ export default function MarcarErronea({goBack, id_usuario, id_evolucion, evoluci
     };
     
     const handleConfirmarGuardado = async () => {
+        // guard: ensure we have an id to operate on
+        if (!id_evolucion) {
+            alert('ID de la entidad no disponible para marcar como erronea');
+            return;
+        }
+
         setMostrarResultado(true);
         setPedirConfirmacion(false);
-        let evolucion = await marcarErronea(id_usuario, id_evolucion, formData);
-        if (evolucion != null) {
-            // Actualizo los datos...
-            let anteriores = evoluciones.filter(evolucion => Number(evolucion.id_evolucion) < id_evolucion)
-            let posteriores = evoluciones.filter(evolucion => Number(evolucion.id_evolucion) > id_evolucion)
+
+        // prefer a passed onSubmit handler (allows using this form for different entity types)
+        let evolucion: any = null;
+            if (onSubmit) {
+                evolucion = await onSubmit(fallbackIdUsuario, id_evolucion, formData);
+            } else if (entityKind === 'sot') {
+                // delegate to hook which now exposes marcarErroneaSOT
+                const { marcarErroneaSOT } = useMarcarErronea();
+                evolucion = await marcarErroneaSOT(fallbackIdUsuario, id_evolucion!, formData);
+            } else {
+                evolucion = await marcarErronea(fallbackIdUsuario, id_evolucion, formData);
+            }
+
+        if (evolucion != null && setEvoluciones) {
+            // Actualizo los datos... only when caller provided evoluciones array
+            let anteriores = (evoluciones || []).filter((e: EvolucionCompleta) => Number(e.id_evolucion) < id_evolucion)
+            let posteriores = (evoluciones || []).filter((e: EvolucionCompleta) => Number(e.id_evolucion) > id_evolucion)
             setEvoluciones([...anteriores, evolucion, ...posteriores])
         }
     };
@@ -94,7 +123,6 @@ export default function MarcarErronea({goBack, id_usuario, id_evolucion, evoluci
                         <textarea 
                             id="motivo_erronea" 
                             name="motivo_erronea" 
-                            type="text"
                             required
                             value={formData.motivo_erronea} 
                             onChange={handleInputChange} 

@@ -1,6 +1,6 @@
 "use client";
 
-import { Plus, ChevronUp, CreditCard } from "lucide-react";
+import { Plus, ChevronUp, ChevronDown, CreditCard } from "lucide-react";
 import { useState } from "react";
 import Modal from "../../../../../globals/components/moleculas/Modal";
 import CrearEvolucion from "../organismos/FormCrearEvolucion";
@@ -14,6 +14,8 @@ interface Props {
   rightLabel?: string;
   onCreate?: () => void;
   onRightClick?: () => void;
+  sortNewestFirst?: boolean;
+  id_usuario?: string | number;
 }
 
 export default function PatientEvolutionHeader({
@@ -23,7 +25,9 @@ export default function PatientEvolutionHeader({
   onCreate,
   onRightClick,
   evoluciones,
-  setEvoluciones
+  setEvoluciones,
+  id_usuario
+  , sortNewestFirst = true
 }: Props) {
   if (!onCreate) {
     onCreate = () => setShowModal(true)
@@ -41,14 +45,14 @@ export default function PatientEvolutionHeader({
           <span>{leftLabel}</span>
           <Plus className="w-4 h-4" />
         </button>
-        {showModal &&
-            <Modal title="Cargar Evolucion" onClose={() => setShowModal(false)}>
-                <CrearEvolucion evoluciones={evoluciones} setEvoluciones={setEvoluciones} goBack={() => setShowModal(false)}/>
-            </Modal>
-        }
+          {showModal &&
+        <Modal title="Cargar Evolucion" onClose={() => setShowModal(false)}>
+          <CrearEvolucion evoluciones={evoluciones ?? []} setEvoluciones={setEvoluciones} goBack={() => setShowModal(false)} id_usuario={id_usuario} />
+        </Modal>
+          }
         <button onClick={onRightClick} className="inline-flex items-center gap-2 text-gray-800 hover:text-black focus:outline-none">
-          <span className="mr-1">{rightLabel}</span>
-          <ChevronUp className="w-5 h-5" />
+          <span className="mr-1">{sortNewestFirst ? 'Más recientes' : 'Menos recientes'}</span>
+          {sortNewestFirst ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
         </button>
       </div>
     </section>

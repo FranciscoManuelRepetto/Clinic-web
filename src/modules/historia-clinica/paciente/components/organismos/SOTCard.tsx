@@ -4,6 +4,8 @@ import { useState } from "react";
 import ToggleCompactButton from "../atoms/ToggleCompactButton";
 import CorreccionCard from "./CorreccionCard";
 import MarkAsErroneousButton from "../atoms/MarkAsErroneousButton";
+import Modal from '@/globals/components/moleculas/Modal';
+import MarcarErronea from './FormMarcarErronea';
 
 interface ApiData {
   motivo?: string;
@@ -14,6 +16,11 @@ interface ApiData {
   id_sot?: number;
   creado_por?: number;
   fecha_creacion?: string; // ISO
+  creacion?: {
+    nombre?: string;
+    id_usuario?: number | string;
+    fecha?: string;
+  };
   dni_paciente?: string;
   motivo_modificado?: string;
   modificado_por?: number;
@@ -37,15 +44,26 @@ export default function SOTCard({
   creatorName,
 }: Props) {
   const [isCompact, setIsCompact] = useState(true);
+  const [showModal, setShowModal] = useState(false);
+  const idEntity = data?.id_sot;
+  const onMarcarErronea = () => {
+    if (!idEntity) {
+      alert('ID de SOT no disponible');
+      return;
+    }
+    setShowModal(true);
+  }
 
-  const createdAt = data?.fecha_creacion ? new Date(data.fecha_creacion) : undefined;
+  // use creation metadata from API: data.creacion.{nombre, fecha}
+  const createdAt = data?.creacion?.fecha ? new Date(data.creacion.fecha) : undefined;
   const formattedCreatedAt = createdAt
     ? `${String(createdAt.getDate()).padStart(2, '0')}/${String(createdAt.getMonth() + 1).padStart(2, '0')}/${String(createdAt.getFullYear()).slice(-2)} ${String(createdAt.getHours()).padStart(2, '0')}:${String(createdAt.getMinutes()).padStart(2, '0')} hs`
     : undefined;
 
   const baseTitle = title.includes(' - ') ? title.split(' - ')[0] : title;
-  const headerTitle = professionalName
-    ? `${baseTitle} - ${professionalName}${formattedCreatedAt ? ` (${formattedCreatedAt})` : ''}`
+  const creator = creatorName ?? data?.creacion?.nombre;
+  const headerTitle = creator
+    ? `${baseTitle} - ${creator}${formattedCreatedAt ? ` (${formattedCreatedAt})` : ''}`
     : title;
 
   // event datetime (fecha + hora)
@@ -91,8 +109,13 @@ export default function SOTCard({
           </div>
 
           <div className="mt-6 flex justify-end">
-            <MarkAsErroneousButton ariaLabel="Marcar como Erróneo" />
+            <MarkAsErroneousButton onClick={onMarcarErronea} ariaLabel="Marcar como Erróneo" />
           </div>
+          {showModal && idEntity && (
+            <Modal title="Marcar SOT como Erróneo" onClose={() => setShowModal(false)}>
+              <MarcarErronea id_usuario={9} id_evolucion={idEntity} evoluciones={[]} setEvoluciones={() => {}} goBack={() => setShowModal(false)} entityKind="sot" />
+            </Modal>
+          )}
         </div>
       </div>
 

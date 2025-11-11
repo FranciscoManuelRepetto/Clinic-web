@@ -28,12 +28,24 @@ interface StripedTableProps {
     sortConfig?: sortConfig;
     rowAction?(row: any): void;
     showMedicationActions?: boolean;
+    onMedicationAdd?(row: any): void;
+    onMedicationRemove?(row: any): void;
 }
 
 
 
 
-export default function StripedTable({ contentConfig, data, className, color, sortConfig, rowAction, showMedicationActions }: StripedTableProps) {
+export default function StripedTable({
+    contentConfig,
+    data,
+    className,
+    color,
+    sortConfig,
+    rowAction,
+    showMedicationActions,
+    onMedicationAdd,
+    onMedicationRemove,
+}: StripedTableProps) {
     if (contentConfig.some((elem) => elem.sorts) && !sortConfig) {
         console.error("La tabla se configuro con columnas que se ordenan pero no se definio sortConfig!")
     }
@@ -92,6 +104,10 @@ export default function StripedTable({ contentConfig, data, className, color, so
                                                 type="button"
                                                 aria-label="Agregar medicamento"
                                                 className="p-2 rounded-md bg-blue-100 hover:bg-blue-200 transition-colors duration-200 text-blue-600 hover:text-blue-700"
+                                                onClick={(event) => {
+                                                    event.stopPropagation()
+                                                    onMedicationAdd?.(elem)
+                                                }}
                                             >
                                                 <PackagePlus className="w-7 h-7" />
                                             </button>
@@ -100,6 +116,10 @@ export default function StripedTable({ contentConfig, data, className, color, so
                                                 type="button"
                                                 aria-label="Quitar medicamento"
                                                 className="p-2 rounded-md bg-red-100 hover:bg-red-200 transition-colors duration-200 text-red-600 hover:text-red-700"
+                                                onClick={(event) => {
+                                                    event.stopPropagation()
+                                                    onMedicationRemove?.(elem)
+                                                }}
                                             >
                                                 <PackageMinus className="w-7 h-7" />
                                             </button>

@@ -7,13 +7,17 @@ import { useRouter } from 'next/navigation';
 import VirtualKeyboard from "@/globals/components/organismos/VirtualKeyboard";
 import PageHeader from "@/globals/components/organismos/PageHeader";
 import { useBuscarMedicamentos } from "@/modules/medicamentos/hooks/useBuscarMedicamentos";
-import { Medicamento } from "@/modules/medicamentos/types/Medicamento";
 import RadioField from "@/globals/components/atomos/RadioField";
 import { buildFormaFarmaceuticaOptions } from "@/modules/medicamentos/const/const";
 import Subtitle from "@/globals/components/atomos/Subtitle";
 /*De tabla*/
 import StripedTable from "@/globals/components/atomos/Table";
 import Paginator from "@/globals/components/moleculas/Paginator";
+import { Medicamento } from "@/modules/medicamentos/types/Medicamento";
+import { MedicationIntakeModal } from "@/modules/medicamentos/components/modalIngreso";
+import { MedicationWithdrawalModal } from "@/modules/medicamentos/components/modalEgreso";
+import { useIngresoMedicamento } from "@/modules/medicamentos/hooks/useIngresoMedicamento";
+import { useEgresoMedicamento } from "@/modules/medicamentos/hooks/useEgresoMedicamento";
 
 interface FormData {
   nomCom_NomGene: string;
@@ -26,6 +30,13 @@ interface FormData {
   order: string;
   sort: string;
 }
+
+type MedicationMovementFormValues = {
+  id_paciente: number;
+  id_profesional: number;
+  cantidad: number;
+  motivo: string;
+};
 
 interface BuscarMedicamentoProps {
   t?: (key: string) => string;
@@ -43,8 +54,12 @@ export default function BuscarMedicamento({ t: propT, language: propLanguage, ch
   const [showFilters, setShowFilters] = useState(false);
   const [searched, setSearched] = useState<boolean>(false);
   const { buscarMedicamentos, medicamentos, getTotalPages, isLoading, error } = useBuscarMedicamentos();
-  const [sort, setSort] = useState<string>("nombre_comercial");
-  const [order, setOrder] = useState<string>("asc");
+  const [sort, setSort] = useState<string>("stock");
+  const [order, setOrder] = useState<string>("desc");
+  const [selectedMedicationForIngreso, setSelectedMedicationForIngreso] = useState<Medicamento | null>(null);
+  const [selectedMedicationForEgreso, setSelectedMedicationForEgreso] = useState<Medicamento | null>(null);
+  const { registrarIngresoMedicamento } = useIngresoMedicamento();
+  const { registrarEgresoMedicamento } = useEgresoMedicamento();
   const [formData, setFormData] = useState<FormData>({
     nomCom_NomGene: "",
     laboratorio_titular: "",
@@ -53,8 +68,8 @@ export default function BuscarMedicamento({ t: propT, language: propLanguage, ch
     presentacion: "",
     limit: 10,
     page: 1,
-    order: "asc",
-    sort: "nombre_comercial"
+    order: "desc",
+    sort: "stock"
 
     /*
     diagnostico: "",
@@ -70,6 +85,46 @@ export default function BuscarMedicamento({ t: propT, language: propLanguage, ch
       ...prev,
       forma_farmaceutica: value,
     }));
+  };
+
+  const openIngresoModal = (medicamento: Medicamento) => {
+    setSelectedMedicationForIngreso(medicamento);
+  };
+
+  const openEgresoModal = (medicamento: Medicamento) => {
+    setSelectedMedicationForEgreso(medicamento);
+  };
+
+  const closeIngresoModal = () => {
+    setSelectedMedicationForIngreso(null);
+  };
+
+  const closeEgresoModal = () => {
+    setSelectedMedicationForEgreso(null);
+  };
+
+  const handleMedicationIntakeSubmit = async (medicamento: Medicamento, data: MedicationMovementFormValues) => {
+    await registrarIngresoMedicamento({
+      id_medicamento: medicamento.id_medicamento,
+      id_paciente: data.id_paciente,
+      id_profesional: data.id_profesional,
+      cantidad: data.cantidad,
+      motivo: data.motivo,
+    });
+    closeIngresoModal();
+    await buscarMedicamentos({ ...formData });
+  };
+
+  const handleMedicationWithdrawalSubmit = async (medicamento: Medicamento, data: MedicationMovementFormValues) => {
+    await registrarEgresoMedicamento({
+      id_medicamento: medicamento.id_medicamento,
+      id_paciente: data.id_paciente,
+      id_profesional: data.id_profesional,
+      cantidad: data.cantidad,
+      motivo: data.motivo,
+    });
+    closeEgresoModal();
+    await buscarMedicamentos({ ...formData });
   };
 
   const formaFarmaceuticaOptions = buildFormaFarmaceuticaOptions({
@@ -104,8 +159,8 @@ export default function BuscarMedicamento({ t: propT, language: propLanguage, ch
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const datos = { ...formData };
-    datos.order = "asc";
-    datos.sort = "nombre_comercial";
+    datos.order = "desc";
+    datos.sort = "stock";
     datos.page = 1;
     setSort(datos.sort);
     setOrder(datos.order);
@@ -389,6 +444,9 @@ export default function BuscarMedicamento({ t: propT, language: propLanguage, ch
             contentConfig={tableContentConfig}
             sortConfig={tableSortConfig}
             rowAction={rowClickAction}
+            showMedicationActions={true}
+            onMedicationAdd={openIngresoModal}
+            onMedicationRemove={openEgresoModal}
           />
           <Paginator
             totalPages={getTotalPages(formData.limit)}
@@ -411,6 +469,20 @@ export default function BuscarMedicamento({ t: propT, language: propLanguage, ch
         onDeleteText={deleteText}
         onClearField={clearField}
       />
+      {selectedMedicationForIngreso && (
+        <MedicationIntakeModal
+          medicamento={selectedMedicationForIngreso}
+          onClose={closeIngresoModal}
+          onSubmit={handleMedicationIntakeSubmit}
+        />
+      )}
+      {selectedMedicationForEgreso && (
+        <MedicationWithdrawalModal
+          medicamento={selectedMedicationForEgreso}
+          onClose={closeEgresoModal}
+          onSubmit={handleMedicationWithdrawalSubmit}
+        />
+      )}
     </>
   );
 }

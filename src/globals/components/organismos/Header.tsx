@@ -55,10 +55,12 @@ export default function Header({
           menuKey="personal"
           items={[
             {
-              href: "#",
+              href: "registrar-personal",
               text: t("navbar.submenus.personal.gestionarPersonal"),
             },
-            { href: "#", text: t("navbar.submenus.personal.horarios") },
+            { 
+              href: "#", 
+              text: t("navbar.submenus.personal.horarios") },
           ]}
         />
       </ul>

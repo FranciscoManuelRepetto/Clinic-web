@@ -14,6 +14,8 @@ import Header from "@/globals/components/organismos/Header";
 import Sidebar from "@/globals/components/organismos/Sidebar";
 import HeaderNotLogger from "@/globals/components/organismos/HeaderNotLogger";
 import Medicamentos from "@/modules/medicamentos/medicamentos";
+import Personal from "@/modules/personal/personal";
+import RegistrarPersonal from "@/modules/personal/registrarPersonal/registrarPersonal";
 
 export default function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -82,6 +84,9 @@ export default function App() {
     '/': <HomeLogin />,
     '/home': <HomeLogin />,
     '/historia-clinica': <HistoriaClinica />,
+    '/medicamentos': <Medicamentos />,
+    '/personal': <Personal />,
+    '/registrar-personal': <RegistrarPersonal />,
     '/registrar-paciente': <RegistrarPaciente t={t} language={language} changeLanguage={changeLanguage} />,
     '/buscar-paciente': <BuscarPaciente t={t} language={language} changeLanguage={changeLanguage} />,
     '/buscar-medicamentos': <BuscarMedicamentos t={t} language={language} changeLanguage={changeLanguage} />,

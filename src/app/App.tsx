@@ -9,7 +9,8 @@ import HomeLogin from "@/modules/home/homeLogin/components/HomeLogin";
 import HistoriaClinica from "@/modules/historia-clinica/historia-clinica";
 import RegistrarPaciente from "@/modules/historia-clinica/registrarPaciente/components/registrar-paciente";
 import BuscarPaciente from "@/modules/historia-clinica/buscarPaciente/components/buscar-paciente";
-import BuscarMedicamentos from "@/modules/medicamentos/buscarMedicamentos/components/buscar-Medicamentos";
+import BuscarMedicamentos from "@/modules/medicamentos/components/buscar-Medicamentos";
+import HistoriaClinicaPaciente from "@/modules/historia-clinica/paciente/components/historia-clinica-paciente";
 import Header from "@/globals/components/organismos/Header";
 import Sidebar from "@/globals/components/organismos/Sidebar";
 import HeaderNotLogger from "@/globals/components/organismos/HeaderNotLogger";
@@ -87,6 +88,7 @@ export default function App() {
     '/medicamentos': <Medicamentos />,
     '/personal': <Personal />,
     '/registrar-personal': <RegistrarPersonal />,
+    '/paciente': <HistoriaClinicaPaciente t={t} />,
     '/registrar-paciente': <RegistrarPaciente t={t} language={language} changeLanguage={changeLanguage} />,
     '/buscar-paciente': <BuscarPaciente t={t} language={language} changeLanguage={changeLanguage} />,
     '/buscar-medicamentos': <BuscarMedicamentos t={t} language={language} changeLanguage={changeLanguage} />,

@@ -3,6 +3,7 @@ import axios from 'axios';
 import { Medicamento } from '../types/Medicamento';
 import { BUSCAR_MEDICAMENTOS_ENDPOINT, BuscarMedicamentosParams } from '../services/buscarMedicamentosEndpoint';
 import errorHandler from '@/globals/utils/errorHandler';
+import sortData from '@/globals/utils/sortData';
 
 export interface UseBuscarMedicamentosReturn {
   buscarMedicamentos: (params: BuscarMedicamentosParams) => Promise<void>;
@@ -34,9 +35,10 @@ export const useBuscarMedicamentos = (): UseBuscarMedicamentosReturn => {
       const requestedPage = params.page && params.page > 0 ? params.page : 1;
 
       if (Array.isArray(data)) {
+        const sorted = sortData<Medicamento>(data, params.sort, params.order as 'asc' | 'desc');
         const paginated = requestedLimit
-          ? data.slice((requestedPage - 1) * requestedLimit, requestedPage * requestedLimit)
-          : data;
+          ? sorted.slice((requestedPage - 1) * requestedLimit, requestedPage * requestedLimit)
+          : sorted;
 
         setMedicamentos(paginated);
         setTotalMedicamentos(data.length);
@@ -48,10 +50,11 @@ export const useBuscarMedicamentos = (): UseBuscarMedicamentosReturn => {
           limit: serverLimit,
         } = data ?? {};
 
+        const sorted = sortData<Medicamento>(medicamentosData, params.sort, params.order as 'asc' | 'desc');
         const effectiveLimit = requestedLimit ?? (typeof serverLimit === "number" ? serverLimit : undefined);
         const paginated = effectiveLimit
-          ? medicamentosData.slice((requestedPage - 1) * effectiveLimit, requestedPage * effectiveLimit)
-          : medicamentosData;
+          ? sorted.slice((requestedPage - 1) * effectiveLimit, requestedPage * effectiveLimit)
+          : sorted;
 
         setMedicamentos(paginated);
         setTotalMedicamentos(

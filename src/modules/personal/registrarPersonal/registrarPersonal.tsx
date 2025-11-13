@@ -12,8 +12,6 @@ import FormSelectField from "@/globals/components/atomos/FormSelectField";
 import FormFieldset from "@/globals/components/moleculas/FormFieldset";
 import ConfirmationModal from "@/globals/components/moleculas/ConfirmationModal";
 import NotificationToast from "@/globals/components/moleculas/NotificationToast";
-import { Apple } from "lucide-react";
-import { TIPOS_CAPSULA } from "@/modules/medicamentos/const/const";
 
 
 interface FormData {
@@ -26,6 +24,7 @@ interface FormData {
     fecha_nacimiento: string;
     email: string;
     foto_url: File | null;
+    telefono: string;
 }
 
 interface RegistrarPersonalProps {
@@ -54,6 +53,7 @@ export default function RegistrarPersonal({ t: propT, language: propLanguage, ch
     genero: "",
     fecha_nacimiento: "",
     email: "",
+    telefono: "",
     foto_url: null
   });
   
@@ -213,6 +213,7 @@ export default function RegistrarPersonal({ t: propT, language: propLanguage, ch
       { key: 'genero', label: 'Género' },
       { key: 'matricula', label: 'Matricula' },
       { key: 'tipo', label: 'Tipo' },
+      { key: 'telefono', label: 'Teléfono' }
     ];
     
     // Verificar campos vacíos
@@ -256,7 +257,8 @@ export default function RegistrarPersonal({ t: propT, language: propLanguage, ch
       foto_url: null,
       tipo:"",
       matricula:"",
-      email:""
+      email:"",
+      telefono:"",
     });
   } catch (error) {
     setNotification({ show: true, message: saveError || 'Error al guardar personal', type: 'error' });
@@ -467,6 +469,23 @@ export default function RegistrarPersonal({ t: propT, language: propLanguage, ch
                    <FormFieldset legend={t('registerPatient.form.labels.contactData')}>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
                         
+                        {/* Teléfono */}
+                        <FormField
+                          id="telefono"
+                          name="telefono"
+                          label={t('registerPatient.form.labels.phone')}
+                          value={formData.telefono}
+                          onChange={handleInputChange}
+                          onFocus={() => handleInputFocus('telefono')}
+                          placeholder={t('registerPatient.form.placeholders.enterPhone')}
+                          type="tel"
+                          required
+                          onKeyboardIconClick={() => openKeyboardForField('telefono')}
+                          isFocused={focusedFields.has('telefono')}
+                          helpText={t('registerPatient.form.messages.requiredField')}
+                          instructionText="Ingrese solo numeros, sin espacios ni guiones."
+                          width="full"
+                        />
                         {/* Email*/}
                         <FormField
                           id="email"

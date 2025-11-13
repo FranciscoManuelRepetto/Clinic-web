@@ -7,7 +7,9 @@ export interface RegistrarPersonalData {
   nombre: string;
   apellido: string;
   matricula?: string;
-  email: string;
+  email?: string;
+  fecha_nacimiento?: string;
+  telefono?: string;
   foto_url?: File | null;
 }
 

@@ -1,4 +1,6 @@
 import React from "react";
+import { useUser } from "@auth0/nextjs-auth0/client";
+
 
 interface Turno {
   id: number;
@@ -7,6 +9,7 @@ interface Turno {
 }
 
 const HomeLogin: React.FC = () => {
+  const { user, isLoading: userCargando } = useUser();
   const turnos: Turno[] = [
     { id: 1, hora: "09:00", servicio: "Consulta general" },
     { id: 2, hora: "10:30", servicio: "Control odontológico" },
@@ -15,11 +18,20 @@ const HomeLogin: React.FC = () => {
   ];
 
   const fecha = "Lunes 01/02";
+  if (userCargando) {
+    return (
+    <div className="flex items-center justify-center min-h-screen">
+        <div className="text-lg">Cargando...</div>
+    </div>
+    );
+  }else{
+    console.log("DATOS DE USUARIO: ", user);
+  }
 
   return (
     <div className="flex flex-col p-20 mt-10 space-y-10 font-sans">
       <h1 className="text-4xl font-semibold text-black">
-        Bienvenido, Francisco
+        Bienvenido, {user.name}
       </h1>
 
       <div className="w-2/3 mx-auto rounded-md overflow-hidden shadow-sm">

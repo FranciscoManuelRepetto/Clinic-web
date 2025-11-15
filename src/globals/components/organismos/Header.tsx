@@ -1,7 +1,7 @@
 import NavButton from "../moleculas/NavButton";
 
 interface HeaderProps {
-  onLogout: () => void;
+  onLogout?: null | (() => void);
   t: (key: string) => string;
   language: string;
   changeLanguage: (lang: 'es' | 'en') => void;
@@ -81,13 +81,13 @@ export default function Header({
 
         {/* Botón de logout */}
         <div className="flex items-center gap-4 text-gray-900">
-          <button
-            onClick={onLogout}
+          <a
+            href="/auth/logout"
             className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition-colors text-sm font-bold h-12 w-30 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
             tabIndex={0}
           >
             {t("navbar.submenus.personal.cerrarSesion")}
-          </button>
+          </a>
         </div>
       </div>
     </div>

@@ -36,6 +36,7 @@ interface RegistrarPersonalProps {
 export default function RegistrarPersonal({ t: propT, language: propLanguage, changeLanguage: propChangeLanguage }: RegistrarPersonalProps) {
   const { t: hookT, language: hookLanguage, changeLanguage: hookChangeLanguage } = useTranslations();
   const { registrarPersonal, isLoading: saving, error: saveError } = useRegistrarPersonal();
+  const [pedirMatricula, setPedirMatricula] = useState(false);
   
 
   // Usar props si están disponibles, sino usar hook
@@ -61,6 +62,7 @@ export default function RegistrarPersonal({ t: propT, language: propLanguage, ch
   const [focusedFields, setFocusedFields] = useState<Set<string>>(new Set());
   const [isUpperCase, setIsUpperCase] = useState(false);
   const [isGenderExpanded, setIsGenderExpanded] = useState(false);
+  const [isProfesionalTypeExpanded, setIsProfesionalTypeExpanded] = useState(false);
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
   const [notification, setNotification] = useState<{
     show: boolean;
@@ -201,6 +203,20 @@ export default function RegistrarPersonal({ t: propT, language: propLanguage, ch
     }
   };
 
+  const clinicos = ['psicologo', 'psiquiatra', 'enfermero'];
+  // Funcion para manejar el cambio de tipo o rol del profesional, para pedir o no la matricula
+  const handleProfesionalTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    handleInputChange(e);
+    let seleccionado = e.target.value;
+    let pideMatricula = clinicos.includes(seleccionado)
+    setPedirMatricula(pideMatricula);
+    if (!pideMatricula)
+      setFormData(prev => ({
+          ...prev,
+          ["matricula"]: ""
+      }));
+  }
+
   // Función para manejar el envío del formulario
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -213,14 +229,18 @@ export default function RegistrarPersonal({ t: propT, language: propLanguage, ch
       { key: 'genero', label: 'Género' },
       { key: 'matricula', label: 'Matricula' },
       { key: 'tipo', label: 'Tipo' },
-      { key: 'telefono', label: 'Teléfono' }
+      { key: 'telefono', label: 'Teléfono' },
+      { key: 'email', label: 'Email' }
     ];
     
     // Verificar campos vacíos
-    const missingFields = requiredFields.filter(field => !formData[field.key]);
+    let missingFields = requiredFields.filter(field => !formData[field.key]);
     
     if (missingFields.length > 0) {
+
       // Crear mensajes de error específicos
+      if (!pedirMatricula)
+        missingFields = missingFields.filter(elem => elem.key !== 'matricula');
       const errors = missingFields.map(field => `El campo ${field.label} es obligatorio`);
       setValidationErrors(errors);
       
@@ -304,12 +324,12 @@ export default function RegistrarPersonal({ t: propT, language: propLanguage, ch
         {/* Header */}
           <PageHeader
             title={"Registrar Personal"}
-            description={"Gestione la información de nuevos personal en el sistema."}
+            description={"Gestione la información de nuevo personal en el sistema."}
             breadCrumbConf={
               {
                 items:[
                   { label: t("navbar.menus.personal"), href: "/personal" },
-                  { label: t("registerPatient.title"), isActive: true }
+                  { label: "Registrar Personal", isActive: true }
                 ],
                 t: t
               }
@@ -317,7 +337,7 @@ export default function RegistrarPersonal({ t: propT, language: propLanguage, ch
           />
           <div>
             <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-4 text-center">
-              {t('registerPatient.form.title')}
+              Formulario de Registro de Personal
             </h1>
             
             
@@ -432,21 +452,36 @@ export default function RegistrarPersonal({ t: propT, language: propLanguage, ch
                           width="half"
                         />
 
-                        {/* Cuarta fila: tipo y matricula juntitos */}
+                        {/* Cuarta fila: tipo o rol del profesional*/}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          <FormField
-                            id="tipo"
-                            name="tipo"
-                            label={"tipo"}
-                            value={formData.tipo}
-                            onChange={handleInputChange}
-                            onFocus={() => handleInputFocus('tipo')}
-                            placeholder={"Ingrese el tipo de personal"}
-                            onKeyboardIconClick={() => openKeyboardForField('tipo')}
-                            isFocused={focusedFields.has('tipo')}
-                            instructionText={"no sé qué poner acá"}
-                            width="full"
-                          />
+                        <FormSelectField
+                          id="tipo"
+                          name="tipo"
+                          label={"Tipo o Rol del Personal"}
+                          value={formData.tipo}
+                          onChange={handleProfesionalTypeChange}
+                          onFocus={() => handleInputFocus('tipo')}
+                          onToggleExpanded={() => setIsProfesionalTypeExpanded(!isProfesionalTypeExpanded)}
+                          onBlur={() => setIsProfesionalTypeExpanded(false)}
+                          options={[
+                            { value: 'psicologo', label: "Psicologo" },
+                            { value: 'psiquiatra', label: "Psiquiatra" },
+                            { value: 'enfermero', label: "Enfermero" },
+                            { value: 'secretaria', label: "Secretaria" },
+                            { value: 'director', label: "Director" },
+                            { value: 'coordinador', label: "Coordinador" },
+                          ]}
+                          placeholder={focusedFields.has('tipo') ? "Seleccione una opcion" : "Seleccione aquí el tipo o rol del personal"}
+                          required
+                          isFocused={focusedFields.has('tipo')}
+                          isExpanded={isProfesionalTypeExpanded}
+                          helpText={t('registerPatient.form.messages.requiredField')}
+                          width="full"
+                        />
+                        </div>
+                        {/* Quinta fila (opcional): matricula SOLO para PSIQ, PSIC, ENF*/}
+                        {
+                          pedirMatricula && <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           <FormField
                             id="matricula"
                             name="matricula"
@@ -461,6 +496,7 @@ export default function RegistrarPersonal({ t: propT, language: propLanguage, ch
                             width="full"
                           />
                         </div>
+                        }
 
                       </div>
                    </FormFieldset>

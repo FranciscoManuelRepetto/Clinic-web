@@ -122,6 +122,7 @@ describe("CrearEvolucion", () => {
     //El click a guardar no deberia provocar que se muestre la confirmacion porque hay errores
     expect(confirmacion).toHaveClass('max-h-0');
    })
+   
    it("No debe permitir la carga si todos los ejes del diagnostico estan llenos pero el campo de observacion no", async () => {
     const user = userEvent.setup()
     render(<CrearEvolucion

@@ -235,12 +235,10 @@ export default function RegistrarPersonal({ t: propT, language: propLanguage, ch
     
     // Verificar campos vacíos
     let missingFields = requiredFields.filter(field => !formData[field.key]);
-    
-    if (missingFields.length > 0) {
-
-      // Crear mensajes de error específicos
-      if (!pedirMatricula)
+    if (!pedirMatricula)
         missingFields = missingFields.filter(elem => elem.key !== 'matricula');
+
+    if (missingFields.length > 0) {
       const errors = missingFields.map(field => `El campo ${field.label} es obligatorio`);
       setValidationErrors(errors);
       
@@ -265,7 +263,7 @@ export default function RegistrarPersonal({ t: propT, language: propLanguage, ch
   const handleConfirmarGuardado = async () => {
     try {
     await registrarPersonal(formData); // Llama al hook para registrar el personal
-    setNotification({ show: true, message: t('registerPatient.form.messages.patientSavedSuccessfully'), type: 'success' });
+    setNotification({ show: true, message: "Personal Guardado Exitosamente", type: 'success' });
     setShowModal(false);
     // Opcional: limpiar el formulario o redirigir
     setFormData({

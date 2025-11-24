@@ -46,11 +46,11 @@ export default function Main() {
     <div className="min-h-screen bg-gray-50">
       <Sidebar t={t} onCollapseChange={setSidebarCollapsed} />
       <div className={`${sidebarCollapsed ? 'ml-24' : 'ml-64'} flex flex-col transition-all duration-300`}>
-        <Header 
+        {/*<Header 
           t={t} 
           language={language} 
           changeLanguage={changeLanguage} 
-        />
+        />*/}
         <main className="flex-1">
           {routes[pathname as keyof typeof routes] || <HomeLogin />}
         </main>

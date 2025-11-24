@@ -1,6 +1,7 @@
 import { useState } from "react";
 import REGISTRAR_PACIENTE_ENDPOINT, { RegistrarPacienteData } from "../services/registrarPacienteEndpoint";
 import errorHandler from '@/globals/utils/errorHandler';
+import getToken from "@/globals/utils/getToken";
 
 export function useRegistrarPaciente() {
   const [isLoading, setIsLoading] = useState(false);
@@ -47,6 +48,7 @@ export function useRegistrarPaciente() {
           method: REGISTRAR_PACIENTE_ENDPOINT.METHOD,
           headers: {
             'Content-Type': 'application/json',
+            Authorization: `Bearer ${getToken()}`,
           },
           body: JSON.stringify(payload),
         }
@@ -62,7 +64,7 @@ export function useRegistrarPaciente() {
       return responseData;
 
     } catch (error: any) {
-      const errorMessage = errorHandler(error.message);
+      const errorMessage = errorHandler(error.message || error);
       setError(errorMessage);
       setIsLoading(false);
       throw error;

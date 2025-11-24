@@ -30,14 +30,29 @@ export default function HistoriaClinicaPaciente({ t: propT, id_usuario: propId }
   const id_usuario = propId ?? searchParams.get('id');
   const { data: evolucionesData, isLoading, error, reload, setData: setEvoluciones } = useEvoluciones(id_usuario);
   const evoluciones = evolucionesData ?? [];
-  const { data: sotsData } = useSots(id_usuario);
+  const { data: sotsData, error: errorSot, isLoading: isLoadingSOT } = useSots(id_usuario);
   const sots = sotsData ?? [];
 
   // fetch patient data from API
   const { data: pacienteData, isLoading: pacienteLoading, error: pacienteError } = usePaciente(id_usuario);
   // map API shape to the `PatientCard` expected shape and provide fallbacks
-  const patientData = pacienteData
-    ? {
+
+  if (pacienteLoading || (!pacienteError && !pacienteData)) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <p>Cargando datos del paciente...</p>
+      </div>
+    )
+  }
+  if (pacienteError) {
+   return (
+    <div className="flex items-center justify-center h-screen">
+        <p className="text-red-500 text-xl mx-20 text-center">{pacienteError}</p>
+    </div>
+   )
+  } 
+
+  const patientData = {
         name: `${pacienteData.nombre ?? ''} ${pacienteData.apellido ?? ''}`.trim(),
         dni: pacienteData.dni ?? undefined,
         sexo: pacienteData.genero ?? undefined,
@@ -48,12 +63,7 @@ export default function HistoriaClinicaPaciente({ t: propT, id_usuario: propId }
         telefono: pacienteData.telefono ?? undefined,
         email: pacienteData.email ?? undefined,
         foto_url: pacienteData.foto_url ?? undefined,
-      }
-    : {
-        // temporary fallback while loading or on error
-        name: t ? t('patient.name') : 'Anabella Sofía Perri',
-      };
-
+  }
   return (
     <main className="flex-1 p-6">
       <div className="max-w-4xl mx-auto px-6 py-3">
@@ -73,8 +83,8 @@ export default function HistoriaClinicaPaciente({ t: propT, id_usuario: propId }
 
   <PatientEvolutionHeader id_usuario={id_usuario} evoluciones={evoluciones} setEvoluciones={setEvoluciones} sortNewestFirst={sortNewestFirst} onRightClick={() => setSortNewestFirst(s => !s)} />
 
-        {isLoading && <div className="py-4 text-sm text-gray-600">Cargando evoluciones...</div>}
-        {error && <div className="py-4 text-sm text-red-500">{error}</div>}
+        {(isLoading || isLoadingSOT)&& <div className="py-4 text-sm text-gray-600">Cargando Historia Clinica...</div>}
+        {(error || errorSot) && <div className="py-4 text-xl text-red-500">{`No se pudo cargar la historia clinica completa: ${(error || errorSot)}`}</div>}
 
         {/* Group evolutions by their diagnostico multiaxial (if present) */}
         {
@@ -324,8 +334,6 @@ export default function HistoriaClinicaPaciente({ t: propT, id_usuario: propId }
             return blocks;
           })()
         }
-
-        <RecetaCard />
       </div>
     </main>
   );

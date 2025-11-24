@@ -18,7 +18,7 @@ export default function useEvoluciones(id_usuario?: string | number) {
       const res = await fetchEvoluciones(id_usuario);
       setData(res);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error al obtener evoluciones');
+      setError(err.response?.data?.detail ? err.response.data.detail : err instanceof Error ? err.message : 'Error al obtener evoluciones');
     } finally {
       setIsLoading(false);
     }

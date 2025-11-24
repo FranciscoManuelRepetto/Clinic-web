@@ -3,6 +3,7 @@ import axios from 'axios';
 import { CargaEvolucion } from '../types/CargaEvolucion';
 import { CARGAR_EVOLUCION } from '../services/historiaClinicaEndpoints';
 import errorHandler from '@/globals/utils/errorHandler';
+import getToken from '@/globals/utils/getToken';
 
 
 export interface UseItemsDMReturn {
@@ -29,6 +30,9 @@ export const useCargarEvolucion = (): UseItemsDMReturn => {
       const response = await axios({
         method: CARGAR_EVOLUCION.METHOD,
         url: CARGAR_EVOLUCION.URL(id_usuario),
+        headers: {
+                    Authorization: `Bearer ${getToken()}`,
+        },
         data: body
       });
       id_evolucion_cargada = response.data.id_evolucion;

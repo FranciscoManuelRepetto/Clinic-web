@@ -17,7 +17,7 @@ export default function usePaciente(id_usuario?: string | number) {
       const res = await fetchPaciente(id_usuario);
       setData(res);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error al obtener paciente');
+      setError(err instanceof Error ? err.response.data.detail : 'Error al obtener paciente');
     } finally {
       setIsLoading(false);
     }

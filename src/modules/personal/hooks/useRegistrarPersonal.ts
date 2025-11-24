@@ -1,6 +1,7 @@
 import { useState } from "react";
 import REGISTRAR_PERSONAL_ENDPOINT, {RegistrarPersonalData}  from "../services/registrarPersonalEndpoint";
 import errorHandler from '@/globals/utils/errorHandler';
+import getToken from "@/globals/utils/getToken";
 
 export function useRegistrarPersonal() {
   const [isLoading, setIsLoading] = useState(false);
@@ -36,6 +37,7 @@ export function useRegistrarPersonal() {
           method: REGISTRAR_PERSONAL_ENDPOINT.METHOD,
           headers: {
             ...REGISTRAR_PERSONAL_ENDPOINT.headers,
+            Authorization: `Bearer ${getToken()}`,
             'Content-Type': 'application/json',
           },
           body: JSON.stringify(payload),
@@ -44,6 +46,7 @@ export function useRegistrarPersonal() {
 
       if (!response.ok) {
         const errorData = await response.json();
+        console.log(errorData)
         throw new Error(errorData.detail || 'Error al registrar personal');
       }
 

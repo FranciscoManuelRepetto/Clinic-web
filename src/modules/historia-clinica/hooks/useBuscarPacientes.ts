@@ -3,6 +3,7 @@ import axios from 'axios';
 import { Paciente } from '../types/Paciente';
 import { BUSCAR_PACIENTES_ENDPOINT, BuscarPacientesParams } from '../services/buscarPacientesEndpoint';
 import errorHandler from '@/globals/utils/errorHandler';
+import getToken from '@/globals/utils/getToken';
 
 export interface UseBuscarPacientesReturn {
   buscarPacientes: (params: BuscarPacientesParams) => Promise<void>;
@@ -32,6 +33,9 @@ export const useBuscarPacientes = (): UseBuscarPacientesReturn => {
     try {
       const response = await axios({
         method: BUSCAR_PACIENTES_ENDPOINT.METHOD,
+        headers: {
+          Authorization: `Bearer ${getToken()}`,
+        },
         url: BUSCAR_PACIENTES_ENDPOINT.URL(params),
       });
 

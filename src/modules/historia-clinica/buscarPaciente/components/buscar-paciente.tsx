@@ -395,7 +395,7 @@ export default function BuscarPaciente({ t: propT, language: propLanguage, chang
         </form>
         <div className="my-5 mx-2">
           {isLoading && <p>Cargando...</p>}
-          {error && <p className="text-red-500">Error: {error}</p>}
+          {error && <p className="text-red-500 text-lg">Error: {error}</p>}
           {!isLoading && !error && searched && pacientes.length > 0 ? 
             <div className="flex flex-col">
             <Subtitle subtitle="Resultados"/>

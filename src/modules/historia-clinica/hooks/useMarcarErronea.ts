@@ -3,7 +3,7 @@ import axios from 'axios';
 import { MARCAR_ERRONEA, MARCAR_ERRONEA_SOT } from '../services/historiaClinicaEndpoints';
 import errorHandler from '@/globals/utils/errorHandler';
 import { EvolucionCompleta } from '../types/EvolucionCompleta';
-
+import getToken from '@/globals/utils/getToken';
 
 export interface UseMarcarErronea {
   marcarErronea: (id_usuario: number | string, id_evolucion: number | string, body: {
@@ -36,6 +36,9 @@ export const useMarcarErronea = (): UseMarcarErronea => {
       const response = await axios({
         method: MARCAR_ERRONEA.METHOD,
         url: MARCAR_ERRONEA.URL(id_usuario, id_evolucion),
+        headers: {
+          Authorization: `Bearer ${getToken()}`,
+        },
         data: payload
       });
       evolucion = response.data;

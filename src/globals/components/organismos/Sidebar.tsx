@@ -81,142 +81,159 @@ export default function Sidebar({ t, onCollapseChange }: SidebarProps) {
       </div>
 
       {/* Navigation Menu */}
-      <div className="flex-1 overflow-y-auto px-3 pt-2 space-y-1">
-        {/* Historia Clínica */}
-        <div className="mb-1 mt-2">
-          <SidebarMenuItem
-            menuKey="home"
-            icon={<FileText className="w-full h-full" />}
-            label={t("navbar.menus.historiaClinica")}
-            isOpen={openMenu === "home"}
-            isCollapsed={isCollapsed}
-            onToggle={toggleMenu}
-            onKeyDown={handleKeyDown}
-            onExpandSidebar={expandSidebar}
-            t={t}
-          />
-          <SidebarSubmenu
-            menuKey="home"
-            items={[
-              {
-                href: "/registrar-paciente",
-                icon: <UserPlus className="w-full h-full" />,
-                label: t("navbar.submenus.historiaClinica.crearPaciente")
-              },
-              {
-                href: "/buscar-paciente",
-                icon: <Search className="w-full h-full" />,
-                label: t("navbar.submenus.historiaClinica.buscarPaciente")
-              },
-              {
-                href: "#",
-                icon: <FileBarChart className="w-full h-full" />,
-                label: t("navbar.submenus.historiaClinica.generarReporte")
-              }
-            ]}
-            isOpen={openMenu === "home"}
-            isCollapsed={isCollapsed}
-            onExpandSidebar={expandSidebar}
-          />
-        </div>
+      <div className="flex-1 flex flex-col justify-between overflow-y-auto px-3 pt-2 space-y-1">
+        <div>
+          {/* Historia Clínica */}
+          <div className="mb-1 mt-2">
+            <SidebarMenuItem
+              menuKey="home"
+              icon={<FileText className="w-full h-full" />}
+              label={t("navbar.menus.historiaClinica")}
+              isOpen={openMenu === "home"}
+              isCollapsed={isCollapsed}
+              onToggle={toggleMenu}
+              onKeyDown={handleKeyDown}
+              onExpandSidebar={expandSidebar}
+              t={t}
+            />
+            <SidebarSubmenu
+              menuKey="home"
+              items={[
+                {
+                  href: "/registrar-paciente",
+                  icon: <UserPlus className="w-full h-full" />,
+                  label: t("navbar.submenus.historiaClinica.crearPaciente")
+                },
+                {
+                  href: "/buscar-paciente",
+                  icon: <Search className="w-full h-full" />,
+                  label: t("navbar.submenus.historiaClinica.buscarPaciente")
+                },
+                {
+                  href: "#",
+                  icon: <FileBarChart className="w-full h-full" />,
+                  label: t("navbar.submenus.historiaClinica.generarReporte")
+                }
+              ]}
+              isOpen={openMenu === "home"}
+              isCollapsed={isCollapsed}
+              onExpandSidebar={expandSidebar}
+            />
+          </div>
 
-        {/* Turnos */}
-        <div className="mb-1">
-          <SidebarMenuItem
-            menuKey="turnos"
-            icon={<Calendar className="w-full h-full" />}
-            label={t("navbar.menus.turnos")}
-            isOpen={openMenu === "turnos"}
-            isCollapsed={isCollapsed}
-            onToggle={toggleMenu}
-            onKeyDown={handleKeyDown}
-            onExpandSidebar={expandSidebar}
-            t={t}
-          />
-          <SidebarSubmenu
-            menuKey="turnos"
-            items={[
-              {
-                href: "#",
-                icon: <CalendarCheck className="w-full h-full" />,
-                label: t("navbar.submenus.turnos.gestionarTurnos")
-              },
-              {
-                href: "#",
-                icon: <CalendarDays className="w-full h-full" />,
-                label: t("navbar.submenus.turnos.calendario")
-              }
-            ]}
-            isOpen={openMenu === "turnos"}
-            isCollapsed={isCollapsed}
-            onExpandSidebar={expandSidebar}
-          />
-        </div>
+          {/* Turnos */}
+          <div className="mb-1">
+            <SidebarMenuItem
+              menuKey="turnos"
+              icon={<Calendar className="w-full h-full" />}
+              label={t("navbar.menus.turnos")}
+              isOpen={openMenu === "turnos"}
+              isCollapsed={isCollapsed}
+              onToggle={toggleMenu}
+              onKeyDown={handleKeyDown}
+              onExpandSidebar={expandSidebar}
+              t={t}
+            />
+            <SidebarSubmenu
+              menuKey="turnos"
+              items={[
+                {
+                  href: "#",
+                  icon: <CalendarCheck className="w-full h-full" />,
+                  label: t("navbar.submenus.turnos.gestionarTurnos")
+                },
+                {
+                  href: "#",
+                  icon: <CalendarDays className="w-full h-full" />,
+                  label: t("navbar.submenus.turnos.calendario")
+                }
+              ]}
+              isOpen={openMenu === "turnos"}
+              isCollapsed={isCollapsed}
+              onExpandSidebar={expandSidebar}
+            />
+          </div>
 
-        {/* Medicamentos */}
-        <div className="mb-1">
-          <SidebarMenuItem
-            menuKey="medicamentos"
-            icon={<Pill className="w-full h-full" />}
-            label={t("navbar.menus.medicamentos")}
-            isOpen={openMenu === "medicamentos"}
-            isCollapsed={isCollapsed}
-            onToggle={toggleMenu}
-            onKeyDown={handleKeyDown}
-            onExpandSidebar={expandSidebar}
-            t={t}
-          />
-          <SidebarSubmenu
-            menuKey="medicamentos"
-            items={[
-              {
-                href: "#",
-                icon: <Package className="w-full h-full" />,
-                label: t("navbar.submenus.medicamentos.inventario")
-              },
-              {
-                href: "#",
-                icon: <FileEdit className="w-full h-full" />,
-                label: t("navbar.submenus.medicamentos.recetas")
-              }
-            ]}
-            isOpen={openMenu === "medicamentos"}
-            isCollapsed={isCollapsed}
-            onExpandSidebar={expandSidebar}
-          />
-        </div>
+          {/* Medicamentos */}
+          <div className="mb-1">
+            <SidebarMenuItem
+              menuKey="medicamentos"
+              icon={<Pill className="w-full h-full" />}
+              label={t("navbar.menus.medicamentos")}
+              isOpen={openMenu === "medicamentos"}
+              isCollapsed={isCollapsed}
+              onToggle={toggleMenu}
+              onKeyDown={handleKeyDown}
+              onExpandSidebar={expandSidebar}
+              t={t}
+            />
+            <SidebarSubmenu
+              menuKey="medicamentos"
+              items={[
+                {
+                  href: "/buscar-medicamentos",
+                  icon: <Package className="w-full h-full" />,
+                  label: t("navbar.submenus.medicamentos.inventario")
+                },
+                {
+                  href: "#",
+                  icon: <FileEdit className="w-full h-full" />,
+                  label: t("navbar.submenus.medicamentos.recetas")
+                }
+              ]}
+              isOpen={openMenu === "medicamentos"}
+              isCollapsed={isCollapsed}
+              onExpandSidebar={expandSidebar}
+            />
+          </div>
 
-        {/* Personal */}
-        <div className="mb-1">
-          <SidebarMenuItem
-            menuKey="personal"
-            icon={<Users className="w-full h-full" />}
-            label={t("navbar.menus.personal")}
-            isOpen={openMenu === "personal"}
-            isCollapsed={isCollapsed}
-            onToggle={toggleMenu}
-            onKeyDown={handleKeyDown}
-            onExpandSidebar={expandSidebar}
-            t={t}
-          />
-          <SidebarSubmenu
-            menuKey="personal"
-            items={[
-              {
-                href: "#",
-                icon: <UserCog className="w-full h-full" />,
-                label: t("navbar.submenus.personal.gestionarPersonal")
-              },
-              {
-                href: "#",
-                icon: <Clock className="w-full h-full" />,
-                label: t("navbar.submenus.personal.horarios")
-              }
-            ]}
-            isOpen={openMenu === "personal"}
-            isCollapsed={isCollapsed}
-            onExpandSidebar={expandSidebar}
-          />
+          {/* Personal */}
+          <div className="mb-1">
+            <SidebarMenuItem
+              menuKey="personal"
+              icon={<Users className="w-full h-full" />}
+              label={t("navbar.menus.personal")}
+              isOpen={openMenu === "personal"}
+              isCollapsed={isCollapsed}
+              onToggle={toggleMenu}
+              onKeyDown={handleKeyDown}
+              onExpandSidebar={expandSidebar}
+              t={t}
+            />
+            <SidebarSubmenu
+              menuKey="personal"
+              items={[
+                {
+                  href: "registrar-personal",
+                  icon: <UserCog className="w-full h-full" />,
+                  label: t("navbar.submenus.personal.gestionarPersonal")
+                },
+                {
+                  href: "#",
+                  icon: <Clock className="w-full h-full" />,
+                  label: t("navbar.submenus.personal.horarios")
+                }
+              ]}
+              isOpen={openMenu === "personal"}
+              isCollapsed={isCollapsed}
+              onExpandSidebar={expandSidebar}
+            />
+          </div>
+        </div>
+        {/* Logout */}
+        <div className="w-full">
+          <button
+            onClick={() => {
+              // Limpiar todo el localStorage
+              localStorage.clear();
+              // Redirigir a la ruta de logout de Auth0
+              window.location.href = '/auth/logout';
+            }}
+            className="bottom-0 w-full bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition-colors text-sm font-bold h-12 w-30 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+            tabIndex={0}
+          >
+            {t("navbar.submenus.personal.cerrarSesion")}
+          </button>
         </div>
       </div>
 

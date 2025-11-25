@@ -25,9 +25,18 @@ export const useBuscarMedicamentos = (): UseBuscarMedicamentosReturn => {
     setError(null);
     
     try {
+      // Obtener el token del localStorage
+      const token = localStorage.getItem('authToken');
+      if (!token) {
+        throw new Error('No se encontró el token de autenticación');
+      }
+
       const response = await axios({
         method: BUSCAR_MEDICAMENTOS_ENDPOINT.METHOD,
         url: BUSCAR_MEDICAMENTOS_ENDPOINT.URL(params),
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
 
       const data = response.data;

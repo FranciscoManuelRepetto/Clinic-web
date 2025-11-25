@@ -1,4 +1,5 @@
 import NavButton from "../moleculas/NavButton";
+import Link from "next/link"
 
 interface HeaderProps {
   onLogout?: null | (() => void);
@@ -15,8 +16,9 @@ export default function Header({
 }: HeaderProps) {
 
   return (
-    <div className="bg-[#88B497] flex items-center px-8 py-4">
-      <ul className="flex gap-5 m-0 p-0 list-none justify-center w-full mt-4" role="navigation" aria-label="Main navigation">
+    <div className="bg-[#88B497] flex flex-1 items-center justify-between px-8 py-4">
+      {/*
+      <ul className="flex gap-2 m-0 p-0 list-none justify-center w-full mt-4" role="navigation" aria-label="Main navigation">
         <NavButton
           menuKey="historiaClinica"
           items={[
@@ -64,7 +66,12 @@ export default function Header({
           ]}
         />
       </ul>
-
+        */}
+      <div className="flex-grow">
+        <Link href="/home" className="flex items-center justify-center" aria-label={t("navbar.logo")}>
+            <img src="/assets/ClinicLogo.png" alt={t("navbar.logo")} className="w-100 h-20 object-contain" />
+        </Link>
+      </div>
       <div className="flex items-center gap-4 mt-4">
         {/* Selector de idioma */}
         <div className="relative">

@@ -31,11 +31,20 @@ export const useEgresoMedicamento = (): UseEgresoMedicamentoReturn => {
     setIsSuccess(false);
 
     try {
+      // Obtener el token del localStorage
+      const token = localStorage.getItem('authToken');
+      if (!token) {
+        throw new Error('No se encontró el token de autenticación');
+      }
+
       const url = REGISTRAR_EGRESO_MEDICAMENTO_ENDPOINT.URL();
       const response = await axios({
         method: REGISTRAR_EGRESO_MEDICAMENTO_ENDPOINT.METHOD,
         url,
         data: payload,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
 
       setResponseData(response.data);

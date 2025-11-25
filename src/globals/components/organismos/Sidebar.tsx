@@ -220,7 +220,7 @@ export default function Sidebar({ t, onCollapseChange }: SidebarProps) {
             />
           </div>
         </div>
-        {/* Logout */}
+        {/* Logout 
         <div className="w-full">
           <button
             onClick={() => {
@@ -235,6 +235,7 @@ export default function Sidebar({ t, onCollapseChange }: SidebarProps) {
             {t("navbar.submenus.personal.cerrarSesion")}
           </button>
         </div>
+        */}
       </div>
 
       {/* Botón de Colapsar - Al final */}

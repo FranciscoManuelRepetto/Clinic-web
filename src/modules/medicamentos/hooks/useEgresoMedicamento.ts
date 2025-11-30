@@ -45,10 +45,7 @@ export const useEgresoMedicamento = (): UseEgresoMedicamentoReturn => {
         headers: {
               Authorization: `Bearer ${getToken()}`,
             },
-        data: payload,
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        data: payload
       });
 
       setResponseData(response.data);

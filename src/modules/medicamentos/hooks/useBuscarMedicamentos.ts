@@ -37,10 +37,7 @@ export const useBuscarMedicamentos = (): UseBuscarMedicamentosReturn => {
         headers: {
               Authorization: `Bearer ${getToken()}`,
             },
-        url: BUSCAR_MEDICAMENTOS_ENDPOINT.URL(params),
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        url: BUSCAR_MEDICAMENTOS_ENDPOINT.URL(params)
       });
 
       const data = response.data;

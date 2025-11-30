@@ -3,6 +3,7 @@ import axios from 'axios';
 import { EvolucionCompleta } from '../types/EvolucionCompleta';
 import { OBTENER_EVOLUCION } from '../services/historiaClinicaEndpoints';
 import errorHandler from '@/globals/utils/errorHandler';
+import getToken from '@/globals/utils/getToken';
 
 
 export interface UseEvolucionReturn {
@@ -24,6 +25,9 @@ export const useObtenerEvolucion = (): UseEvolucionReturn => {
     try {
       const response = await axios({
         method: OBTENER_EVOLUCION.METHOD,
+        headers: {
+              Authorization: `Bearer ${getToken()}`,
+            },
         url: OBTENER_EVOLUCION.URL(id_usuario, id_evolucion)
       });
       evolucion = response.data;

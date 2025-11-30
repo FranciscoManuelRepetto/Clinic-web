@@ -3,6 +3,7 @@ import axios from 'axios';
 import { ItemDM } from '../types/ItemDM';
 import { OBTENER_ITEMS_DM } from '../services/historiaClinicaEndpoints';
 import errorHandler from '@/globals/utils/errorHandler';
+import getToken from '@/globals/utils/getToken';
 
 
 export interface UseItemsDMReturn {
@@ -24,6 +25,9 @@ export const useObtenerItemsDM = (): UseItemsDMReturn => {
     try {
       const response = await axios({
         method: OBTENER_ITEMS_DM.METHOD,
+        headers: {
+              Authorization: `Bearer ${getToken()}`,
+            },
         url: OBTENER_ITEMS_DM.URL
       });
       itemsDM = response.data;

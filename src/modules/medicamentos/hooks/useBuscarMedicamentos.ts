@@ -4,6 +4,7 @@ import { Medicamento } from '../types/Medicamento';
 import { BUSCAR_MEDICAMENTOS_ENDPOINT, BuscarMedicamentosParams } from '../services/buscarMedicamentosEndpoint';
 import errorHandler from '@/globals/utils/errorHandler';
 import sortData from '@/globals/utils/sortData';
+import getToken from '@/globals/utils/getToken';
 
 export interface UseBuscarMedicamentosReturn {
   buscarMedicamentos: (params: BuscarMedicamentosParams) => Promise<void>;
@@ -33,6 +34,9 @@ export const useBuscarMedicamentos = (): UseBuscarMedicamentosReturn => {
 
       const response = await axios({
         method: BUSCAR_MEDICAMENTOS_ENDPOINT.METHOD,
+        headers: {
+              Authorization: `Bearer ${getToken()}`,
+            },
         url: BUSCAR_MEDICAMENTOS_ENDPOINT.URL(params),
         headers: {
           Authorization: `Bearer ${token}`,

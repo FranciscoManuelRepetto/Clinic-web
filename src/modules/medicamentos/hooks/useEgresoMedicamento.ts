@@ -5,6 +5,7 @@ import {
   REGISTRAR_EGRESO_MEDICAMENTO_ENDPOINT,
   RegistrarEgresoMedicamentoPayload,
 } from "../services/registrarEgresoMedicamento";
+import getToken from "@/globals/utils/getToken";
 
 interface UseEgresoMedicamentoReturn {
   registrarEgresoMedicamento: (
@@ -41,6 +42,9 @@ export const useEgresoMedicamento = (): UseEgresoMedicamentoReturn => {
       const response = await axios({
         method: REGISTRAR_EGRESO_MEDICAMENTO_ENDPOINT.METHOD,
         url,
+        headers: {
+              Authorization: `Bearer ${getToken()}`,
+            },
         data: payload,
         headers: {
           Authorization: `Bearer ${token}`,

@@ -66,6 +66,9 @@ export const useMarcarErronea = (): UseMarcarErronea => {
       const response = await axios({
         method: MARCAR_ERRONEA_SOT.METHOD,
         url: MARCAR_ERRONEA_SOT.URL(id_usuario, id_sot),
+        headers: {
+              Authorization: `Bearer ${getToken()}`,
+            },
         data: payload,
       });
       result = response.data;

@@ -132,7 +132,7 @@ export default function BuscarMedicamento({ t: propT, language: propLanguage, ch
     onChange: handleFormaFarmaceuticaChange,
   });
 
-  // 👉 Hook del teclado virtual
+  // Hook del teclado virtual
   const {
     showVirtualKeyboard,
     setShowVirtualKeyboard,
